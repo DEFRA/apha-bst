@@ -1,0 +1,175 @@
+﻿@* @model Site *@
+@* @model Apha.BST.Application.DTOs.SiteDTO *@
+@model Apha.BST.Web.Models.SiteViewModel
+@{
+	ViewData["Title"] = "AddSite";
+}
+
+
+
+<form asp-action="AddSite" asp-controller="Site" method="post"@*  enctype="multipart/form-data" *@>
+	<table class="w-100 h-100 m-3">
+		<tbody class="me-5">
+			<tr>
+				<td class="fw-bold text-decoration-underline">
+					Add a new site with details
+				</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td>
+					<label class="pt-2"  asp-for='PlantNo'>Plant / site No.</label>
+				</td>
+				<td>
+					<input asp-for="PlantNo" tabindex="1">
+					<span asp-validation-for="PlantNo" class="text-danger">*</span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2 ">
+					<label asp-for="Name">Plant name</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="Name" tabindex="2" />
+					<span asp-validation-for="Name" class="text-danger">**</span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressLine1">Address 1</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressLine1" class="px-5 " tabindex="3" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressLine2">Address 2</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressLine2" class="px-5 " tabindex="4" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressTown">Town</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressTown" class="px-5 " tabindex="5" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressCounty">County</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressCounty" class="px-5 " tabindex="6" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressPostCode">Postcode</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressPostCode" tabindex="7" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="Telephone">Telephone</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="Telephone" tabindex="8" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="Fax">Fax</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="Fax" tabindex="9" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="Ahvla">AHVLA Site</label>
+				</td>
+				<td class="pt-4">
+					<input asp-for="Ahvla" type="checkbox" />
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+
+					<table>
+						<tr>
+							<td class="pt-3 px-5">
+								<button type="submit" class="btn" tabindex="10">
+									<img src="~/Images/tick.gif" alt="Save site" />
+								</button>
+							</td>
+							<td class="pt-3 px-5">
+								<a href="@Url.Action("Index", "Home")" class="btn">
+									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
+								</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<div class="pt-3 px-5 ErrorText">
+						@if (TempData["Message"] != null)
+						{
+							@TempData["Message"]
+						}
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-5">
+					<p>Plant / Site No. and Plant name are required fields</p>
+					<div asp-Validation-Summary="ModelOnly">
+					</div>
+
+
+					<ul class="ErrorText">
+						@foreach (var key in new[] { "PlantNo", "Name" })
+						{
+							if (ViewData.ModelState.ContainsKey(key))
+							{
+								foreach (var error in ViewData.ModelState[key].Errors)
+								{
+									<li>@error.ErrorMessage</li>
+								}
+							}
+						}
+					</ul>
+
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
+
+

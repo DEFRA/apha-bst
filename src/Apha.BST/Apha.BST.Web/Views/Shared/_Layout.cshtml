@@ -1,0 +1,170 @@
+﻿@{
+	var pageTitle = ViewData["Title"] ?? "Brainstem training database";
+}
+
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@pageTitle - TSE Brainstem Training Database</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" />
+	<link rel="stylesheet" href="~/css/vla-green.css" />
+	@await RenderSectionAsync("Styles", required: false)
+	@await RenderSectionAsync("Scripts", required: false)
+</head>
+<body>
+
+	<header class="mx-3">
+		<div class=" d-flex justify-content-start gap-1">
+			<div class="w-100">
+				<img src="~/Images/logo-small.jpg" alt="AHVLA" class="img-fluid" />
+			</div>
+			<div class=" w-100 d-flex justify-content-end align-items-center ">
+				<table class="fw-bold fs-6 text-center  ">
+					<tr><td>TSE</td></tr>
+					<tr><td>Brainstem Training</td></tr>
+					<tr><td>Database</td></tr>
+				</table>
+			</div>
+			<div class=" w-100 mt-4 text-end">
+				<img src="~/Images/cattlesheep.jpeg" alt="Brainstem training database" class="img-fluid" />
+			</div>
+			<div class="w-100 d-flex justify-content-end align-items-center">
+				<table>
+					<tr>
+						<td class="fw-bold text-end">
+							<span>EVIDENDEV\atos.user1</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="fw-bold text-end">
+							<span>Role: Superuser</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</header>
+	<nav class="menu-bar">
+		<ul title="Please choose your path young Jedi" data-bs-toggle="tooltip">
+			<li>
+				<a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+			</li>
+			<li class="dropdown">
+				<div class="d-flex justify-content-between">
+					<a class="nav-link" href="#" id="navbarDropdownPerson" role="button" aria-haspopup="true" aria-expanded="false">
+						Person
+					</a>
+					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
+				</div>
+
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownPerson">
+					<a class="dropdown-item" asp-action="Index" asp-route-part="adte">Add a person</a>
+					<a class="dropdown-item" asp-action="Index" asp-route-part="chte">Edit/Delete a person</a>
+					<a class="dropdown-item" asp-action="Index" asp-route-part="vwte">View people</a>
+				</div>
+			</li>
+			<li class="dropdown">
+				<div class="d-flex justify-content-between">
+					<a class="nav-link " href="#" id="navbarDropdownTraining" role="button" aria-haspopup="true" aria-expanded="false">
+						Training
+					</a>
+					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
+				</div>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownTraining">
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="adtg">Add training</a>
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwtg">View, alter, delete training details</a>
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwtr">Trainer History</a>
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwth">Trainer trained</a>
+				</div>
+			</li>
+			<li class="dropdown">
+				<div class="d-flex justify-content-between">
+					<a class="nav-link " href="#" id="navbarDropdownSite" role="button" aria-haspopup="true" aria-expanded="false">
+						Site
+					</a>
+					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
+				</div>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownSite">
+					<a class="dropdown-item" asp-controller="Site" asp-action="AddSite" asp-route-part="adst">Add a site</a>
+					<a class="dropdown-item" asp-controller="Site" asp-action="ViewSite" asp-route-part="vwst">View, alter, delete site details</a>
+					<a class="dropdown-item" asp-controller="Site" asp-action="SiteTrainee" asp-route-part="stte">Site trainees</a>
+				</div>
+			</li>
+
+
+			<li class="dropdown">
+				<div class="d-flex justify-content-between">
+					<a class="nav-link" href="#" id="navbarDropdownUser" role="button" aria-haspopup="true" aria-expanded="false">
+						User
+					</a>
+					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
+				</div>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownUser">
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="adus">Add a user</a>
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwus">View user details</a>
+				</div>
+			</li>
+			<li class="dropdown">
+				<div class="d-flex justify-content-between">
+					<a class="nav-link " href="#" id="navbarDropdownNews" role="button" aria-haspopup="true" aria-expanded="false">
+						News
+					</a>
+					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
+				</div>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownNews">
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="nwad">Add news</a>
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="nwch">View, change, delete news</a>
+				</div>
+			</li>
+			<li class="dropdown">
+				<div class="d-flex justify-content-between">
+					<a class="nav-link " href="#" role="button" bs-data-target="navbarDropdownHelp" bs-data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Help
+					</a>
+					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
+				</div>
+				<div class="dropdown-menu" id="navbarDropdownHelp" aria-labelledby="navbarDropdownHelp">
+					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hphm">Home</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpur">Users</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpnw">News</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpte">Persons</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hptr">Trainer</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hptg">Training</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpst">Site</a>
+				</div>
+			</li>
+			<li class="dropdown">
+				<div class="d-flex justify-content-between">
+					<a class="nav-link " href="#" id="navbarDropdownReports" role="button" aria-haspopup="true" aria-expanded="false">
+						Reports
+					</a>
+					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
+				</div>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownReports">
+					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwrt">All tables</a>
+				</div>
+			</li>
+		</ul>
+	</nav>
+
+
+	<hr class="mx-3 mt-1"/>
+
+	<main role="main">
+		@RenderBody()
+	</main>
+
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+
+
+	@await RenderSectionAsync("ScriptsBottom", required: false)
+</body>
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

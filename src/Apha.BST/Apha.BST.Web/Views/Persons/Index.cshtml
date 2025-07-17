@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Apha.BST.Application.DTOs.PersonsDTO>
+
+@{
+    ViewData["Title"] = "Person List";
+}
+
+<h2>Person List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>PersonID</th>
+            <th>Person</th>
+            <th>LocationID</th>
+            <th>VLALocationID</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var person in Model)
+        {
+            <tr>
+                <td>@person.PersonId</td>
+                <td>@person.Person</td>
+                <td>@person.LocationId</td>
+                <td>@person.VlalocationId</td>
+            </tr>
+        }
+    </tbody>
+</table>

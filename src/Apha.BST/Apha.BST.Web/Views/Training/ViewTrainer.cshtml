@@ -1,0 +1,91 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@* <div class="w-100 h-100 p-2">
+	<div class=" d-flex flex-column mb-3">
+		<form asp-action="SiteTrainee" method="post">
+			<div class="d-flex justify-content-between ">
+				<span class="w-70 fw-bold text-decoration-underline">
+					View all training by trainee
+				</span>
+				<span class="w-30 me-5 px-5">
+					<a href="@Url.Action("Index", "Home")" class="back-button" title="Back to home">
+						<img src="~/Images/cancel.jpeg" size="2px" alt="Back to home" />
+					</a>
+				</span>
+			</div>
+			<div class="w-100 d-flex justify-content-start">
+				<span class="w-30 "><label for="ddlTrainingView">Select trainee</label></span>
+				<span class="w-70 mx-5">
+					<select id="traineeSelect" name="traineeId" class="search-dropdown" onchange="this.form.submit()">
+						<option value="SelectTrainee">Select trainee...</option>
+						<option value="All">All</option>
+						@foreach (var trainee in trainees)
+						{
+							<option>@trainee.Person</option>
+						}
+					</select>
+				</span>
+				<span>
+					<p class=" ErrorText text-start">
+						@if (!string.IsNullOrEmpty(ViewBag.message))
+						{
+							@ViewBag.message
+						}
+
+					</p>
+				</span>
+
+			</div>
+		</form>
+
+	</div>
+
+	<div class="w-100 d-flex justify-content-start">
+		<p class="w-30 me-5">Details</p>
+		<table id="siteTable" class="w-60 mx-5 grid-table">
+			<thead>
+				<tr>
+					<th>Trainer</th>
+					<th>Species</th>
+					<th>Site</th>
+					<th>Training Date</th>
+					<th>ID</th>
+					<th>Training type</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var training in trainings)
+				{
+					<tr>
+						<td>@training.Person</td>
+						<td>@training.TrainingAnimal</td>
+						<td>@training.Name</td>
+						<td>@training.TrainingDateTime.ToString("yyyy-MM-dd")</td>
+						<td>@training.PersonID</td>
+						<td>@training.TrainingType</td>
+						<td>
+							<a href="@Url.Action("Edit", "Training", new { id = training.PersonID })" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">Edit</a>
+							<form asp-action="DeleteTraining" method="post" style="display: inline;">
+								@Html.AntiForgeryToken()
+								<input type="hidden" name="traineeId" value="@training.PersonID" />
+								<input type="hidden" name="species" value="@training.TrainingAnimal" />
+								<input type="hidden" name="dateTrained" value="@training.TrainingDateTime.ToString("yyyy-MM-dd")" />
+								<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover">Delete</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+
+		</table>
+
+
+	</div>
+
+
+</div>
+ *@
