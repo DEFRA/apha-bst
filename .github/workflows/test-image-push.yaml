@@ -40,6 +40,7 @@ jobs:
       - name: Generate raw tag
         id: raw-tag
         run: |
+          git tag --list
           echo "raw_tag=$(git tag --list --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)"
           echo "raw_tag=$(git tag --list --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)" >> $GITHUB_OUTPUT
       
