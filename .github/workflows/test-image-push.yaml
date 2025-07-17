@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required to fetch tags and full commit history
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
