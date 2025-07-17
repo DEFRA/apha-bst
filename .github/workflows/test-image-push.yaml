@@ -1,0 +1,27 @@
+name: test-image-push
+
+on:
+  workflow_dispatch:
+    inputs:
+      DEFRA_SHARED_ACCOUNT_REGION:
+        description: "defra shared account region"
+        type: string
+        required: true
+        default: 'eu-west-2'
+
+jobs:
+  push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_ENV_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ENV_ACCOUNT }}:role/${{ secrets.AWS_ENV_ROLE }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
