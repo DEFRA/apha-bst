@@ -8,7 +8,9 @@ on:
         type: string
         required: true
         default: 'eu-west-2'
-
+env:
+  REPOSITORY: apha/bst
+  
 jobs:
   push-image:
     runs-on: ubuntu-latest
