@@ -10,8 +10,5 @@ namespace Apha.BST.Web.Models
         public string SelectedSite { get; set; }
 
         public string? Message { get; set; }
-
-        //public string SelectedSite { get; set; }
-        //public IEnumerable<SiteTraineeViewModel> Trainees { get; set; }
     }
 }

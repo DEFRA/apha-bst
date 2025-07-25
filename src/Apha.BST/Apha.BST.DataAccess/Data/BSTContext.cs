@@ -20,7 +20,7 @@ public partial class BSTContext : DbContext
 
     public virtual DbSet<AuditlogArchived> AuditlogArchiveds { get; set; }
 
-    public virtual DbSet<Persons> People { get; set; }
+    public virtual DbSet<Persons> Persons { get; set; }
 
     public virtual DbSet<Site> Sites { get; set; }
 
@@ -41,7 +41,11 @@ public partial class BSTContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<VlaLoc> Vlalocs { get; set; }
-    public object SiteTrainees { get; internal set; }
+    //public object SiteTrainees { get; internal set; }
+    public DbSet<SiteTrainee> SiteTrainees { get; set; }
+    public DbSet<Trainee> Traines { get; set; }
+    public DbSet<TrainerTraining> TrainerTrainings { get; set; }    
+
 
     //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -288,6 +292,14 @@ public partial class BSTContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("VLA_Location");
         });
+
+        modelBuilder.Entity<SiteTrainee>().HasNoKey();
+        modelBuilder
+            .Entity<Trainee>()
+            .HasNoKey()  // Redundant if you use [Keyless], but explicit
+            .ToView(null);  // Prevents EF from trying to map to a table or view
+
+        modelBuilder.Entity<TrainerTraining>().HasNoKey();       
 
         OnModelCreatingPartial(modelBuilder);
     }

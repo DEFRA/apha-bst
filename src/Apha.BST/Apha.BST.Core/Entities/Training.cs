@@ -15,3 +15,4 @@ public partial class Training
 
     public int TrainerId { get; set; }
 }
+

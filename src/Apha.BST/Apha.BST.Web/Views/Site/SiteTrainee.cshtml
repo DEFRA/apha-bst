@@ -66,9 +66,13 @@
 					<tr>
 						<td>@trainee.PersonId</td>
 						<td>@trainee.Person</td>
+						@* 	<td>
+								<input type="checkbox" disabled @(trainee.HasTraining ? "checked" : "") />
+							</td> *@
 						<td>
 								<form asp-action="DeleteTrainee" asp-controller="Site" method="post">
 								<input type="hidden" name="personId" value="@trainee.PersonId" />
+								<input type="hidden" name="selectedSite" value="@Model.SelectedSite" />
 								<button type="submit" class="btn btn-link p-0 m-0 text-dark custom-underline-hover">Delete</button>
 							</form>
 						</td>
@@ -77,9 +81,13 @@
 			</tbody>
 		</table>
 		<p class="w-10 ErrorText text-start">
-				@if (TempData["Message"] != null)
+				@* @if (TempData["Message"] != null)
 				{					
 					<div>@TempData["Message"]</div>
+				} *@
+				@if (TempData["Message"] != null)
+				{
+					@TempData["Message"]
 				}
 		</p>
 		}

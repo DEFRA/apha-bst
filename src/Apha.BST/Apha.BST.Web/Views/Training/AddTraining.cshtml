@@ -1,5 +1,159 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model AddTrainingViewModel
 @{
+	ViewData["Title"] = "AddTraining";
+	// var trainees = new List<Trainee>
+	// 		{
+	// 			new Trainee { PersonID = 1, Person = "John Doe", PlantNo = "1" },
+	// 			new Trainee { PersonID = 2, Person = "Jane Smith", PlantNo = "1" },
+	// 			new Trainee { PersonID = 3, Person = "Bob Johnson", PlantNo = "2" }
+	// 		};
 }
+
+<form asp-action="AddTraining" method="post">
+	<table class="w-80 h-100 m-4">
+		<tbody class="me-5">
+			<tr>
+				<td class="fw-bold text-decoration-underline">
+					Add new training for trainee
+				</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td class="pt-2">
+					<label asp-for="PersonId">Please select trainee</label>
+				</td>
+				<td class="px-5">
+				@* 	<select asp-for="PersonId">
+						<option value="">Select trainee...</option>
+						@foreach (var trainee in trainees)
+						{
+							<option>@trainee.Person</option>
+						} *@
+					</select>
+						<select asp-for="PersonId" asp-items="Model.Persons">
+							<option value="">Select trainee...</option>
+						</select>
+					<span asp-for="PersonId" class="text-danger"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-3 ">
+					<label asp-for="TrainerId">Please select trainer</label>
+				</td>
+				<td class="pt-3 px-5">
+					@* <select asp-for="TrainerId">
+						<option value="">Select trainer...</option>
+						@foreach (var trainer in trainees)
+						{
+							<option>@trainer.Person</option>
+						}
+					</select> *@
+					<select asp-for="TrainerId" asp-items="Model.Persons">
+						<option value="">Select trainer...</option>
+					</select>
+					<span asp-for="TrainerId" class="text-danger"></span>
+				</td>
+
+			</tr>
+			<tr>
+				<td class="pt-3">
+					<label asp-for="TrainingType">Please select training type</label>
+				</td>
+				<td class="pt-3 px-5">
+					<select asp-for="TrainingType">
+						<option value="">Select training type...</option>
+						<option value="Cascade trained">Cascade trained</option>
+						<option value="Trained">Trained</option>
+						<option value="Training confirmed">Training confirmed</option>
+					</select>
+					<span asp-for="TrainingType" class="text-danger"></span>
+				</td>
+
+			</tr>
+			<tr>
+				<td class="pt-3">
+					<label asp-for="TrainingDateTime">Please select training date</label>
+				</td>
+				<td class="pt-3 px-5">
+
+					<input asp-for="TrainingDateTime" id="dateInput" type="date" class="custom-date-input" placeholder=" ">
+					<button type="button" onclick="openDateCalender()" class="btn btn-sm">
+						<img src="~/Images/asp-calendar.gif" alt="img" id="calenderImage" />
+					</button>
+
+					<span sp-for="TrainingDate" asp-validation-for="TrainingDateTime" class="text-danger"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-3">
+					<label asp-for="TrainingAnimal">Please select species</label>
+				</td>
+				<td class="pt-3 px-5">
+					<select asp-for="TrainingAnimal">
+						<option value="">Select species...</option>
+						<option value="Cattle">Cattle</option>
+						<option value="Sheep">Sheep</option>
+						<option value="Goat">Goat</option>
+					</select>
+					<span asp-for="TrainingAnimal" class="text-danger"></span>
+				</td>
+
+			<tr class="mt-5">
+				<td></td>
+				<td>
+
+					<table>
+						<tr>
+							<td class="pt-5 px-5">
+								<button type="submit" class="btn" tabindex="10">
+									<img src="~/Images/tick.gif" alt="Save site" />
+								</button>
+							</td>
+							<td class="pt-5 px-5">
+								<a href="@Url.Action("Index", "Home")" class="btn">
+									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
+								</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<div class="pt-3 px-5 ErrorText">
+							@if (TempData["Message"] != null)
+							{
+								@TempData["Message"]
+							}
+					</div>
+					
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-3 text-danger">
+					<p>** All fields are required to add new training</p>
+					<div asp-Validation-Summary="ModelOnly">
+					</div>
+
+
+					<ul class="ErrorText">
+							@foreach (var key in new[] { "PersonId", "TrainerId", "TrainingType", "TrainingAnimal", "TrainingDateTime" })
+							{
+								if (ViewData.ModelState.ContainsKey(key))
+								{
+									foreach (var error in ViewData.ModelState[key].Errors)
+									{
+									<li>@error.ErrorMessage</li>
+									}
+								}
+							}
+					</ul>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+

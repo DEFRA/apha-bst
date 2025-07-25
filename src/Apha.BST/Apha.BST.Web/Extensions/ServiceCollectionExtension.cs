@@ -19,6 +19,7 @@ namespace Apha.BST.Web.Extensions
             services.AddScoped<IPersonsService, PersonsService>();
             services.AddScoped<ISiteService, SiteService>();
             services.AddScoped<IAuditLogService, AuditLogService > ();
+            services.AddScoped<ITrainingService, TrainingService>();
             return services;
         }
         public static IServiceCollection AddRepositories(this IServiceCollection services)
@@ -27,6 +28,8 @@ namespace Apha.BST.Web.Extensions
             services.AddScoped<IPersonsRepository, PersonsRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
             services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+            services.AddScoped<ITrainingRepository, TrainingRepository>();
+
             return services;
         }
     }

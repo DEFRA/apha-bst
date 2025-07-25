@@ -32,9 +32,9 @@ else
 }
 
 // Add database context
-builder.Services.AddDbContext<WeatherForecastDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WeatherForecastConnectionString")
-    ?? throw new InvalidOperationException("Connection string 'WeatherForecastConnectionString' not found.")));
+//builder.Services.AddDbContext<WeatherForecastDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("WeatherForecastConnectionString")
+//    ?? throw new InvalidOperationException("Connection string 'WeatherForecastConnectionString' not found.")));
 
 builder.Services.AddDbContext<BSTContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BSTConnectionString")

@@ -47,55 +47,7 @@ namespace Apha.BST.Web.Controllers
             return View(model);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> SiteTrainee(string selectedSite)
-        //{
-        //    var allSites = await _siteService.GetAllSitesAsync(); // Implement as needed
-        //    var trainees = string.IsNullOrEmpty(selectedSite) || selectedSite == "All"
-        //        ? new List<SiteTraineeDTO>()
-        //        : await _siteService.GetSiteTraineesAsync(selectedSite);
-
-        //    var model = new SiteTraineeViewModel
-        //    {
-        //        SelectedSite = selectedSite,
-        //        AllSites = allSites.Select(s => new SelectListItem { Value = s.PlantNo, Text = s.Name }).ToList(),
-        //        Trainees = trainees
-        //    };
-        //    return View(model);
-        //}
-
-        //[HttpGet]
-        //public async Task<IActionResult> SiteTrainee(string selectedSite)
-        //{
-        //    //var traineeDTOs = await _siteService.GetSiteTraineesAsync(selectedSite);
-        //    //var trainees = _mapper.Map<List<SiteTraineeViewModel>>(traineeDTOs);
-
-        //    //var viewModel = new SiteTraineeListViewModel
-        //    //{
-        //    //    SelectedSite = selectedSite,
-        //    //    AllSites = allSites,
-        //    //    Trainees = trainees
-        //    //};
-
-        //    //return View(viewModel);
-        //    var traineeDTOs = await _siteService.GetSiteTraineesAsync(selectedSite);
-        //    var viewModel = new SiteTraineeListViewModel
-        //    {
-        //        SelectedSite = selectedSite,
-        //        AllSites = allSites, // however you populate this
-        //        Trainees = traineeDTOs.Select(dto => new SiteTraineeViewModel
-        //        {
-        //            PersonId = dto.PersonId,
-        //            Person = dto.Person,
-        //            Cattle = dto.Cattle,
-        //            Sheep = dto.Sheep,
-        //            Goats = dto.Goats
-        //        }).ToList()
-        //    };
-        //    return View(viewModel);
-        //}
-
-        ////Final code working for SiteTrainee
+        //Final code working for SiteTrainee
         [HttpGet]
         public async Task<IActionResult> SiteTrainee(string selectedSite = "All")
         {
@@ -122,32 +74,19 @@ namespace Apha.BST.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteTrainee(int personId)
+        public async Task<IActionResult> DeleteTrainee(int personId, string selectedSite)
         {
             var deleted = await _siteService.DeleteTraineeAsync(personId);
             if (deleted)
                 TempData["message"] = "Trainee deleted successfully.";
             else
-                TempData["message"] = "Trainee not found.";
+                //TempData["message"] = "Trainee not found.";
+                TempData["message"] = "Trainee has training records. Delete them first if you wish to remove the person.";
 
-            return RedirectToAction("SiteTrainee");
+            return RedirectToAction("SiteTrainee", new { selectedSite });
         }
 
-        //public async Task<IActionResult> SiteTrainee(string selectedSite)
-        //{
-        //    var trainees = string.IsNullOrEmpty(selectedSite)
-        //        ? new List<SiteTraineeDTO>()
-        //        : await _siteService.GetSiteTraineesAsync(selectedSite);
-
-        //    var model = new SiteTraineeListViewModel
-        //    {
-        //        SelectedSite = selectedSite,
-        //        Trainees = trainees
-        //    };
-
-        //    return View(model);
-        //}
-
+       
         [HttpGet]
         public IActionResult AddSite()
         {
@@ -160,7 +99,6 @@ namespace Apha.BST.Web.Controllers
             if (ModelState.IsValid)
             {
                 var site = _mapper.Map<SiteDTO>(siteViewModel);
-                //await _siteService.CreateSiteAsync(site);
                 var message = await _siteService.CreateSiteAsync(site);
                 //TempData["Message"] = $"'{siteViewModel.Name}' saved as site";
                 // Set TempData message based on the result
@@ -170,65 +108,11 @@ namespace Apha.BST.Web.Controllers
                 }
                 else
                 {
-                    TempData["Message"] = message; // e.g., "Site already exists."
+                    TempData["Message"] = message; // "Site already exists."
                 }
                 return RedirectToAction(nameof(AddSite));
             }
             return View(siteViewModel);
         }
-
-
-        //[HttpGet]
-        //public async Task<IActionResult> ViewSite()
-        //{
-        //    var sites = await _siteService.GetAllSitesAsync();
-        //    var viewModels = _mapper.Map<IEnumerable<SiteViewModel>>(sites);
-        //    return View(viewModels);
-        //}
-
-        //[HttpGet]
-        //public IActionResult ViewSite()
-        //{
-        //    var sites = await _siteService.GetAllSitesAsync();
-        //    return View(sites);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(SiteViewModel siteViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            var site = _mapper.Map<Site>(siteViewModel);
-        //            var result = await _siteService.AddSiteAsync(site);
-        //            //if (result.IsSuccess)
-        //            //{
-        //            //    TempData["SuccessMessage"] = $"'{site.Name}' saved as site";
-        //            //    return RedirectToAction(nameof(Index));
-        //            //}
-        //            //else
-        //            //{
-        //            //    ModelState.AddModelError("", result.ErrorMessage);
-        //            //}
-        //            if (result > 0)
-        //            {
-        //                TempData["SuccessMessage"] = $"'{site.Name}' saved as site";
-        //                return RedirectToAction(nameof(Index));
-        //            }
-        //            else
-        //            {
-        //                ModelState.AddModelError("", "Failed to save site.");
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _logger.LogError(ex, "Error occurred while creating site");
-        //            ModelState.AddModelError("", "Save failed: " + ex.Message);
-        //        }
-        //    }
-        //    return View(siteViewModel);
-        //}
     }
 }

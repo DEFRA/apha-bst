@@ -73,9 +73,9 @@
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
 				</div>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdownTraining">
-					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="adtg">Add training</a>
-					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwtg">View, alter, delete training details</a>
-					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwtr">Trainer History</a>
+					<a class="dropdown-item" asp-controller="Training" asp-action="AddTraining" asp-route-part="adtg">Add training</a>
+					<a class="dropdown-item" asp-controller="Training" asp-action="ViewTrainer" asp-route-part="vwtg">View, alter, delete training details</a>
+					<a class="dropdown-item" asp-controller="Training" asp-action="EditTraining" asp-route-part="vwtr">Trainer History</a>
 					<a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-part="vwth">Trainer trained</a>
 				</div>
 			</li>

@@ -19,7 +19,7 @@ namespace Apha.BST.DataAccess.Repositories
         }
         public async Task<IEnumerable<Persons>> GetAllAsync()
         {
-            return await _context.People.ToListAsync();
+            return await _context.Persons.ToListAsync();
         }
     }
 }

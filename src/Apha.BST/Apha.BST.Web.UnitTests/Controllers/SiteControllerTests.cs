@@ -27,10 +27,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _controller = new SiteController(_siteService, _mapper);
             // Setup TempData for the controller
         var tempData = new TempDataDictionary(new DefaultHttpContext(), Substitute.For<ITempDataProvider>());
-            _controller.TempData = tempData;
-            //// Setup TempData
-            //var httpContext = new DefaultHttpContext();
-            //_controller.TempData = new TempDataDictionary(httpContext, Substitute.For<ITempDataProvider>());
+            _controller.TempData = tempData;           
         }
 
         [Fact]
@@ -171,6 +168,104 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.False(_controller.ModelState.IsValid);
             await _siteService.DidNotReceive().CreateSiteAsync(Arg.Any<SiteDTO>());
             _mapper.DidNotReceive().Map<SiteDTO>(Arg.Any<SiteViewModel>());
+        }
+
+        [Fact]
+        public async Task SiteTrainee_WhenSelectedSiteIsAll_ReturnsAllSitesWithEmptyTrainees()
+        {
+            // Arrange
+            var allSitesDto = new List<SiteDTO> { new SiteDTO { PlantNo = "Site1" }, new SiteDTO { PlantNo = "Site2" } };
+            var allSitesViewModel = new List<SiteViewModel> { new SiteViewModel { PlantNo = "Site1" }, new SiteViewModel { PlantNo = "Site2" } };
+
+            _siteService.GetAllSitesAsync("All").Returns(allSitesDto);
+            _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto).Returns(allSitesViewModel);
+
+            // Act
+            var result = await _controller.SiteTrainee("All");
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<SiteTraineeListViewModel>(viewResult.Model);
+            Assert.Equal("All", model.SelectedSite);
+            Assert.Equal(allSitesViewModel, model.AllSites);
+            Assert.Empty(model.FilteredTrainees);
+        }
+
+        [Fact]
+        public async Task SiteTrainee_WhenSelectedSiteIsSpecific_ReturnsFilteredTrainees()
+        {
+            // Arrange
+            var selectedSite = "Site1";
+            var allSitesDto = new List<SiteDTO> { new SiteDTO { PlantNo = "Site1" }, new SiteDTO { PlantNo = "Site2" } };
+            var allSitesViewModel = new List<SiteViewModel> { new SiteViewModel { PlantNo = "Site1" }, new SiteViewModel { PlantNo = "Site2" } };
+            var traineeDto = new List<SiteTraineeDTO> { new SiteTraineeDTO { PersonId = 1 } };
+            var traineeViewModel = new List<SiteTraineeViewModel> { new SiteTraineeViewModel { PersonId = 1 } };
+
+            _siteService.GetAllSitesAsync("All").Returns(allSitesDto);
+            _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto).Returns(allSitesViewModel);
+            _siteService.GetSiteTraineesAsync(selectedSite).Returns(traineeDto);
+            _mapper.Map<IEnumerable<SiteTraineeViewModel>>(traineeDto).Returns(traineeViewModel);
+
+            // Act
+            var result = await _controller.SiteTrainee(selectedSite);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<SiteTraineeListViewModel>(viewResult.Model);
+            Assert.Equal(selectedSite, model.SelectedSite);
+            Assert.Equal(allSitesViewModel, model.AllSites);
+            Assert.Equal(traineeViewModel, model.FilteredTrainees);
+        }
+
+        [Theory]
+        //[InlineData(null)]
+        [InlineData("")]
+        public async Task SiteTrainee_WhenSelectedSiteIsNullOrEmpty_TreatsAsAll(string selectedSite)
+        {
+            // Arrange
+            var allSitesDto = new List<SiteDTO> { new SiteDTO { PlantNo = "Site1" }, new SiteDTO { PlantNo = "Site2" } };
+            var allSitesViewModel = new List<SiteViewModel> { new SiteViewModel { PlantNo = "Site1" }, new SiteViewModel { PlantNo = "Site2" } };
+
+            _siteService.GetAllSitesAsync("All").Returns(allSitesDto);
+            _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto).Returns(allSitesViewModel);
+
+            // Act
+            var result = await _controller.SiteTrainee(selectedSite);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<SiteTraineeListViewModel>(viewResult.Model);
+            Assert.Equal(selectedSite ?? "All", model.SelectedSite);
+            Assert.Equal(allSitesViewModel, model.AllSites);
+            Assert.Empty(model.FilteredTrainees);
+        }
+
+        //[Fact]
+        //public async Task SiteTrainee_WhenSiteServiceThrowsException_ReturnsErrorView()
+        //{
+        //    // Arrange
+        //    _siteService.GetAllSitesAsync("All").Returns(Task.FromException<IEnumerable<SiteDTO>>(new System.Exception("Database error")));
+
+        //    // Act
+        //    var result = await _controller.SiteTrainee("All");
+
+        //    // Assert
+        //    Assert.IsType<ViewResult>(result);
+        //    // You might want to check for a specific error view or message here
+        //}
+
+        [Fact]
+        public async Task SiteTrainee_VerifyServiceCalls()
+        {
+            // Arrange
+            var selectedSite = "Site1";
+
+            // Act
+            await _controller.SiteTrainee(selectedSite);
+
+            // Assert
+            await _siteService.Received(1).GetAllSitesAsync("All");
+            await _siteService.Received(1).GetSiteTraineesAsync(selectedSite);
         }
     }
 }
