@@ -10,25 +10,25 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copy only solution and project files first for better build caching
-COPY Apha.BST.sln ./
-COPY Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj Apha.BST/Apha.BST.Web/
+COPY ./Apha.BST.sln ./
+COPY ./Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj Apha.BST/Apha.BST.Web/
 # Repeat for any other referenced projects if needed:
-# COPY Apha.BST/Apha.BST.Core/Apha.BST.Core.csproj Apha.BST/Apha.BST.Core/
+# COPY ./Apha.BST/Apha.BST.Core/Apha.BST.Core.csproj Apha.BST/Apha.BST.Core/
 
 # Restore dependencies
 RUN dotnet restore "Apha.BST.sln"
 
 # Copy remaining source files
-COPY Apha.BST/ Apha.BST/
+COPY ./Apha.BST/ Apha.BST/
 
 # Build the application
-RUN dotnet build "Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj" \
+RUN dotnet build "./Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj" \
     -c $BUILD_CONFIGURATION -o /app/build
 
 # -------- Publish image --------
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj" \
+RUN dotnet publish "./Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj" \
     -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # -------- Final runtime image --------
