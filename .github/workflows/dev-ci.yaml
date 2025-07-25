@@ -157,8 +157,8 @@ jobs:
           } >> $GITHUB_STEP_SUMMARY
       - name: Run container locally
         run: |
-          # Extract the first tag from metadata output (local tag)
-          image_tag=$(echo "${{ steps.meta.outputs.tags }}" | cut -d',' -f1)
+          image_tag=${{ needs.build-and-analyze.outputs.image_tag }}
+          docker build -t bst:$image_tag .
           echo "Running local image: $image_tag"
           docker run -d --name test-container -p 8080:8080 "$image_tag"
       - name: Wait for service to start
