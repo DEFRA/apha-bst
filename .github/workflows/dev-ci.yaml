@@ -30,7 +30,7 @@ jobs:
         shell: pwsh
         run: |
           $CommitMsg = "${{ github.event.head_commit.message }}"
-          ./scripts/bump-version.ps1 -CommitMsg $CommitMsg
+          ./gh-actions-scripts/bump-version.ps1 -CommitMsg $CommitMsg
 
       - name: Extract short SHA
         id: shortsha
