@@ -7,7 +7,7 @@ USER app
 # -------- Build image with SDK --------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
+WORKDIR src
 
 # Copy only solution and project files first for better build caching
 COPY ./Apha.BST.sln ./
