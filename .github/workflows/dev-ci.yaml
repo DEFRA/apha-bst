@@ -102,3 +102,56 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_ENV_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ENV_ACCOUNT }}:role/${{ secrets.AWS_ENV_ROLE }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2   
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          flavor: |
+            latest=false
+          images: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}
+          tags: |
+            type=semver,priority=900,pattern={{raw}}
+            type=raw,priority=800,value=${{ steps.imgtag.outputs.image_tag }}
+          labels: |
+            org.opencontainers.image.licenses=OGL-UK-3.0
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: base
+          build-args: |
+            GIT_COMMIT=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+          push: true
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}    
+
+      - name: Generate job summary
+        id: summary
+        shell: pwsh
+        run: |
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "### Docker Image details"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "The tag is **${{ steps.imgtag.outputs.image_tag }}**"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| Label      | Value |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| ---------- | ----- |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| created    | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }} |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| description| ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.description'] }} |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| licenses   | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.licenses'] }} |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| revision   | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }} |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| source     | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.source'] }} |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| title      | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.title'] }} |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| url        | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.url'] }} |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY "| version    | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }} |"
+          
+        
