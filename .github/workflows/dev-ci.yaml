@@ -7,11 +7,16 @@ on:
   #    - 'feature/*'
   #    - 'fix/*'
   #    - 'docs/*'
-
+env:
+  REPOSITORY: apha/bst
+  
 jobs:
   build-and-analyze:
     name: Build + Test + Sonar + Optional ECR Push
     runs-on: windows-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Set up JDK 17
