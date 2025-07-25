@@ -2,75 +2,72 @@ name: Dev Build and Sonar Analysis
 
 on:
   workflow_dispatch:
-  #push:
-  #  branches:
-  #    - 'feature/*'
-  #    - 'fix/*'
-  #    - 'docs/*'
+  # push:
+  #   branches:
+  #     - 'feature/*'
+  #     - 'fix/*'
+  #     - 'docs/*'
 
 jobs:
   build-and-analyze:
-    name: Build + Test + Sonar + Optional ECR Push
+    name: Versioning Only
     runs-on: windows-latest
 
     steps:
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'zulu'
+      # - name: Set up JDK 17
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     java-version: 17
+      #     distribution: 'zulu'
 
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Cache SonarQube Cloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Cache SonarQube Cloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v4
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-
-      - name: Install SonarQube Cloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
+      # --------------------- Versioning Step ----------------------
+      - name: Bump version from commit
+        id: versioning
+        shell: pwsh
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          $CommitMsg = "${{ github.event.head_commit.message }}"
+          ./scripts/bump-version.ps1 -CommitMsg $CommitMsg
 
-      - name: Start Sonar Analysis
-        shell: powershell
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Extract short SHA
+        id: shortsha
+        shell: pwsh
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"DEFRA_apha-bst" `
-            /o:"defra" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.host.url="https://sonarcloud.io"
+          "shortsha=$($env:GITHUB_SHA.Substring(0, 8))" >> $env:GITHUB_OUTPUT
 
-      - name: Restore NuGet packages
-        shell: powershell
-        run: dotnet restore src/Apha.BST.sln
+      - name: Compose image tag
+        id: imgtag
+        shell: pwsh
+        run: |
+          $imageTag = "${{ steps.versioning.outputs.version }}-dev-g${{ steps.shortsha.outputs.shortsha }}"
+          "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
 
-      - name: Build Solution
-        shell: powershell
-        run: dotnet build src/Apha.BST.sln --configuration Release
+      # Optional: commit updated VERSION file
+      # - name: Commit VERSION bump
+      #   shell: pwsh
+      #   run: |
+      #     git config user.name "github-actions"
+      #     git config user.email "github-actions@users.noreply.github.com"
+      #     git add VERSION
+      #     git commit -m "ci: version bump to ${{ steps.versioning.outputs.version }}"
+      #     git push origin HEAD:${{ github.ref_name }}
+      #   if: github.ref == 'refs/heads/feature/initial-Setup'
 
-      - name: Run Unit Tests
-        shell: powershell
-        run: dotnet test src/Apha.BST.sln --no-build --configuration Release --logger trx
 
-      - name: End Sonar Analysis
-        shell: powershell
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      # --------------------- Sonar + Build ----------------------
+      # - name: Start Sonar Analysis
+      # - name: Restore NuGet packages
+      # - name: Build Solution
+      # - name: Run Unit Tests
+      # - name: End Sonar Analysis
+
+      - name: Print Docker image tag
+        shell: pwsh
+        run: |
+          echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"
+
+
+     
