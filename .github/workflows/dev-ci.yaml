@@ -179,4 +179,27 @@ jobs:
           } >> $GITHUB_STEP_SUMMARY
           
 
-      
+      - name: Run container locally
+        run: |
+          docker run -d --name test-container -p 8080:8080 ${{ steps.meta.outputs.tags }}
+
+      - name: Wait for service to start
+        run: |
+          echo "Waiting for the service to start..."
+          for i in {1..10}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 || echo "000")
+            echo "HTTP Status: $STATUS"
+            if [ "$STATUS" -eq 200 ]; then
+              break
+            fi
+            sleep 3
+          done
+
+      - name: Test application response
+        run: |
+          curl -i http://localhost:8080
+
+      - name: Cleanup container
+        if: always()
+        run: |
+          docker rm -f test-container
