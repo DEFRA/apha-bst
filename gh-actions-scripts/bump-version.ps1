@@ -23,9 +23,9 @@ if ($CommitMsg -match 'BREAKING CHANGE' -or $CommitMsg -match '^feat!?:') {
   $patch = 0
 } elseif ($CommitMsg -match '^fix:') {
   $patch++
-} else {
-  # No bump
 }
 
 $bumpedVersion = "$major.$minor.$patch"
-Write-Output "::set-output name=version::v$bumpedVersion"
+
+# Set output
+"version=v$bumpedVersion" >> $env:GITHUB_OUTPUT
