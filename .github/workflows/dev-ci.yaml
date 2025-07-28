@@ -1,15 +1,6 @@
 name: Dev Build and Sonar Analysis
 on:
-  push:
-    branches:
-      - feature/*
-      
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to run workflow on'
-        required: false
-        default: 'main'  
 env:
   REPOSITORY: apha/bst
 jobs:
@@ -111,12 +102,12 @@ jobs:
     
     steps:
 
-      - name: Set branch name from input or context
-        id: extract_branch
-        run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-          echo "BRANCH_NAME=$BRANCH_NAME"
+      # - name: Set branch name from input or context
+      #   id: extract_branch
+      #   run: |
+      #     BRANCH_NAME="${{ github.ref_name }}"
+      #     echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+      #     echo "BRANCH_NAME=$BRANCH_NAME"
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -147,21 +138,80 @@ jobs:
             type=raw,priority=800,value=${{ needs.build-and-analyze.outputs.image_tag }}
           labels: |
             org.opencontainers.image.licenses=OGL-UK-3.0
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-         # context: https://github.com/DEFRA/apha-bst.git#${{ github.ref_name }}
-          context: .
-          file: Dockerfile
-          target: base
-          build-args: |
-            GIT_COMMIT=${{
-            fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision']
-            }}
-#            GIT_BRANCH=${{ github.ref_name }}
-          push: true
-          labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Build and push Docker image manually
+        run: |
+          # Set metadata-based variables
+          GIT_COMMIT=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+          GIT_URL=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.source'] }}
+          GIT_TITLE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.title'] }}
+          GIT_VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+          GIT_CREATED=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+          GIT_DESCRIPTION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.description'] }}
+          GIT_LICENSE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.licenses'] }}
+
+          # Get tag and image name from previous steps
+          IMAGE_TAG=${{ steps.meta.outputs.tags }}
+          IMAGE_NAME=${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}
+
+          echo "Building Docker image $IMAGE_NAME:$IMAGE_TAG"
+
+          docker build \
+            --file ./Dockerfile \
+            --target base \
+            --build-arg GIT_COMMIT=$GIT_COMMIT \
+            --label org.opencontainers.image.source=$GIT_URL \
+            --label org.opencontainers.image.revision=$GIT_COMMIT \
+            --label org.opencontainers.image.title="$GIT_TITLE" \
+            --label org.opencontainers.image.version=$GIT_VERSION \
+            --label org.opencontainers.image.created=$GIT_CREATED \
+            --label org.opencontainers.image.description="$GIT_DESCRIPTION" \
+            --label org.opencontainers.image.licenses=$GIT_LICENSE \
+            --tag $IMAGE_NAME:$IMAGE_TAG \
+            .
+
+          echo "Pushing Docker image..."
+          docker push $IMAGE_NAME:$IMAGE_TAG
+            
+#       - name: Build and push Docker image
+#         uses: docker/build-push-action@v6
+#         with:
+#          # context: https://github.com/DEFRA/apha-bst.git#${{ github.ref_name }}
+#           context: .
+#           file: Dockerfile
+#           target: base
+#           build-args: |
+#             GIT_COMMIT=${{
+#             fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision']
+#             }}
+# #            GIT_BRANCH=${{ github.ref_name }}
+#           push: true
+#           labels: ${{ steps.meta.outputs.labels }}
+#           tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Build Docker image with dynamic OCI labels
+        run: |
+          IMAGE="${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}"
+          TAG="v0.0.0-dev-g${GITHUB_SHA::7}"
+          VERSION="v0.0.0-dev-g${GITHUB_SHA::7}"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          docker build \
+            --file Dockerfile \
+            --target base \
+            --build-arg GIT_COMMIT=$GITHUB_SHA \
+            --label org.opencontainers.image.title="${GITHUB_REPOSITORY#*/}" \
+            --label org.opencontainers.image.description="GitHub repo for ${GITHUB_REPOSITORY}" \
+            --label org.opencontainers.image.url="https://github.com/${GITHUB_REPOSITORY}" \
+            --label org.opencontainers.image.source="https://github.com/${GITHUB_REPOSITORY}" \
+            --label org.opencontainers.image.version="$VERSION" \
+            --label org.opencontainers.image.revision="$GITHUB_SHA" \
+            --label org.opencontainers.image.created="$TIMESTAMP" \
+            --label org.opencontainers.image.licenses="OGL-UK-3.0" \
+            --tag "$IMAGE:$TAG" \
+  
+
+
       - name: Generate job summary
         id: summary
         run: >
