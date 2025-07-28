@@ -147,6 +147,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
          # context: https://github.com/DEFRA/apha-bst.git#${{ github.ref_name }}
+          context: .
           file: Dockerfile
           target: base
           build-args: >
