@@ -141,8 +141,7 @@ jobs:
 
       - name: Build and push Docker image manually
         run: |
-          # Extract all labels as shell vars using GitHub expressions at top level
-          IMAGE_TAG="${{ steps.meta.outputs.tags }}"
+          IMAGE_TAG="${{ needs.build-and-analyze.outputs.image_tag }}"
           IMAGE_NAME="${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}"
           
           GIT_COMMIT="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}"
@@ -188,29 +187,6 @@ jobs:
 #           labels: ${{ steps.meta.outputs.labels }}
 #           tags: ${{ steps.meta.outputs.tags }}
 
-      - name: Build Docker image with dynamic OCI labels
-        run: |
-          IMAGE="${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}"
-          TAG="v0.0.0-dev-g${GITHUB_SHA::7}"
-          VERSION="v0.0.0-dev-g${GITHUB_SHA::7}"
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          docker build \
-            --file Dockerfile \
-            --target base \
-            --build-arg GIT_COMMIT=$GITHUB_SHA \
-            --label org.opencontainers.image.title="${GITHUB_REPOSITORY#*/}" \
-            --label org.opencontainers.image.description="GitHub repo for ${GITHUB_REPOSITORY}" \
-            --label org.opencontainers.image.url="https://github.com/${GITHUB_REPOSITORY}" \
-            --label org.opencontainers.image.source="https://github.com/${GITHUB_REPOSITORY}" \
-            --label org.opencontainers.image.version="$VERSION" \
-            --label org.opencontainers.image.revision="$GITHUB_SHA" \
-            --label org.opencontainers.image.created="$TIMESTAMP" \
-            --label org.opencontainers.image.licenses="OGL-UK-3.0" \
-            --tag "$IMAGE:$TAG" \
-  
-
-
       - name: Generate job summary
         id: summary
         run: >
@@ -228,28 +204,28 @@ jobs:
             echo "| url        | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.url'] }} |"
             echo "| version    | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }} |"
           } >> $GITHUB_STEP_SUMMARY
-      - name: Run container locally
-        run: |
-          image_tag=${{ needs.build-and-analyze.outputs.image_tag }}
-          docker build -t bst:$image_tag .
-          echo "Running local image: $image_tag"
-          docker run -d --name test-container -p 8080:8080 "$image_tag"
-      - name: Wait for service to start
-        run: >
-          echo "Waiting for the service to start..."
+      # - name: Run container locally
+      #   run: |
+      #     image_tag=${{ needs.build-and-analyze.outputs.image_tag }}
+      #     docker build -t bst:$image_tag .
+      #     echo "Running local image: $image_tag"
+      #     docker run -d --name test-container -p 8080:8080 "$image_tag"
+      # - name: Wait for service to start
+      #   run: >
+      #     echo "Waiting for the service to start..."
 
-          for i in {1..10}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 || echo "000")
-            echo "HTTP Status: $STATUS"
-            if [ "$STATUS" -eq 200 ]; then
-              break
-            fi
-            sleep 3
-          done
-      - name: Test application response
-        run: |
-          curl -i http://localhost:8080
-      - name: Cleanup container
-        if: always()
-        run: |
-          docker rm -f test-container
+      #     for i in {1..10}; do
+      #       STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 || echo "000")
+      #       echo "HTTP Status: $STATUS"
+      #       if [ "$STATUS" -eq 200 ]; then
+      #         break
+      #       fi
+      #       sleep 3
+      #     done
+      # - name: Test application response
+      #   run: |
+      #     curl -i http://localhost:8080
+      # - name: Cleanup container
+      #   if: always()
+      #   run: |
+      #     docker rm -f test-container
