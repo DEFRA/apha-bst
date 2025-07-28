@@ -153,13 +153,8 @@ jobs:
           GIT_LICENSE="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.licenses'] }}"
 
           echo "Building Docker image $IMAGE_NAME:$IMAGE_TAG"
-          pwd
-          ls src/ -a 
-          cat Dockerfile
-          echo "GIT_COMMIT=$GIT_COMMIT"
           docker build \
             --file ./Dockerfile \
-            #--target base \
             --build-arg GIT_COMMIT="$GIT_COMMIT" \
             --label org.opencontainers.image.source="$GIT_URL" \
             --label org.opencontainers.image.revision="$GIT_COMMIT" \
