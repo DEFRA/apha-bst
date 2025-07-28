@@ -165,7 +165,6 @@ jobs:
             --label org.opencontainers.image.version=$GIT_VERSION \
             --label org.opencontainers.image.created=$GIT_CREATED \
             --label org.opencontainers.image.description="$GIT_DESCRIPTION" \
-            --label org.opencontainers.image.licenses=$GIT_LICENSE \
             --tag $IMAGE_NAME:$IMAGE_TAG \
             .
 
