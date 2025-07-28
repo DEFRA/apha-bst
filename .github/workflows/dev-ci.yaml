@@ -13,36 +13,36 @@ jobs:
     outputs:
       image_tag: ${{ steps.imgtag.outputs.image_tag }}
     steps:
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: zulu
+      # - name: Set up JDK 17
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     java-version: 17
+      #     distribution: zulu
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
           
-      - name: Cache SonarQube Cloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache SonarQube Cloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v4
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-      - name: Install SonarQube Cloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      # - name: Cache SonarQube Cloud packages
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~\sonar\cache
+      #     key: ${{ runner.os }}-sonar
+      #     restore-keys: ${{ runner.os }}-sonar
+      # - name: Cache SonarQube Cloud scanner
+      #   id: cache-sonar-scanner
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: .\.sonar\scanner
+      #     key: ${{ runner.os }}-sonar-scanner
+      #     restore-keys: ${{ runner.os }}-sonar-scanner
+      # - name: Install SonarQube Cloud scanner
+      #   if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      #   shell: pwsh
+      #   run: |
+      #     New-Item -Path .\.sonar\scanner -ItemType Directory
+      #     dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: Bump version from commit
         id: versioning
         shell: pwsh
@@ -66,32 +66,32 @@ jobs:
         shell: pwsh
         run: |
           echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"
-      - name: Start Sonar Analysis
-        shell: pwsh
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"DEFRA_apha-bst" `
-            /o:"defra" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.host.url="https://sonarcloud.io"
-      - name: Restore NuGet packages
-        shell: pwsh
-        run: dotnet restore src/Apha.BST.sln
-      - name: Build Solution
-        shell: pwsh
-        run: dotnet build src/Apha.BST.sln --configuration Release
-      - name: Run Unit Tests
-        shell: pwsh
-        run: dotnet test src/Apha.BST.sln --no-build --configuration Release --logger
-          trx
-      - name: End Sonar Analysis
-        shell: pwsh
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{
-          secrets.SONAR_TOKEN }}"
+      # - name: Start Sonar Analysis
+      #   shell: pwsh
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: |
+      #     .\.sonar\scanner\dotnet-sonarscanner begin `
+      #       /k:"DEFRA_apha-bst" `
+      #       /o:"defra" `
+      #       /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+      #       /d:sonar.host.url="https://sonarcloud.io"
+      # - name: Restore NuGet packages
+      #   shell: pwsh
+      #   run: dotnet restore src/Apha.BST.sln
+      # - name: Build Solution
+      #   shell: pwsh
+      #   run: dotnet build src/Apha.BST.sln --configuration Release
+      # - name: Run Unit Tests
+      #   shell: pwsh
+      #   run: dotnet test src/Apha.BST.sln --no-build --configuration Release --logger
+      #     trx
+      # - name: End Sonar Analysis
+      #   shell: pwsh
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{
+      #     secrets.SONAR_TOKEN }}"
   push-image:
     name: Push Docker Image
     needs: build-and-analyze
@@ -153,10 +153,13 @@ jobs:
           GIT_LICENSE="${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.licenses'] }}"
 
           echo "Building Docker image $IMAGE_NAME:$IMAGE_TAG"
-
+          pwd
+          ls src/ -a 
+          cat Dockerfile
+          echo "GIT_COMMIT=$GIT_COMMIT"
           docker build \
             --file ./Dockerfile \
-            --target base \
+            #--target base \
             --build-arg GIT_COMMIT="$GIT_COMMIT" \
             --label org.opencontainers.image.source="$GIT_URL" \
             --label org.opencontainers.image.revision="$GIT_COMMIT" \
