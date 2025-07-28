@@ -145,7 +145,6 @@ jobs:
           GIT_COMMIT=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
           GIT_URL=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.source'] }}
           GIT_TITLE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.title'] }}
-          GIT_VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
           GIT_CREATED=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
           GIT_DESCRIPTION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.description'] }}
           GIT_LICENSE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.licenses'] }}
