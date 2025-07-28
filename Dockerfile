@@ -10,18 +10,20 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copy solution and project files for caching
-COPY src/Apha.BST.sln ./
-COPY src/Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj Apha.BST/Apha.BST.Web/
-COPY src/Apha.BST/Apha.BST.Core/Apha.BST.Core.csproj Apha.BST/Apha.BST.Core/
-COPY src/Apha.BST/Apha.BST.Application/Apha.BST.Application.csproj Apha.BST/Apha.BST.Application/
-COPY src/Apha.BST/Apha.BST.DataAccess/Apha.BST.DataAccess.csproj Apha.BST/Apha.BST.DataAccess/
+# COPY src/Apha.BST.sln ./
+# COPY src/Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj Apha.BST/Apha.BST.Web/
+# COPY src/Apha.BST/Apha.BST.Core/Apha.BST.Core.csproj Apha.BST/Apha.BST.Core/
+# COPY src/Apha.BST/Apha.BST.Application/Apha.BST.Application.csproj Apha.BST/Apha.BST.Application/
+# COPY src/Apha.BST/Apha.BST.DataAccess/Apha.BST.DataAccess.csproj Apha.BST/Apha.BST.DataAccess/
 # (skip UnitTests for now unless you're testing in Docker)
+
+# Copy full source
+COPY src/. .
 
 # Restore dependencies
 RUN dotnet restore Apha.BST.sln
 
-# Copy full source
-COPY . .
+
 
 # Build
 RUN dotnet build Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
