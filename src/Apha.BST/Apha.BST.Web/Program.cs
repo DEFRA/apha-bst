@@ -31,11 +31,6 @@ else
     });
 }
 
-// Add database context
-//builder.Services.AddDbContext<WeatherForecastDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("WeatherForecastConnectionString")
-//    ?? throw new InvalidOperationException("Connection string 'WeatherForecastConnectionString' not found.")));
-
 builder.Services.AddDbContext<BSTContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BSTConnectionString")
     ?? throw new InvalidOperationException("Connection string 'BSTConnectionString' not found.")));
@@ -55,6 +50,7 @@ builder.Services.AddApplicationServices();
 // Register Authentication services
 builder.Services.AddAuthenticationServices(builder.Configuration);
 
+builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -69,47 +65,6 @@ else
     app.UseHsts();
 
 }
-/*
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    //app.UseExceptionHandler("/Home/Error");
-    //// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    //app.UseHsts();
-
-    //Fallback global handler (useful if custom middleware is not present or fails). Usually used only in production
-    app.UseExceptionHandler(errorApp =>
-    {
-        errorApp.Run(async context =>
-        {
-            var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
-
-            context.Response.ContentType = "application/json";
-
-            switch (exception)
-            {
-                case BusinessValidationErrorException validationEx:
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    await context.Response.WriteAsJsonAsync(validationEx.Errors);
-                    break;
-
-                // You can handle other exception types here
-
-                default:
-                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    await context.Response.WriteAsJsonAsync(new
-                    {
-                        Status = "error",
-                        Message = "An unexpected error occurred.",
-                        Details = exception?.Message
-                    });
-                    break;
-            }
-        });
-    });
-    app.UseHsts();
-}
-*/
 app.UseHsts();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -122,6 +77,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-    //pattern: "{controller=Persons}/{action=Index}/{id?}");
 
+
+app.MapHealthChecks("/health");
 app.Run();
