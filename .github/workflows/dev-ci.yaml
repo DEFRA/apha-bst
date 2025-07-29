@@ -213,7 +213,7 @@ jobs:
           echo "Waiting for the service to start..."
 
           for i in {1..10}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 || echo "000")
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health || echo "000")
             echo "HTTP Status: $STATUS"
             if [ "$STATUS" -eq 200 ]; then
               break
@@ -222,7 +222,7 @@ jobs:
           done
       - name: Test application response
         run: |
-          curl -i http://localhost:8080
+          curl -i http://localhost:8080/health
       - name: Cleanup container
         if: always()
         run: |
