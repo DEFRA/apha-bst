@@ -29,6 +29,8 @@ RUN dotnet restore Apha.BST.sln
 RUN dotnet build Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
     -c $BUILD_CONFIGURATION -o /app/build
 
+
+
 # -------- Publish stage --------
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
