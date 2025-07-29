@@ -29,8 +29,6 @@ namespace Apha.BST.Application.DTOs
 
         public string? Fax { get; set; }
 
-        public string? Ahvla { get; set; }
-
-        //public int ReturnCode { get; set; }
+        public string? Ahvla { get; set; }       
     }
 }

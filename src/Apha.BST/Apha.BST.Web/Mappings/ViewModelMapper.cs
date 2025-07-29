@@ -19,6 +19,7 @@ namespace Apha.BST.Web.Mappings
                 .ForMember(dest => dest.PersonID, opt => opt.MapFrom(src => src.PersonId))
                 .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person));
             CreateMap<EditTrainingDTO, EditTrainingViewModel>().ReverseMap();
+            CreateMap<TrainerHistoryDTO, TrainingHistoryModel>().ReverseMap();
         }
     }
 }

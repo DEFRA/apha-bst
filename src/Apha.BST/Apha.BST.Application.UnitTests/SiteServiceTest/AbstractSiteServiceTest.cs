@@ -44,24 +44,19 @@ namespace Apha.BST.Application.UnitTests.Services
             // _siteRepository = new SiteRepository(_dbContext);
             _siteService = new SiteService(mockRepo, _mapper);
         }
-       
-        public void MockForCreateSite(int returnCode)
+
+
+        public void MockForAddSiteAsync(string returnValue, SiteDTO inputDto)
         {
-            var siteDto = new SiteDTO { PlantNo = "PLANT002", Name = "New Site" };
-            var site = new Site { PlantNo = "PLANT002", Name = "New Site" };
-            var addSiteResult = new AddSiteResult { ReturnCode = (byte)returnCode };
-
             var mockRepo = Substitute.For<ISiteRepository>();
-            mockRepo.AddSiteAsync(Arg.Any<Site>()).Returns(Task.FromResult(addSiteResult)); 
+            var mockMapper = Substitute.For<IMapper>();
 
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<SiteDTO, Site>();
-                cfg.CreateMap<Site, SiteDTO>();
-            });
+            var site = new Site { Name = inputDto.Name, PlantNo = inputDto.PlantNo };
+            mockMapper.Map<Site>(inputDto).Returns(site);
+            mockRepo.AddSiteAsync(site).Returns(returnValue);
 
-            _mapper = config.CreateMapper();
-            _siteService = new SiteService(mockRepo, _mapper);
+            _mapper = mockMapper;
+            _siteService = new SiteService(mockRepo, mockMapper);
         }
 
         public void MockForGetSiteTrainees(string plantNo)

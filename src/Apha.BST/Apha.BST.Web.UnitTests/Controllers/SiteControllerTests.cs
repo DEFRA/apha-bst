@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace Apha.BST.Web.UnitTests.Controllers
 {
@@ -19,12 +20,14 @@ namespace Apha.BST.Web.UnitTests.Controllers
         private readonly ISiteService _siteService;
         private readonly IMapper _mapper;
         private readonly SiteController _controller;
+        private readonly ILogger<SiteController> _logger;
 
         public SiteControllerTests()
         {
             _siteService = Substitute.For<ISiteService>();
             _mapper = Substitute.For<IMapper>();
-            _controller = new SiteController(_siteService, _mapper);
+            _logger = Substitute.For<ILogger<SiteController>>();
+            _controller = new SiteController(_siteService, _mapper, _logger);
             // Setup TempData for the controller
         var tempData = new TempDataDictionary(new DefaultHttpContext(), Substitute.For<ITempDataProvider>());
             _controller.TempData = tempData;           
@@ -113,61 +116,99 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _mapper.Received(1).Map<IEnumerable<SiteViewModel>>(siteDtos);
         }
         [Fact]
-        public async Task AddSite_ValidInput_SiteAddedSuccessfully()
+        public async Task AddSite_ValidModel_ReturnsRedirectToActionResult()
         {
-            // Arrange
             var siteViewModel = new SiteViewModel { Name = "Test Site", PlantNo = "123" };
             var siteDto = new SiteDTO { Name = "Test Site", PlantNo = "123" };
             _mapper.Map<SiteDTO>(siteViewModel).Returns(siteDto);
-            _siteService.CreateSiteAsync(Arg.Any<SiteDTO>()).Returns("Site added successfully.");
+            _siteService.AddSiteAsync(Arg.Any<SiteDTO>()).Returns("Site added successfully.");
 
-            // Act
-            var result = await _controller.AddSite(siteViewModel) as RedirectToActionResult;
+            var result = await _controller.AddSite(siteViewModel);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(nameof(SiteController.AddSite), result.ActionName);
-            Assert.Equal("'Test Site' saved as site", _controller.TempData["Message"]);
-            await _siteService.Received(1).CreateSiteAsync(Arg.Is<SiteDTO>(dto => dto.Name == "Test Site" && dto.PlantNo == "123"));
-            _mapper.Received(1).Map<SiteDTO>(Arg.Is<SiteViewModel>(vm => vm.Name == "Test Site" && vm.PlantNo == "123"));
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AddSite", redirectResult.ActionName);
+            Assert.Equal("Site added successfully.", _controller.TempData["Message"]);
         }
 
         [Fact]
-        public async Task AddSite_ValidInput_SiteAlreadyExists()
+        public async Task AddSite_InvalidModel_ReturnsViewResult()
         {
-            // Arrange
-            var siteViewModel = new SiteViewModel { Name = "Existing Site", PlantNo = "456" };
-            var siteDto = new SiteDTO { Name = "Existing Site", PlantNo = "456" };
-            _mapper.Map<SiteDTO>(siteViewModel).Returns(siteDto);
-            _siteService.CreateSiteAsync(Arg.Any<SiteDTO>()).Returns("Site already exists.");
-
-            // Act
-            var result = await _controller.AddSite(siteViewModel) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(nameof(SiteController.AddSite), result.ActionName);
-            Assert.Equal("Site already exists.", _controller.TempData["Message"]);
-            await _siteService.Received(1).CreateSiteAsync(Arg.Is<SiteDTO>(dto => dto.Name == "Existing Site" && dto.PlantNo == "456"));
-            _mapper.Received(1).Map<SiteDTO>(Arg.Is<SiteViewModel>(vm => vm.Name == "Existing Site" && vm.PlantNo == "456"));
-        }
-
-        [Fact]
-        public async Task AddSite_InvalidInput_ReturnsViewWithModel()
-        {
-            // Arrange
-            var siteViewModel = new SiteViewModel { Name = "", PlantNo = "" };
+            var siteViewModel = new SiteViewModel();
             _controller.ModelState.AddModelError("Name", "Name is required");
 
-            // Act
-            var result = await _controller.AddSite(siteViewModel) as ViewResult;
+            var result = await _controller.AddSite(siteViewModel);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsType<SiteViewModel>(result.Model);
-            Assert.False(_controller.ModelState.IsValid);
-            await _siteService.DidNotReceive().CreateSiteAsync(Arg.Any<SiteDTO>());
-            _mapper.DidNotReceive().Map<SiteDTO>(Arg.Any<SiteViewModel>());
+            Assert.IsType<ViewResult>(result);
+        }
+
+        [Fact]
+        public async Task AddSite_ExceptionThrown_SetsTempDataMessageAndRedirects()
+        {
+            var siteViewModel = new SiteViewModel { Name = "Test Site", PlantNo = "123" };
+            var siteDto = new SiteDTO { Name = "Test Site", PlantNo = "123" };
+            _mapper.Map<SiteDTO>(siteViewModel).Returns(siteDto);
+            _siteService.AddSiteAsync(Arg.Any<SiteDTO>()).Throws(new System.Exception("Test exception"));
+
+            var result = await _controller.AddSite(siteViewModel);
+
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AddSite", redirectResult.ActionName);
+            Assert.Equal("Save failed", _controller.TempData["Message"]);
+        }
+
+        [Fact]
+        public async Task AddSite_SiteAlreadyExists_SetsTempDataMessageAndRedirects()
+        {
+            var siteViewModel = new SiteViewModel { Name = "Existing Site", PlantNo = "123" };
+            var siteDto = new SiteDTO { Name = "Existing Site", PlantNo = "123" };
+            _mapper.Map<SiteDTO>(siteViewModel).Returns(siteDto);
+            _siteService.AddSiteAsync(Arg.Any<SiteDTO>()).Returns("Site already exists.");
+
+            var result = await _controller.AddSite(siteViewModel);
+
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AddSite", redirectResult.ActionName);
+            Assert.Equal("Site already exists.", _controller.TempData["Message"]);
+        }
+
+        [Fact]
+        public async Task AddSite_ValidModel_CallsServiceWithCorrectParameters()
+        {
+            var siteViewModel = new SiteViewModel { Name = "Test Site", PlantNo = "123" };
+            var siteDto = new SiteDTO { Name = "Test Site", PlantNo = "123" };
+            _mapper.Map<SiteDTO>(siteViewModel).Returns(siteDto);
+
+            await _controller.AddSite(siteViewModel);
+
+            await _siteService.Received(1).AddSiteAsync(Arg.Is<SiteDTO>(dto =>
+                dto.Name == siteViewModel.Name && dto.PlantNo == siteViewModel.PlantNo));
+        }
+
+        [Fact]
+        public async Task AddSite_ValidModel_MapsViewModelToDto()
+        {
+            var siteViewModel = new SiteViewModel { Name = "Test Site", PlantNo = "123" };
+
+            await _controller.AddSite(siteViewModel);
+
+            _mapper.Received(1).Map<SiteDTO>(Arg.Is<SiteViewModel>(vm =>
+                vm.Name == siteViewModel.Name && vm.PlantNo == siteViewModel.PlantNo));
+        }
+
+        [Theory]
+        [InlineData(null, "123")]
+        [InlineData("", "123")]
+        [InlineData("Test Site", null)]
+        [InlineData("Test Site", "")]
+        public async Task AddSite_InvalidModelState_ReturnsViewWithModel(string name, string plantNo)
+        {
+            var siteViewModel = new SiteViewModel { Name = name, PlantNo = plantNo };
+            _controller.ModelState.AddModelError("", "Model state is invalid");
+
+            var result = await _controller.AddSite(siteViewModel);
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal(siteViewModel, viewResult.Model);
         }
 
         [Fact]

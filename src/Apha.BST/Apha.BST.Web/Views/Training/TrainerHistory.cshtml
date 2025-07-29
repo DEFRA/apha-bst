@@ -1,0 +1,133 @@
+﻿@* @using Microsoft.AspNetCore.Mvc.Rendering;
+@using static BST.Web.Controllers.TrainerController
+@model BST.Web.Models.TrainerHistoryViewModel *@
+@model TrainerHistoryViewModel
+
+@{
+	// var trainees = new List<TraineeViewModel>
+	// 	{
+	// 		new TraineeViewModel { PersonID = 1, Person = "John Doe" },
+	// 		new TraineeViewModel { PersonID = 2, Person = "Jane Smith" }
+	// 	};
+
+	// var trainings = new List<TrainingModel>
+	// 	{
+	// 		new TrainingModel { Person = "John Doe", TrainingAnimal = "Dog", Name = "Site A", TrainingDateTime = DateTime.Now.AddDays(-5), PersonID = 1, TrainingType = "Basic" },
+	// 		new TrainingModel { Person = "Jane Smith", TrainingAnimal = "Cat", Name = "Site B", TrainingDateTime = DateTime.Now.AddDays(-3), PersonID = 2, TrainingType = "Advanced" }
+	// 	};
+	ViewData["Title"] = "Trainer History";
+}
+
+
+<div class="w-100 h-100 p-2">
+	<div class=" d-flex flex-column mb-3">
+		<form asp-action="TrainerHistory" method="get" asp-controller="Training">
+			<div class="d-flex justify-content-between ">
+				<span class="w-70 fw-bold text-decoration-underline">
+					View all training by trainee
+				</span>
+				<span class="w-30 me-5 px-5">
+					<a href="@Url.Action("Index", "Home")" class="back-button" title="Back to home">
+						<img src="~/Images/cancel.jpeg" size="2px" alt="Back to home" />
+					</a>
+				</span>
+			</div>
+			<div class="w-100 d-flex justify-content-start mb-2">
+				<span class="width-10"><label for="ddlTrainingView">Select trainer</label></span>
+				<span class="w-auto">
+					@* <select id="traineeSelect" name="traineeId" class="search-dropdown" onchange="this.form.submit()">
+						<option value="SelectTrainee">Select trainer</option>
+						<option value="All">All</option>
+						@foreach (var trainee in trainees)
+						{
+							<option>@trainee.Person</option>
+						}
+					</select> *@
+					<select name="selectedTrainerId" class="search-dropdown" onchange="this.form.submit()">
+						<option value="0">All people</option>
+						@foreach (var trainer in Model.AllTrainers)
+						{
+							<option value="@trainer.PersonID" selected="@(Model.SelectedTrainerId == trainer.PersonID ? "selected" : null)">
+								@trainer.Person
+							</option>
+						}
+					</select>
+
+				<span>
+					<p class=" ErrorText text-start">
+						@if (!string.IsNullOrEmpty(ViewBag.message))
+						{
+							@ViewBag.message
+						}
+
+					</p>
+				</span>
+
+			</div>
+			<div class="w-100 d-flex justify-content-start">
+				<span class="width-10"><label asp-for="SelectedSpecies">Select species (Cattle by default)</label></span>
+				@* <span class="w-20">
+					<label asp-for="SelectedSpecies">
+						Select species<br />
+						<span style="font-size: 0.9em;">(Cattle by default)</span>
+					</label>
+				</span> *@
+				<span class="w-75">
+					@* <select asp-for="SelectedSpecies" asp-items="Model.SpeciesSelectList">
+						<option value="">Select species...</option>
+					</select> *@
+					<select name="selectedSpecies" class="search-dropdown" onchange="this.form.submit()">
+						@foreach (var species in Model.SpeciesSelectList)
+						{
+							<option value="@species.Value" selected="@(species.Selected ? "selected" : null)">
+								@species.Text
+							</option>
+						}
+					</select>
+					<span asp-validation-for="SelectedSpecies" class="text-danger"></span>
+				</span>
+
+			</div>
+		</form>
+
+	</div>
+
+
+	<div class="w-100 d-flex justify-content-start">
+		<p class="width-10">Trainer details</p>
+		<table id="siteTable" class="w-75 grid-table ">
+			<thead>
+				<tr>
+					<th>PersonID</th>
+					<th>Person</th>
+					<th>Role</th>
+					<th>TrainerID</th>
+					<th>TrainingAnimal</th>
+					<th>TrainingDateTime</th>
+					<th>Trainer</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.HistoryDetails)
+				{
+					<tr>
+						<td>@item.PersonID</td>
+						<td>@item.Person</td>
+						<td>@item.Role</td>
+						<td>@item.TrainerID</td>
+						<td>@item.TrainingAnimal</td>
+						<td>@item.TrainingDateTime.ToString()</td>
+						<td>@item.Trainer</td>
+					</tr>
+				}
+			</tbody>
+
+		</table>
+
+
+	</div>
+
+
+</div>
+
+

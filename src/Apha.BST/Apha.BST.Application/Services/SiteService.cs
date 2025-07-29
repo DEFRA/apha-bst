@@ -74,21 +74,34 @@ namespace Apha.BST.Application.Services
             }).ToList();
         }
 
-        public async Task<string> CreateSiteAsync(SiteDTO siteDto)
+        //For Addsite
+        public async Task<string> AddSiteAsync(SiteDTO siteDto)
         {
             var site = _mapper.Map<Site>(siteDto);
-            var createdSite = await _siteRepository.AddSiteAsync(site);          
-            if (createdSite.ReturnCode == 1)
+            var createdSite = await _siteRepository.AddSiteAsync(site);
+            if (createdSite == "EXISTS")
             {
                 return "Site already exists. Please choose another Site / Plant No.";
             }
 
-            return "Site added successfully.";
-        }      
-
-        public async Task<bool> DeleteTraineeAsync(int personId)
+            return $"'{siteDto.Name}' saved as site";
+            
+        }
+        public async Task<string> DeleteTraineeAsync(int personId)
         {
-            return await _siteRepository.DeleteTraineeAsync(personId);
+            // Fetch person name first
+            var personName = await _siteRepository.GetPersonNameByIdAsync(personId);
+
+            var deleted = await _siteRepository.DeleteTraineeAsync(personId);
+
+            if (deleted)
+            {
+                return $"Trainee '{personName}' deleted successfully.";
+            }
+            else
+            {
+                return $"Trainee '{personName}' has training records. Delete them first if you wish to remove the person.";
+            }
         }
 
     }

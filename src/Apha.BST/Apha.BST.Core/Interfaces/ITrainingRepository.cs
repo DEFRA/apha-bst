@@ -14,7 +14,10 @@ namespace Apha.BST.Core.Interfaces
         //For EditTraining    
         Task<Training?> GetTrainingByKeysAsync(int personId, string species, DateTime dateTrained);
         Task<string> UpdateTrainingAsync(Training training, DateTime dateTrainedOld, string speciesOld);
-        Task<AddTrainingResult> AddTrainingAsync(Training training);
+
+        //TrainerHistory
+        Task<IEnumerable<TrainerHistory>> GetTrainerHistoryAsync(int personId, string animalType);       
+        Task<string> AddTrainingAsync(Training training);
         Task<Persons?> GetPersonByIdAsync(int personId);
         Task<IEnumerable<TrainerTraining>> GetTrainingByTraineeAsync(string traineeId);
         Task<IEnumerable<TrainerTraining>> GetAllTrainingsAsync();

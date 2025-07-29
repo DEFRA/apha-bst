@@ -4,7 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Services;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using AutoMapper;
 using FluentAssertions;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace Apha.BST.Application.UnitTests.Services
 {
@@ -48,31 +54,48 @@ namespace Apha.BST.Application.UnitTests.Services
             }
 
         [Fact]
-        public async Task CreateSiteAsync_WhenSiteAlreadyExists_ShouldReturnExistsMessage()
+        public async Task AddSiteAsync_NewSite_ReturnsSuccessMessage()
         {
             // Arrange
-            MockForCreateSite(returnCode: 1);
-            var siteDto = new SiteDTO { PlantNo = "PLANT002", Name = "Existing Site" };
+            var siteDto = new SiteDTO { Name = "Test Site", PlantNo = "1234" };
+            MockForAddSiteAsync("CREATED", siteDto);
 
             // Act
-            var result = await _siteService.CreateSiteAsync(siteDto);
+            var result = await _siteService.AddSiteAsync(siteDto);
 
             // Assert
-            result.Should().Be("Site already exists. Please choose another Site / Plant No.");
+            result.Should().Be("'Test Site' saved as site");
         }
 
         [Fact]
-        public async Task CreateSiteAsync_WhenSiteIsNew_ShouldReturnSuccessMessage()
+        public async Task AddSiteAsync_ExistingSite_ReturnsErrorMessage()
         {
             // Arrange
-            MockForCreateSite(returnCode: 0);
-            var siteDto = new SiteDTO { PlantNo = "PLANT003", Name = "Fresh Site" };
+            var siteDto = new SiteDTO { Name = "Existing Site", PlantNo = "5678" };
+            MockForAddSiteAsync("EXISTS", siteDto);
 
             // Act
-            var result = await _siteService.CreateSiteAsync(siteDto);
+            var result = await _siteService.AddSiteAsync(siteDto);
 
             // Assert
-            result.Should().Be("Site added successfully.");
+            result.Should().Be("Site already exists. Please choose another Site / Plant No.");
+        }       
+
+        [Fact]
+        public async Task AddSiteAsync_RepositoryThrowsException_PropagatesException()
+        {
+            // Arrange
+            var siteDto = new SiteDTO { Name = "Test Site", PlantNo = "1234" };
+            var mockRepo = Substitute.For<ISiteRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var site = new Site { Name = "Test Site", PlantNo = "1234" };
+            mockMapper.Map<Site>(siteDto).Returns(site);
+            mockRepo.AddSiteAsync(site).ThrowsAsync(new Exception("Repository error"));
+
+            _siteService = new SiteService(mockRepo, mockMapper);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => _siteService.AddSiteAsync(siteDto));
         }
 
         [Fact]

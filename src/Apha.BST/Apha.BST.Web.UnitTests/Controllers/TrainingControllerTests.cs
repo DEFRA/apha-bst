@@ -14,6 +14,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Apha.BST.Core.Interfaces;
 using Apha.BST.Core.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace Apha.BST.Web.UnitTests.Controllers
 {
@@ -23,14 +24,16 @@ namespace Apha.BST.Web.UnitTests.Controllers
         private readonly IPersonsRepository _mockPersonRepository;
         private readonly IMapper _mockMapper;
         private readonly TrainingController _controller;
+        private readonly ILogger<TrainingController> _logger;
 
         public TrainingControllerTests()
         {
             _mockTrainingService = Substitute.For<ITrainingService>();
             _mockPersonRepository = Substitute.For<IPersonsRepository>();
             _mockMapper = Substitute.For<IMapper>();
+            _logger = Substitute.For<ILogger<TrainingController>>();
             //_controller = new TrainingController(_mockTrainingService, _mockMapper);
-            _controller = new TrainingController(_mockTrainingService, _mockMapper,_mockPersonRepository);
+            _controller = new TrainingController(_mockTrainingService, _mockMapper,_mockPersonRepository,_logger);
             // Setup TempData for the controller
             _controller.TempData = Substitute.For<ITempDataDictionary>();
         }
@@ -43,9 +46,9 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _controller.ModelState.AddModelError("Error", "Model error");
 
             _mockTrainingService.GetTraineesAsync().Returns(new List<PersonsDTO>
-    {
-        new PersonsDTO { PersonId = 1, Person = "John Doe" }
-    });
+        {
+            new PersonsDTO { PersonId = 1, Person = "John Doe" }
+        });
 
             // Act
             var result = await _controller.AddTraining(viewModel);
@@ -75,6 +78,82 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal("Training added successfully", _controller.TempData["Message"]);
             await _mockTrainingService.Received(1).AddTrainingAsync(dto);
         }
+
+        [Fact]
+        public async Task AddTraining_ValidModelState_SuccessfulAddition()
+        {
+            // Arrange
+            var viewModel = new AddTrainingViewModel
+            {
+                TrainerId = 1,
+                TrainingAnimal = "Dog",
+                TrainingDateTime = DateTime.Now
+            };
+
+            var dto = new TrainingDTO();
+            _mockMapper.Map<TrainingDTO>(viewModel).Returns(dto);
+            _mockTrainingService.AddTrainingAsync(dto).Returns("Training added successfully");
+
+            // Act
+            var result = await _controller.AddTraining(viewModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(nameof(TrainingController.AddTraining), redirectResult.ActionName);
+            Assert.Equal("Training added successfully", _controller.TempData["Message"]);
+        }
+
+        [Fact]
+        public async Task AddTraining_InvalidModelState_ReturnsViewWithErrors()
+        {
+            // Arrange
+            var viewModel = new AddTrainingViewModel();
+            _controller.ModelState.AddModelError("Species", "Species is required");
+
+            var trainees = new List<TraineeDTO>
+        {
+            new TraineeDTO { PersonId = 1, Person = "John Doe" }
+        };
+            _mockTrainingService.GetTraineesAsync().Returns(Task.FromResult(new List<PersonsDTO>
+{
+    new PersonsDTO { PersonId = 1, Person = "John Doe" }
+}));
+
+
+            // Act
+            var result = await _controller.AddTraining(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal(viewModel, viewResult.Model);
+            Assert.NotNull((viewResult.Model as AddTrainingViewModel).Persons);
+            Assert.Single((viewResult.Model as AddTrainingViewModel).Persons);
+        }
+
+        [Fact]
+        public async Task AddTraining_ExceptionThrown_ReturnsSaveFailedMessage()
+        {
+            // Arrange
+            var viewModel = new AddTrainingViewModel
+            {
+                TrainerId = 1,
+                TrainingAnimal = "Cat",
+                TrainingDateTime = DateTime.Now
+            };
+
+            var dto = new TrainingDTO();
+            _mockMapper.Map<TrainingDTO>(viewModel).Returns(dto);
+            _mockTrainingService.AddTrainingAsync(dto).Throws(new Exception("Database error"));
+
+            // Act
+            var result = await _controller.AddTraining(viewModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(nameof(TrainingController.AddTraining), redirectResult.ActionName);
+            Assert.Equal("Save failed", _controller.TempData["Message"]);
+        }
+
 
         //[Fact]
         //public async Task AddTraining_ExceptionThrown_ReturnsViewWithError()
@@ -204,6 +283,127 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Empty(model.AllTrainees);
             Assert.Empty(model.FilteredTrainings);
         }
+
+        [Fact]
+        public async Task TrainerHistory_WithDefaultParameters_ReturnsCorrectViewModel()
+        {
+            var persons = new List<Persons> { new Persons { PersonId = 1, Person = "John Doe" } };
+            var historyDto = new List<TrainerHistoryDTO> { new TrainerHistoryDTO() };
+            var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel() };
+
+            _mockPersonRepository.GetAllAsync().Returns(persons);
+            _mockTrainingService.GetTrainerHistoryAsync(0, "Cattle").Returns(historyDto);
+            _mockMapper.Map<List<TraineeViewModel>>(persons).Returns(new List<TraineeViewModel> { new TraineeViewModel { PersonID = 1, Person = "John Doe" } });
+            _mockMapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
+
+            var result = await _controller.TrainerHistory();
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<TrainerHistoryViewModel>(viewResult.Model);
+            Assert.Equal(0, model.SelectedTrainerId);
+            Assert.Equal("Cattle", model.SelectedSpecies);
+            Assert.Single(model.AllTrainers);
+            Assert.Single(model.HistoryDetails);
+        }
+
+        [Fact]
+        public async Task TrainerHistory_WithCustomParameters_ReturnsCorrectViewModel()
+        {
+            var persons = new List<Persons> { new Persons { PersonId = 2, Person = "Jane Smith" } };
+            var historyDto = new List<TrainerHistoryDTO> { new TrainerHistoryDTO() };
+            var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel() };
+
+            _mockPersonRepository.GetAllAsync().Returns(persons);
+            _mockTrainingService.GetTrainerHistoryAsync(2, "Sheep").Returns(historyDto);
+            _mockMapper.Map<List<TraineeViewModel>>(persons).Returns(new List<TraineeViewModel> { new TraineeViewModel { PersonID = 2, Person = "Jane Smith" } });
+            _mockMapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
+
+            var result = await _controller.TrainerHistory(2, "Sheep");
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<TrainerHistoryViewModel>(viewResult.Model);
+            Assert.Equal(2, model.SelectedTrainerId);
+            Assert.Equal("Sheep", model.SelectedSpecies);
+            Assert.Single(model.AllTrainers);
+            Assert.Single(model.HistoryDetails);
+        }
+
+        [Fact]
+        public async Task TrainerHistory_WithNoTrainers_ReturnsEmptyTrainerList()
+        {
+            var persons = new List<Persons>();
+            var historyDto = new List<TrainerHistoryDTO>();
+            var historyModel = new List<TrainingHistoryModel>();
+
+            _mockPersonRepository.GetAllAsync().Returns(persons);
+            _mockTrainingService.GetTrainerHistoryAsync(0, "Cattle").Returns(historyDto);
+            _mockMapper.Map<List<TraineeViewModel>>(persons).Returns(new List<TraineeViewModel>());
+            _mockMapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
+
+            var result = await _controller.TrainerHistory();
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<TrainerHistoryViewModel>(viewResult.Model);
+            Assert.Empty(model.AllTrainers);
+        }
+
+        [Fact]
+        public async Task TrainerHistory_WithNoHistory_ReturnsEmptyHistoryList()
+        {
+            var persons = new List<Persons> { new Persons { PersonId = 1, Person = "John Doe" } };
+            var historyDto = new List<TrainerHistoryDTO>();
+            var historyModel = new List<TrainingHistoryModel>();
+
+            _mockPersonRepository.GetAllAsync().Returns(persons);
+            _mockTrainingService.GetTrainerHistoryAsync(1, "Cattle").Returns(historyDto);
+            _mockMapper.Map<List<TraineeViewModel>>(persons).Returns(new List<TraineeViewModel> { new TraineeViewModel { PersonID = 1, Person = "John Doe" } });
+            _mockMapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
+
+            var result = await _controller.TrainerHistory(1);
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<TrainerHistoryViewModel>(viewResult.Model);
+            Assert.Empty(model.HistoryDetails);
+        }
+
+        [Fact]
+        public async Task TrainerHistory_CallsRepositoryAndServiceMethods()
+        {
+            var persons = new List<Persons> { new Persons { PersonId = 1, Person = "John Doe" } };
+            var historyDto = new List<TrainerHistoryDTO> { new TrainerHistoryDTO() };
+            var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel() };
+
+            _mockPersonRepository.GetAllAsync().Returns(persons);
+            _mockTrainingService.GetTrainerHistoryAsync(1, "Cattle").Returns(historyDto);
+            _mockMapper.Map<List<TraineeViewModel>>(persons).Returns(new List<TraineeViewModel> { new TraineeViewModel { PersonID = 1, Person = "John Doe" } });
+            _mockMapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
+
+            await _controller.TrainerHistory(1);
+
+            await _mockPersonRepository.Received(1).GetAllAsync();
+            await _mockTrainingService.Received(1).GetTrainerHistoryAsync(1, "Cattle");
+            _mockMapper.Received(1).Map<List<TraineeViewModel>>(persons);
+            _mockMapper.Received(1).Map<List<TrainingHistoryModel>>(historyDto);
+        }
+
+        [Fact]
+        public async Task TrainerHistory_ReturnsViewResult()
+        {
+            var persons = new List<Persons> { new Persons { PersonId = 1, Person = "John Doe" } };
+            var historyDto = new List<TrainerHistoryDTO> { new TrainerHistoryDTO() };
+            var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel() };
+
+            _mockPersonRepository.GetAllAsync().Returns(persons);
+            _mockTrainingService.GetTrainerHistoryAsync(1, "Cattle").Returns(historyDto);
+            _mockMapper.Map<List<TraineeViewModel>>(persons).Returns(new List<TraineeViewModel> { new TraineeViewModel { PersonID = 1, Person = "John Doe" } });
+            _mockMapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
+
+            var result = await _controller.TrainerHistory(1);
+
+            Assert.IsType<ViewResult>(result);
+        }
+
+
 
     }
 

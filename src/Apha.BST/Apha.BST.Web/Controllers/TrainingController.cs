@@ -13,14 +13,15 @@ namespace Apha.BST.Web.Controllers
         private readonly ITrainingService _trainingService;
         private readonly IPersonsRepository _personRepository;
         private readonly IMapper _mapper;
-        //private readonly ILogger<SiteController> _logger;
+        private const string siteName = "All";
+        private readonly ILogger<TrainingController> _logger;
 
-        public TrainingController(ITrainingService trainingService, IMapper mapper, IPersonsRepository personRepository/*, ILogger<SiteController> logger*/)
+        public TrainingController(ITrainingService trainingService, IMapper mapper, IPersonsRepository personRepository, ILogger<TrainingController> logger)
         {
             _trainingService = trainingService;
             _mapper = mapper;
             _personRepository = personRepository;
-            //_logger = logger;
+            _logger = logger;
         }
         public IActionResult Index()
         {
@@ -50,10 +51,17 @@ namespace Apha.BST.Web.Controllers
                     .ToList();
                 return View(viewModel);
             }
-            viewModel.TrainingDateTime = DateTime.Now;
-            var dto = _mapper.Map<TrainingDTO>(viewModel);
-            var message = await _trainingService.AddTrainingAsync(dto);
-            TempData["Message"] = message;
+            try
+            {
+                viewModel.TrainingDateTime = DateTime.Now;
+                var dto = _mapper.Map<TrainingDTO>(viewModel);
+                var message = await _trainingService.AddTrainingAsync(dto);
+                TempData["Message"] = message;
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Save failed";
+            }
 
             return RedirectToAction(nameof(AddTraining));
         }
@@ -96,7 +104,7 @@ namespace Apha.BST.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewTrainer(string selectedTraineeId = "All")
+        public async Task<IActionResult> ViewTrainer(string selectedTraineeId = siteName)
         {
             var allPersons = await _personRepository.GetAllAsync(); // PersonID + Person
             var allTrainees = _mapper.Map<IEnumerable<TraineeViewModel>>(allPersons);
@@ -123,7 +131,31 @@ namespace Apha.BST.Web.Controllers
 
             return View(model);
         }
-       
+
+        
+        // For TrainerHistory
+        [HttpGet]
+        public async Task<IActionResult> TrainerHistory(int selectedTrainerId = 0, string selectedSpecies = "Cattle")
+        {
+            var allPersons = await _personRepository.GetAllAsync();
+            var allTrainers = _mapper.Map<List<TraineeViewModel>>(allPersons);
+
+            var historyDto = await _trainingService.GetTrainerHistoryAsync(selectedTrainerId, selectedSpecies);
+
+            // FIX: Map DTO to Model
+            var historyData = _mapper.Map<List<TrainingHistoryModel>>(historyDto);
+
+            var model = new TrainerHistoryViewModel
+            {
+                SelectedTrainerId = selectedTrainerId,
+                SelectedSpecies = selectedSpecies,
+                AllTrainers = allTrainers,
+                HistoryDetails = historyData,                
+            };
+
+
+            return View(model);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

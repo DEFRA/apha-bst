@@ -39,10 +39,7 @@ namespace Apha.BST.DataAccess.Repositories
                 .FromSqlRaw("EXEC sp_Training_Select @TraineeID", param)
                 .ToListAsync();
         }
-        //public async Task<IEnumerable<Training>> GetAllTrainingsAsync()
-        //{
-        //    return await _context.Trainings.ToListAsync();
-        //}
+        
         public async Task<IEnumerable<TrainerTraining>> GetAllTrainingsAsync()
         {
             var param = new SqlParameter("@TraineeID", DBNull.Value);
@@ -51,62 +48,17 @@ namespace Apha.BST.DataAccess.Repositories
                 .ToListAsync();
         }
 
-        //Fot EditTraining
-        //public async Task<string> UpdateTrainingAsync(EditTraining editTraining)
-        //{
-        //    var parameters = new[]
-        //    {
-        //    new SqlParameter("@TraineeID", editTraining.PersonId),
-        //    new SqlParameter("@DateTrained", editTraining.TrainingDateTime),
-        //    new SqlParameter("@DateTrainedOld", editTraining.TrainingDateTimeOld),
-        //    new SqlParameter("@Species", editTraining.TrainingAnimal),
-        //    new SqlParameter("@SpeciesOld", editTraining.TrainingAnimalOld),
-        //    new SqlParameter("@Trainer",  editTraining.TrainerId),
-        //    new SqlParameter("@TrainerOld", editTraining.TrainerIdOld),
-        //    new SqlParameter("@TrainingType", editTraining.TrainingType)
-        //};
+        //For TrainerHistory
+        public async Task<IEnumerable<TrainerHistory>> GetTrainerHistoryAsync(int personId, string animalType)
+        {
+            var personIdParam = new SqlParameter("@PersonID", personId);
+            var animalTypeParam = new SqlParameter("@AnimalType", animalType);
 
-        //    string error = null;
-        //    try
-        //    {
-        //        await _context.Database.ExecuteSqlRawAsync(
-        //            "EXEC sp_Training_Update @TraineeID, @DateTrained, @DateTrainedOld, @Species, @SpeciesOld, @Trainer, @TrainerOld, @TrainingType",
-        //            parameters);
-        //        return "Training record updated successfully.";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        error = ex.Message;
-        //        return $"Update failed: {ex.Message}";
-        //    }
-        //    finally
-        //    {
-        //        await _auditLogRepository.AddAuditLogAsync("sp_Training_Update", parameters, "Write", error);
-        //    }
-        //}
+            return await _context.Set<TrainerHistory>()
+                .FromSqlRaw("EXEC sp_Trainer_TrainedBy_Trained @PersonID, @AnimalType", personIdParam, animalTypeParam)
+                .ToListAsync();
+        }      
 
-        //public async Task<EditTraining> GetTrainingByKeysAsync(int personId, string trainingAnimal, DateTime trainingDateTime)
-        //{
-        //    var training = await _context.Trainings
-        //        .FirstOrDefaultAsync(t =>
-        //            t.PersonId == personId &&
-        //            t.TrainingAnimal == trainingAnimal &&
-        //            t.TrainingDateTime == trainingDateTime);
-
-        //    if (training == null) return null;
-
-        //    return new EditTraining
-        //    {
-        //        PersonId = training.PersonId,
-        //        TrainerId = training.TrainerId,
-        //        TrainingType = training.TrainingType,
-        //        TrainingAnimal = training.TrainingAnimal,
-        //        TrainingDateTime = training.TrainingDateTime,
-        //        TrainerIdOld = training.TrainerId,
-        //        TrainingAnimalOld = training.TrainingAnimal,
-        //        TrainingDateTimeOld = training.TrainingDateTime
-        //    };
-        //}
 
         public async Task<Training?> GetTrainingByKeysAsync(int personId, string species, DateTime dateTrained)
         {
@@ -120,14 +72,14 @@ namespace Apha.BST.DataAccess.Repositories
         {
             var parameters = new[]
             {
-        new SqlParameter("@TraineeID", training.PersonId),
-        new SqlParameter("@TrainerID", training.TrainerId),
-        new SqlParameter("@Species", training.TrainingAnimal),
-        new SqlParameter("@TrainingType", training.TrainingType),
-        new SqlParameter("@DateTrained", training.TrainingDateTime),
-        new SqlParameter("@DateTrainedOld", dateTrainedOld),
-        new SqlParameter("@SpeciesOld", speciesOld)
-    };
+                 new SqlParameter("@TraineeID", training.PersonId),
+                 new SqlParameter("@TrainerID", training.TrainerId),
+                 new SqlParameter("@Species", training.TrainingAnimal),
+                 new SqlParameter("@TrainingType", training.TrainingType),
+                 new SqlParameter("@DateTrained", training.TrainingDateTime),
+                 new SqlParameter("@DateTrainedOld", dateTrainedOld),
+                 new SqlParameter("@SpeciesOld", speciesOld)
+            };
 
             string error = null;
             try
@@ -147,7 +99,7 @@ namespace Apha.BST.DataAccess.Repositories
         }
 
 
-        public async Task<AddTrainingResult> AddTrainingAsync(Training training)
+        public async Task<string> AddTrainingAsync(Training training)
         {
             var parameters = new[]
             {
@@ -163,13 +115,12 @@ namespace Apha.BST.DataAccess.Repositories
                 Direction = ParameterDirection.Output,
                 Value = 0
             }
-        };
+            };
 
             string error = null;
             try
             {
-                await _context.Database.ExecuteSqlRawAsync(
-                   //"EXEC sp_Training_Add @TraineeID, @TrainerID, @Species, @TrainingType, @DateTrained, @ReturnCode OUT",
+                await _context.Database.ExecuteSqlRawAsync(                  
                    "EXEC sp_Training_Add @TraineeID, @TrainerID, @Species, @DateTrained, @TrainingType, @ReturnCode OUT",
                     parameters);
             }
@@ -177,57 +128,20 @@ namespace Apha.BST.DataAccess.Repositories
             {
                 error = ex.Message;
                 throw;
-            }
-            finally
-            {
-                await _auditLogRepository.AddAuditLogAsync(
-                    "sp_Training_Add",
-                    parameters,
-                    "Write",
-                    error);
-            }
+            }            
+            var returnCode = (byte)parameters[5].Value;
 
-            return new AddTrainingResult
-            {
-                Training = training,
-                ReturnCode = (byte)parameters[5].Value
-            };
+            if (returnCode == 1)
+                return "EXISTS"; 
+
+            return "SUCCESS";             
         }
 
         public async Task<Persons?> GetPersonByIdAsync(int personId)
         {
             return await _context.Persons.FirstOrDefaultAsync(p => p.PersonId == personId);
         }
-        //    public async Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained)
-        //    {
-        //        string resultMessage = string.Empty;
-        //        var parameters = new[]
-        //        {
-        //    new SqlParameter("@TraineeID", traineeId),
-        //    new SqlParameter("@Species", species),
-        //    new SqlParameter("@DateTrained", dateTrained)
-        //};
-
-        //        string error = null;
-
-        //        try
-        //        {
-        //            await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);
-        //            resultMessage = $"Training on {dateTrained:yyyy-MM-dd} for species '{species}' has been deleted.";
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            error = ex.Message;
-        //            resultMessage = $"Delete failed: {ex.Message}";
-        //        }
-        //        finally
-        //        {
-        //            //await _auditLogRepository.AddAuditLogAsync("sp_Training_Delete", parameters, "Delete", error);
-        //            await _auditLogRepository.AddAuditLogAsync("sp_Training_Delete", parameters, "Write", error);
-        //        }
-
-        //        return resultMessage;
-        //    }
+        
         public async Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained)
         {
             string error = null;
@@ -235,16 +149,14 @@ namespace Apha.BST.DataAccess.Repositories
 
             var parameters = new[]
             {
-        new SqlParameter("@TraineeID", traineeId),
-        new SqlParameter("@Species", species),
-        new SqlParameter("@DateTrained", dateTrained)
-    };
+                 new SqlParameter("@TraineeID", traineeId),
+                 new SqlParameter("@Species", species),
+                 new SqlParameter("@DateTrained", dateTrained)
+            };
 
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);
-
-                // Always assume success, like VB.NET, because SET NOCOUNT ON suppresses affected rows                
+                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);    
 
             resultMessage = $"All trained in {species}  brainstem removal on {dateTrained:G} has been deleted from the database";
             }

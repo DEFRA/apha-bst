@@ -20,76 +20,63 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
     {
         protected ITrainingService? _trainingService;
         protected IMapper? _mapper;
+        protected SiteService? SiteServiceInstance;
 
-        public void MockForAddTraining(int returnCode, string personName = "John Doe", string trainerName = "Jane Smith", DateTime? date = null)
+        public void MockForAddSiteAsync(SiteDTO siteDto, string repoResult)
         {
-            var trainingDto = new TrainingDTO
+            var site = new Site
             {
-                PersonId = 1,
-                TrainerId = 2,
-                TrainingType = "Test Type",
-                TrainingDateTime = date ?? DateTime.Now
+                Name = siteDto.Name,
+                PlantNo = siteDto.PlantNo
             };
 
-            var training = new Training
-            {
-                PersonId = 1,
-                TrainerId = 2,
-                TrainingType = trainingDto.TrainingType,
-                TrainingDateTime = trainingDto.TrainingDateTime
-            };
+            var mockRepo = Substitute.For<ISiteRepository>();
+            var mockMapper = Substitute.For<IMapper>();
 
-            var mockRepo = Substitute.For<ITrainingRepository>();
+            mockMapper.Map<Site>(siteDto).Returns(site);
+            mockRepo.AddSiteAsync(site).Returns(repoResult);
 
-            mockRepo.AddTrainingAsync(Arg.Any<Training>())
-                .Returns(Task.FromResult(new AddTrainingResult { ReturnCode = (byte)returnCode }));
-            mockRepo.GetPersonByIdAsync(1)
-                .Returns(Task.FromResult(new Persons { PersonId = 1, Person = personName }));
-            mockRepo.GetPersonByIdAsync(2)
-                .Returns(Task.FromResult(new Persons { PersonId = 2, Person = trainerName }));
+            _trainingService = null; // Not needed for site service test
+            _mapper = mockMapper;
 
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<TrainingDTO, Training>();
-            });
-
-            _mapper = config.CreateMapper();
-            _trainingService = new TrainingService(mockRepo, _mapper);
+            var siteService = new SiteService(mockRepo, mockMapper);
+            SiteServiceInstance = siteService;
         }
 
-        public void MockForAddTrainingWithNullNames(int? personId, int? trainerId)
-        {
-            var trainingDto = new TrainingDTO
-            {
-                PersonId = personId ?? 0,
-                TrainerId = trainerId ?? 0,
-                TrainingType = "Test Type",
-                TrainingDateTime = DateTime.Now
-            };
 
-            var training = new Training
-            {
-                PersonId = trainingDto.PersonId,
-                TrainerId = trainingDto.TrainerId,
-                TrainingType = trainingDto.TrainingType,
-                TrainingDateTime = trainingDto.TrainingDateTime
-            };
+        //public void MockForAddTrainingWithNullNames(int? personId, int? trainerId)
+        //{
+        //    var trainingDto = new TrainingDTO
+        //    {
+        //        PersonId = personId ?? 0,
+        //        TrainerId = trainerId ?? 0,
+        //        TrainingType = "Test Type",
+        //        TrainingDateTime = DateTime.Now
+        //    };
 
-            var mockRepo = Substitute.For<ITrainingRepository>();
+        //    var training = new Training
+        //    {
+        //        PersonId = trainingDto.PersonId,
+        //        TrainerId = trainingDto.TrainerId,
+        //        TrainingType = trainingDto.TrainingType,
+        //        TrainingDateTime = trainingDto.TrainingDateTime
+        //    };
 
-            mockRepo.AddTrainingAsync(Arg.Any<Training>())
-                .Returns(Task.FromResult(new AddTrainingResult { ReturnCode = 0 }));
-            mockRepo.GetPersonByIdAsync(Arg.Any<int>())
-                .Returns(Task.FromResult<Persons?>(null));
+        //    var mockRepo = Substitute.For<ITrainingRepository>();
 
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<TrainingDTO, Training>();
-            });
+        //    mockRepo.AddTrainingAsync(Arg.Any<Training>())
+        //        .Returns(Task.FromResult(new AddTrainingResult { ReturnCode = 0 }));
+        //    mockRepo.GetPersonByIdAsync(Arg.Any<int>())
+        //        .Returns(Task.FromResult<Persons?>(null));
 
-            _mapper = config.CreateMapper();
-            _trainingService = new TrainingService(mockRepo, _mapper);
-        }
+        //    var config = new MapperConfiguration(cfg =>
+        //    {
+        //        cfg.CreateMap<TrainingDTO, Training>();
+        //    });
+
+        //    _mapper = config.CreateMapper();
+        //    _trainingService = new TrainingService(mockRepo, _mapper);
+        //}
         public void MockForGetAllTrainings(IEnumerable<TrainerTraining> trainings, IEnumerable<TrainerTrainingDTO> mappedTrainings)
         {
             var mockRepo = Substitute.For<ITrainingRepository>();
@@ -142,6 +129,17 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 
             _trainingService = new TrainingService(mockRepo, mockMapper);
         }
+        public void MockForGetTrainerHistory(int personId, string animalType, IEnumerable<TrainerHistory> history, IEnumerable<TrainerHistoryDTO> mappedDtos)
+        {
+            var mockRepo = Substitute.For<ITrainingRepository>();
+            mockRepo.GetTrainerHistoryAsync(personId, animalType).Returns(Task.FromResult(history));
+
+            var mockMapper = Substitute.For<IMapper>();
+            mockMapper.Map<IEnumerable<TrainerHistoryDTO>>(history).Returns(mappedDtos);
+
+            _trainingService = new TrainingService(mockRepo, mockMapper);
+        }
+
 
     }
 }

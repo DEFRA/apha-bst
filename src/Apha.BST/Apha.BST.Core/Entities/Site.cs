@@ -25,7 +25,5 @@ public partial class Site
 
     public string? Fax { get; set; }
 
-    public string? Ahvla { get; set; }
-
-    //public int ReturnCode { get; set; }
+    public string? Ahvla { get; set; }    
 }

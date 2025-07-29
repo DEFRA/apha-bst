@@ -55,6 +55,13 @@ namespace Apha.BST.Application.Services
             return await _trainingRepository.UpdateTrainingAsync(training, dto.TrainingDateTimeOld, dto.TrainingAnimalOld);
         }
 
+        //For TrainerHistory
+        public async Task<IEnumerable<TrainerHistoryDTO>> GetTrainerHistoryAsync(int personId, string animalType)
+        {
+            var history = await _trainingRepository.GetTrainerHistoryAsync(personId, animalType);
+            return _mapper.Map<IEnumerable<TrainerHistoryDTO>>(history);
+        }
+
         public async Task<string> AddTrainingAsync(TrainingDTO trainingDto)
         {           
             var training = _mapper.Map<Training>(trainingDto);
@@ -66,7 +73,7 @@ namespace Apha.BST.Application.Services
             string traineeName = trainee?.Person ?? trainingDto.PersonId.ToString();
             string trainerName = trainer?.Person ?? trainingDto.TrainerId.ToString();
 
-            if (result.ReturnCode == 1)
+            if (result == "EXISTS")
             {
                 return $"{traineeName} has already trained for {trainingDto.TrainingType} brainstem removal: Cannot save record";
             }

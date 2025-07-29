@@ -1,12 +1,6 @@
 ﻿@model AddTrainingViewModel
 @{
-	ViewData["Title"] = "AddTraining";
-	// var trainees = new List<Trainee>
-	// 		{
-	// 			new Trainee { PersonID = 1, Person = "John Doe", PlantNo = "1" },
-	// 			new Trainee { PersonID = 2, Person = "Jane Smith", PlantNo = "1" },
-	// 			new Trainee { PersonID = 3, Person = "Bob Johnson", PlantNo = "2" }
-	// 		};
+	ViewData["Title"] = "AddTraining";	
 }
 
 <form asp-action="AddTraining" method="post">
@@ -23,14 +17,7 @@
 				<td class="pt-2">
 					<label asp-for="PersonId">Please select trainee</label>
 				</td>
-				<td class="px-5">
-				@* 	<select asp-for="PersonId">
-						<option value="">Select trainee...</option>
-						@foreach (var trainee in trainees)
-						{
-							<option>@trainee.Person</option>
-						} *@
-					</select>
+				<td class="px-5">			
 						<select asp-for="PersonId" asp-items="Model.Persons">
 							<option value="">Select trainee...</option>
 						</select>
@@ -41,20 +28,12 @@
 				<td class="pt-3 ">
 					<label asp-for="TrainerId">Please select trainer</label>
 				</td>
-				<td class="pt-3 px-5">
-					@* <select asp-for="TrainerId">
-						<option value="">Select trainer...</option>
-						@foreach (var trainer in trainees)
-						{
-							<option>@trainer.Person</option>
-						}
-					</select> *@
+				<td class="pt-3 px-5">				
 					<select asp-for="TrainerId" asp-items="Model.Persons">
 						<option value="">Select trainer...</option>
 					</select>
 					<span asp-for="TrainerId" class="text-danger"></span>
 				</td>
-
 			</tr>
 			<tr>
 				<td class="pt-3">

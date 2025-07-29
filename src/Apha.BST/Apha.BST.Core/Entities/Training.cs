@@ -13,6 +13,6 @@ public partial class Training
 
     public string TrainingType { get; set; } = null!;
 
-    public int TrainerId { get; set; }
+    public int TrainerId { get; set; }  
 }
 

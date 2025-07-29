@@ -14,13 +14,14 @@ namespace Apha.BST.Web.Controllers
     {
         private readonly ISiteService _siteService;
         private readonly IMapper _mapper;
-        //private readonly ILogger<SiteController> _logger;
+        private const string siteName = "All";
+        private readonly ILogger<SiteController> _logger;
 
-        public SiteController(ISiteService siteService, IMapper mapper/*, ILogger<SiteController> logger*/)
+        public SiteController(ISiteService siteService, IMapper mapper, ILogger<SiteController> logger)
         {
             _siteService = siteService;
             _mapper = mapper;
-            //_logger = logger;
+            _logger = logger;
         }
         public IActionResult Index()
         {
@@ -28,12 +29,12 @@ namespace Apha.BST.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewSite(string selectedSite = "All")
+        public async Task<IActionResult> ViewSite(string selectedSite = siteName)
         {
-            var allSitesDto = await _siteService.GetAllSitesAsync("All");
+            var allSitesDto = await _siteService.GetAllSitesAsync(siteName);
             var allSites = _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto);
 
-            IEnumerable<SiteViewModel> filteredSites = selectedSite == "All"
+            IEnumerable<SiteViewModel> filteredSites = selectedSite == siteName
                 ? allSites
                 : allSites.Where(s => s.PlantNo == selectedSite);
 
@@ -49,15 +50,15 @@ namespace Apha.BST.Web.Controllers
 
         //Final code working for SiteTrainee
         [HttpGet]
-        public async Task<IActionResult> SiteTrainee(string selectedSite = "All")
+        public async Task<IActionResult> SiteTrainee(string selectedSite = siteName)
         {
             // Get all sites for the dropdown
-            var allSitesDto = await _siteService.GetAllSitesAsync("All");
+            var allSitesDto = await _siteService.GetAllSitesAsync(siteName);
             var allSites = _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto);
 
             // Get trainees for the selected site (or all if "All" is selected)
             IEnumerable<SiteTraineeViewModel> filteredTrainees = Enumerable.Empty<SiteTraineeViewModel>();
-            if (selectedSite != "All")
+            if (selectedSite != siteName)
             {
                 var traineeDtos = await _siteService.GetSiteTraineesAsync(selectedSite);
                 filteredTrainees = _mapper.Map<IEnumerable<SiteTraineeViewModel>>(traineeDtos);
@@ -71,20 +72,7 @@ namespace Apha.BST.Web.Controllers
             };
 
             return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DeleteTrainee(int personId, string selectedSite)
-        {
-            var deleted = await _siteService.DeleteTraineeAsync(personId);
-            if (deleted)
-                TempData["message"] = "Trainee deleted successfully.";
-            else
-                //TempData["message"] = "Trainee not found.";
-                TempData["message"] = "Trainee has training records. Delete them first if you wish to remove the person.";
-
-            return RedirectToAction("SiteTrainee", new { selectedSite });
-        }
+        }      
 
        
         [HttpGet]
@@ -92,27 +80,45 @@ namespace Apha.BST.Web.Controllers
         {
             return View();
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSite(SiteViewModel siteViewModel)
         {
             if (ModelState.IsValid)
             {
-                var site = _mapper.Map<SiteDTO>(siteViewModel);
-                var message = await _siteService.CreateSiteAsync(site);
-                //TempData["Message"] = $"'{siteViewModel.Name}' saved as site";
-                // Set TempData message based on the result
-                if (message == "Site added successfully.")
+                try
                 {
-                    TempData["Message"] = $"'{siteViewModel.Name}' saved as site";
+                    var site = _mapper.Map<SiteDTO>(siteViewModel);
+                    var message = await _siteService.AddSiteAsync(site);
+
+                    TempData["Message"] = message;
                 }
-                else
+                catch (Exception)
                 {
-                    TempData["Message"] = message; // "Site already exists."
+                    TempData["Message"] = "Save failed";
                 }
+
                 return RedirectToAction(nameof(AddSite));
             }
+
             return View(siteViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteTrainee(int personId, string selectedSite)
+        {
+            try
+            {
+                var message = await _siteService.DeleteTraineeAsync(personId);
+                TempData["message"] = message;
+            }
+            catch (Exception)
+            {
+                TempData["message"] = "Save failed";
+            }
+
+            return RedirectToAction("SiteTrainee", new { selectedSite });
         }
     }
 }

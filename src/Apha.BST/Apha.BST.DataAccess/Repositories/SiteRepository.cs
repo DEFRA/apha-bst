@@ -23,10 +23,6 @@ namespace Apha.BST.DataAccess.Repositories
             _context = context;
             _auditLogRepository = auditLogRepository;
         }
-        //public async Task<IEnumerable<Site>> GetAllAsync()
-        //{
-        //    return await _context.Sites.ToListAsync();
-        //}
 
         public async Task<IEnumerable<Site>> GetAllSitesAsync(string plantNo)
         {
@@ -35,37 +31,6 @@ namespace Apha.BST.DataAccess.Repositories
                 .FromSqlRaw("EXEC sp_Sites_Select @PlantNo", param)
                 .ToListAsync();
         }
-        ////Working code
-        //public async Task<List<SiteTrainee>> GetSiteTraineesAsync(string plantNo)
-        //{
-        //    var result = new List<SiteTrainee>();
-        //    using (var connection = _context.Database.GetDbConnection())
-        //    {
-        //        await connection.OpenAsync();
-        //        using (var command = connection.CreateCommand())
-        //        {
-        //            command.CommandText = "sp_Site_Trainee_Get";
-        //            command.CommandType = CommandType.StoredProcedure;
-        //            command.Parameters.Add(new SqlParameter("@PlantNo", plantNo));
-
-        //            using (var reader = await command.ExecuteReaderAsync())
-        //            {
-        //                while (await reader.ReadAsync())
-        //                {
-        //                    result.Add(new SiteTrainee
-        //                    {
-        //                        PersonId = reader.GetInt32(reader.GetOrdinal("PersonID")),
-        //                        Person = reader.IsDBNull(reader.GetOrdinal("Person")) ? null : reader.GetString(reader.GetOrdinal("Person")),
-        //                        Cattle = reader.GetBoolean(reader.GetOrdinal("Cattle")),
-        //                        Sheep = reader.GetBoolean(reader.GetOrdinal("Sheep")),
-        //                        Goats = reader.GetBoolean(reader.GetOrdinal("Goats"))
-        //                    });
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return result;
-        //}
         public async Task<List<SiteTrainee>> GetSiteTraineesAsync(string plantNo)
         {
             var param = new SqlParameter("@PlantNo", plantNo);
@@ -73,16 +38,8 @@ namespace Apha.BST.DataAccess.Repositories
                 .FromSqlRaw("EXEC sp_Site_Trainee_Get @PlantNo", param)
                 .ToListAsync();
         }
-
-
-        //public async Task<Site> AddSiteAsync(Site site)
-        //{
-        //    _context.Sites.Add(site);
-        //    await _context.SaveChangesAsync();
-        //    return site;
-        //}
-
-        public async Task<AddSiteResult> AddSiteAsync(Site site)
+        
+        public async Task<string> AddSiteAsync(Site site)
         {
             var parameters = new[]
             {
@@ -129,108 +86,21 @@ namespace Apha.BST.DataAccess.Repositories
                     );
                 }
             }
-            var returnCode = (byte)parameters[10].Value;
-            //if (returnCode == 1)
-            //    throw new Exception("Site already exists.");
+            var returnCode = (byte)parameters[10].Value;          
+            if (returnCode == 1)
+                return "EXISTS"; // Code 1 = Site already exists
 
-            //return site;
-            return new AddSiteResult
-            {
-                Site = site,
-                ReturnCode = returnCode
-            };
+            return "SUCCESS"; // Code 0 = Insert success
         }
 
+        public async Task<string?> GetPersonNameByIdAsync(int personId)
+        {
+            return await _context.Persons
+                                 .Where(p => p.PersonId == personId)
+                                 .Select(p => p.Person)
+                                 .FirstOrDefaultAsync();
+        }
 
-        //public async Task<bool> DeleteTraineeAsync(int personId)
-        //{
-        //    var trainee = await _context.Persons.FirstOrDefaultAsync(t => t.PersonId == personId);
-        //    if (trainee == null)
-        //        return false;
-
-        //    _context.Persons.Remove(trainee);
-        //    await _context.SaveChangesAsync();
-        //    return true;
-        //}
-        //    public async Task<bool> DeleteTraineeAsync(int personId)
-        //    {
-        //        var hasTraining = false;
-        //        string? error = null; // Fix 1: Declare error variable
-        //        int rowsAffected = 0; // Fix 2: Declare rowsAffected variable
-
-        //        var parameters = new[]
-        //        {
-        //    new SqlParameter("@TraineeID", personId),
-        //    new SqlParameter("@PersonTraining", hasTraining)
-        //};
-
-        //        try
-        //        {
-        //            await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @TraineeID, @PersonTraining", parameters);
-        //            return true;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            error = ex.ToString();
-        //            return false;
-        //            // Optionally: log or handle error
-        //            throw;
-        //        }
-        //        finally
-        //        {
-        //            // Audit log for sp_Trainee_Delete, unless it's sp_Audit_log_DELETE or sp_Usage_Insert
-        //            if (!string.Equals("sp_Trainee_Delete", "sp_Audit_log_DELETE", StringComparison.OrdinalIgnoreCase) &&
-        //                !string.Equals("sp_Trainee_Delete", "sp_Usage_Insert", StringComparison.OrdinalIgnoreCase))
-        //            {
-        //                await _auditLogRepository.AddAuditLogAsync(
-        //                    "sp_Trainee_Delete",
-        //                    parameters,
-        //                    "Delete",
-        //                    error
-        //                );
-        //            }
-        //        }
-
-        //        return rowsAffected > 0;
-        //    }
-
-        //    public async Task<bool> DeleteTraineeAsync(int personId)
-        //    {
-        //        var hasTraining = false;
-        //        string? error = null; // Fix 1: Declare error variable
-        //        int rowsAffected = 0; // Fix 2: Declare rowsAffected variable
-
-        //        var parameters = new[]
-        //        {
-        //    new SqlParameter("@TraineeID", personId),
-        //    new SqlParameter("@PersonTraining", hasTraining)
-        //};
-
-        //        try
-        //        {
-        //            rowsAffected = await _context.Database.ExecuteSqlRawAsync(
-        //                "EXEC sp_Trainee_Delete @TraineeID, @PersonTraining", parameters);
-        //            return rowsAffected > 0;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            error = ex.ToString(); // Capture error for audit log
-        //            return false;
-        //        }
-        //        finally
-        //        {
-        //            if (!string.Equals("sp_Trainee_Delete", "sp_Audit_log_DELETE", StringComparison.OrdinalIgnoreCase) &&
-        //                !string.Equals("sp_Trainee_Delete", "sp_Usage_Insert", StringComparison.OrdinalIgnoreCase))
-        //            {
-        //                await _auditLogRepository.AddAuditLogAsync(
-        //                    "sp_Trainee_Delete",
-        //                    parameters,
-        //                    "Delete",
-        //                    error
-        //                );
-        //            }
-        //        }
-        //    }
 
         public async Task<bool> DeleteTraineeAsync(int personId)
         {
@@ -267,28 +137,5 @@ namespace Apha.BST.DataAccess.Repositories
                 await _auditLogRepository.AddAuditLogAsync("sp_Trainee_Delete", parameters, "Write", error);
             }
         }
-
-
-
-
-
-
-        //public async Task<IEnumerable<Site>> GetAllSitesAsync()
-        //{
-        //    return await _context.Sites.ToListAsync();
-        //}
-        //public async Task<bool> CreateSiteAsync(Site site)
-        //{
-        //    try
-        //    {
-        //        _context.Sites.Add(site);
-        //        await _context.SaveChangesAsync();
-        //        return true;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return false;
-        //    }
-        //}
     }
 }

@@ -12,3 +12,19 @@ function openDateCalender() {
         input.click();
     }
 }
+document.addEventListener('DOMContentLoaded', function () {
+    const checkbox = document.getElementById('news-date-checkbox');
+    const dateInput = document.getElementById('news-date-published');
+
+    if (checkbox && dateInput) {
+        checkbox.addEventListener('change', function () {
+            if (this.checked) {
+                const now = new Date();
+                const formatted = now.toISOString().slice(0, 16).replace('T', ' ');
+                dateInput.value = formatted;
+            } else {
+                dateInput.value = '';
+            }
+        });
+    }
+})

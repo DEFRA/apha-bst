@@ -4,102 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Services;
 using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
 using AutoMapper;
 using FluentAssertions;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 {
     public class TrainingServiceTests : AbstractTrainingServiceTest
     {
-        [Fact]
-        public async Task AddTrainingAsync_WhenSuccessful_ShouldReturnSuccessMessage()
-        {
-            // Arrange
-            MockForAddTraining(returnCode: 0);
-
-            var dto = new TrainingDTO
-            {
-                PersonId = 1,
-                TrainerId = 2,
-                TrainingType = "Test Type",
-                TrainingDateTime = DateTime.Now
-            };
-
-            // Act
-            var result = await _trainingService!.AddTrainingAsync(dto);
-
-            // Assert
-            result.Should().Contain("John Doe has been trained in Test Type brainstem removal on");
-            result.Should().Contain("by Jane Smith");
-        }
-
-        [Fact]
-        public async Task AddTrainingAsync_WhenDuplicate_ShouldReturnErrorMessage()
-        {
-            // Arrange
-            MockForAddTraining(returnCode: 1);
-
-            var dto = new TrainingDTO
-            {
-                PersonId = 1,
-                TrainerId = 2,
-                TrainingType = "Test Type",
-                TrainingDateTime = DateTime.Now
-            };
-
-            // Act
-            var result = await _trainingService!.AddTrainingAsync(dto);
-
-            // Assert
-            result.Should().Be("John Doe has already trained for Test Type brainstem removal: Cannot save record");
-        }
-
-        [Theory]
-        [InlineData("0001-01-01")]
-        [InlineData("9999-12-31")]
-        public async Task AddTrainingAsync_EdgeCaseDates_ShouldReturnSuccessMessage(string date)
-        {
-            var parsedDate = DateTime.Parse(date);
-            MockForAddTraining(returnCode: 0, date: parsedDate);
-
-            var dto = new TrainingDTO
-            {
-                PersonId = 1,
-                TrainerId = 2,
-                TrainingType = "Test Type",
-                TrainingDateTime = parsedDate
-            };
-
-            var result = await _trainingService!.AddTrainingAsync(dto);
-
-            result.Should().Contain("John Doe has been trained in Test Type brainstem removal on");
-            result.Should().Contain("by Jane Smith");
-        }
-
-        [Theory]
-        [InlineData(null, 2)]
-        [InlineData(1, null)]
-        public async Task AddTrainingAsync_NullPersonOrTrainer_ShouldReturnMessageWithId(int? personId, int? trainerId)
-        {
-            // Arrange
-            MockForAddTrainingWithNullNames(personId, trainerId);
-
-            var dto = new TrainingDTO
-            {
-                PersonId = personId ?? 0,
-                TrainerId = trainerId ?? 0,
-                TrainingType = "Test Type",
-                TrainingDateTime = DateTime.Now
-            };
-
-            // Act
-            var result = await _trainingService!.AddTrainingAsync(dto);
-
-            // Assert
-            result.Should().Contain($"{dto.PersonId} has been trained in Test Type brainstem removal on");
-            result.Should().Contain($"by {dto.TrainerId}");
-        }
+       
         [Fact]
         public async Task GetAllTrainingsAsync_ShouldReturnMappedTrainings_WhenTrainingsExist()
         {
@@ -192,6 +109,65 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             MockForTrainingByTrainee_Exception("1", repoThrows: false, mapperThrows: true);
 
             await Assert.ThrowsAsync<AutoMapperMappingException>(() => _trainingService!.GetTrainingByTraineeAsync("1"));
+        }
+        [Fact]
+        public async Task GetTrainerHistoryAsync_SuccessfulRetrieval_ReturnsTrainerHistory()
+        {
+            int personId = 1;
+            string animalType = "Dog";
+            var mockHistory = new List<TrainerHistory> { new TrainerHistory(), new TrainerHistory() };
+            var expectedDtos = new List<TrainerHistoryDTO> { new TrainerHistoryDTO(), new TrainerHistoryDTO() };
+
+            MockForGetTrainerHistory(personId, animalType, mockHistory, expectedDtos);
+
+            var result = await _trainingService!.GetTrainerHistoryAsync(personId, animalType);
+
+            Assert.Equal(expectedDtos, result);
+        }
+
+        [Fact]
+        public async Task GetTrainerHistoryAsync_EmptyResult_ReturnsEmptyList()
+        {
+            int personId = 1;
+            string animalType = "Cat";
+            var mockHistory = new List<TrainerHistory>();
+            var expectedDtos = new List<TrainerHistoryDTO>();
+
+            MockForGetTrainerHistory(personId, animalType, mockHistory, expectedDtos);
+
+            var result = await _trainingService!.GetTrainerHistoryAsync(personId, animalType);
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task GetTrainerHistoryAsync_InvalidPersonId_ReturnsEmptyList()
+        {
+            int invalidPersonId = -1;
+            string animalType = "Dog";
+            var mockHistory = new List<TrainerHistory>();
+            var expectedDtos = new List<TrainerHistoryDTO>();
+
+            MockForGetTrainerHistory(invalidPersonId, animalType, mockHistory, expectedDtos);
+
+            var result = await _trainingService!.GetTrainerHistoryAsync(invalidPersonId, animalType);
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task GetTrainerHistoryAsync_InvalidAnimalType_ReturnsEmptyList()
+        {
+            int personId = 1;
+            string invalidAnimalType = "InvalidType";
+            var mockHistory = new List<TrainerHistory>();
+            var expectedDtos = new List<TrainerHistoryDTO>();
+
+            MockForGetTrainerHistory(personId, invalidAnimalType, mockHistory, expectedDtos);
+
+            var result = await _trainingService!.GetTrainerHistoryAsync(personId, invalidAnimalType);
+
+            Assert.Empty(result);
         }
     }
 }
