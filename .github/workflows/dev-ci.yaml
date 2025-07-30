@@ -1,11 +1,16 @@
 name: Dev Build and Sonar Analysis
 on:
   workflow_dispatch:
+  # push:
+  #   branches:
+  #     - 'feature/*'
+  #     - 'fix/*'
+  #     - 'docs/*'
 env:
   REPOSITORY: apha/bst
 jobs:
   build-and-analyze:
-    name: Build + Test + Sonar + Optional ECR Push
+    name: Build + Test + Sonar
     runs-on: windows-latest
     permissions:
       id-token: write
@@ -75,7 +80,8 @@ jobs:
             /k:"DEFRA_apha-bst" `
             /o:"defra" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.host.url="https://sonarcloud.io"
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /v:"${{ steps.imgtag.outputs.image_tag }}"
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/Apha.BST.sln
