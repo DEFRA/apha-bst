@@ -18,7 +18,8 @@ WORKDIR /src
 # (skip UnitTests for now unless you're testing in Docker)
 
 # Copy full source
-COPY src/. .
+#COPY src/. .
+COPY . .
 
 # Restore dependencies
 RUN dotnet restore Apha.BST.sln
