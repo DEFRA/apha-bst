@@ -72,20 +72,6 @@ jobs:
         run: |
           echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"
 
-      - name: Run Unit Tests with Coverage
-        shell: pwsh
-        run: >
-          dotnet test src/Apha.BST.sln --no-build --configuration Release `
-            /p:CollectCoverage=true `
-            /p:CoverletOutputFormat=cobertura `
-            /p:CoverletOutput=TestResults/coverage/
-
-      - name: Convert coverage to Cobertura
-        run: |
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator -reports:**/*.xml -targetdir:coverage -reporttypes:Cobertura
-
-          
       - name: Start Sonar Analysis
         shell: pwsh
         env:
@@ -97,21 +83,29 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage/coverage.cobertura.xml" `
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.cobertura.xml" `
             /d:sonar.branch.name="${{ github.ref_name }}"
-            
 
-            
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/Apha.BST.sln
       - name: Build Solution
         shell: pwsh
         run: dotnet build src/Apha.BST.sln --configuration Release
-      # - name: Run Unit Tests
-      #   shell: pwsh
-      #   run: dotnet test src/Apha.BST.sln --no-build --configuration Release --logger
-      #     trx
+      - name: Run Unit Tests with Coverage
+        shell: pwsh
+        run: >
+          dotnet test src/apha.bst.sln --no-build --configuration Release `
+            --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+          # dotnet test src/Apha.BST.sln --no-build --configuration Release `
+          #   /p:CollectCoverage=true `
+          #   /p:CoverletOutputFormat=cobertura `
+          #   /p:CoverletOutput=TestResults/coverage/
+
+      # - name: Convert coverage to Cobertura
+      #   run: |
+      #     dotnet tool install --global dotnet-reportgenerator-globaltool
+      #     reportgenerator -reports:**/*.xml -targetdir:coverage -reporttypes:Cobertura
 
       - name: End Sonar Analysis
         shell: pwsh
