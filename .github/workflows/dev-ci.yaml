@@ -71,6 +71,21 @@ jobs:
         shell: pwsh
         run: |
           echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"
+
+      - name: Run Unit Tests with Coverage
+        shell: pwsh
+        run: >
+          dotnet test src/Apha.BST.sln --no-build --configuration Release `
+            /p:CollectCoverage=true `
+            /p:CoverletOutputFormat=cobertura `
+            /p:CoverletOutput=TestResults/coverage/
+
+      - name: Convert coverage to Cobertura
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          reportgenerator -reports:**/*.xml -targetdir:coverage -reporttypes:Cobertura
+
+          
       - name: Start Sonar Analysis
         shell: pwsh
         env:
@@ -97,13 +112,6 @@ jobs:
       #   shell: pwsh
       #   run: dotnet test src/Apha.BST.sln --no-build --configuration Release --logger
       #     trx
-      - name: Run Unit Tests with Coverage
-        shell: pwsh
-        run: >
-          dotnet test src/Apha.BST.sln --no-build --configuration Release `
-            /p:CollectCoverage=true `
-            /p:CoverletOutputFormat=cobertura `
-            /p:CoverletOutput=TestResults/coverage/
 
       - name: End Sonar Analysis
         shell: pwsh
