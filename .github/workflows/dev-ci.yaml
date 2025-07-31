@@ -107,8 +107,8 @@ jobs:
       #     dotnet tool install --global dotnet-reportgenerator-globaltool
       #     reportgenerator -reports:**/*.xml -targetdir:coverage -reporttypes:Cobertura
       - name: List coverage files
-        run: |
-          find . -name 'coverage.cobertura.xml'
+        shell: pwsh
+        run: Get-ChildItem -Recurse -Filter "coverage.cobertura.xml"
       - name: End Sonar Analysis
         shell: pwsh
         env:
