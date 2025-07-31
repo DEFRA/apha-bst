@@ -82,7 +82,9 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
-            /d:sonar.branch.name="${{ github.ref_name }}" 
+            /d:sonar.branch.name="${{ github.ref_name }}" ` 
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage/coverage.cobertura.xml"
+
             
       - name: Restore NuGet packages
         shell: pwsh
@@ -90,10 +92,18 @@ jobs:
       - name: Build Solution
         shell: pwsh
         run: dotnet build src/Apha.BST.sln --configuration Release
-      - name: Run Unit Tests
+      # - name: Run Unit Tests
+      #   shell: pwsh
+      #   run: dotnet test src/Apha.BST.sln --no-build --configuration Release --logger
+      #     trx
+      - name: Run Unit Tests with Coverage
         shell: pwsh
-        run: dotnet test src/Apha.BST.sln --no-build --configuration Release --logger
-          trx
+        run: >
+          dotnet test src/Apha.BST.sln --no-build --configuration Release `
+            /p:CollectCoverage=true `
+            /p:CoverletOutputFormat=cobertura `
+            /p:CoverletOutput=TestResults/coverage/
+
       - name: End Sonar Analysis
         shell: pwsh
         env:
