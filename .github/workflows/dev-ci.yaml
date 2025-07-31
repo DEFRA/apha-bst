@@ -83,7 +83,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.cobertura.xml" `
+            /d:sonar.cs.opencover.reportsPaths=**/TestResults/**/coverage.cobertura.xml `
             /d:sonar.branch.name="${{ github.ref_name }}"
 
       - name: Restore NuGet packages
@@ -106,7 +106,9 @@ jobs:
       #   run: |
       #     dotnet tool install --global dotnet-reportgenerator-globaltool
       #     reportgenerator -reports:**/*.xml -targetdir:coverage -reporttypes:Cobertura
-
+      - name: List coverage files
+        run: |
+          find . -name 'coverage.cobertura.xml'
       - name: End Sonar Analysis
         shell: pwsh
         env:
