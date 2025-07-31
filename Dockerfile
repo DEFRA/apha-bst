@@ -1,5 +1,9 @@
 # -------- Base runtime image --------
-FROM defradigital/dotnetcore-development AS base
+# Allow parent image version to be set at build time
+ARG PARENT_VERSION=dotnet8.0
+
+
+FROM defradigital/dotnetcore-development:$PARENT_VERSION AS base
 WORKDIR /app
 EXPOSE 8080
 USER app
@@ -9,26 +13,18 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy solution and project files for caching
-# COPY src/Apha.BST.sln ./
-# COPY src/Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj Apha.BST/Apha.BST.Web/
-# COPY src/Apha.BST/Apha.BST.Core/Apha.BST.Core.csproj Apha.BST/Apha.BST.Core/
-# COPY src/Apha.BST/Apha.BST.Application/Apha.BST.Application.csproj Apha.BST/Apha.BST.Application/
-# COPY src/Apha.BST/Apha.BST.DataAccess/Apha.BST.DataAccess.csproj Apha.BST/Apha.BST.DataAccess/
-# (skip UnitTests for now unless you're testing in Docker)
 
-# Copy full source
-#COPY src/. .
-COPY . .
+# Copy application source files
+COPY src/. .
 
-# Restore dependencies
+# Restore dependencies for application
 RUN dotnet restore Apha.BST.sln
 
 
 
 # Build
 RUN dotnet build Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
-    -c $BUILD_CONFIGURATION -o /app/build
+    -c "$BUILD_CONFIGURATION" -o /app/build
 
 
 
@@ -36,11 +32,19 @@ RUN dotnet build Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
-    -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+    -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 # -------- Final runtime image --------
 FROM base AS final
+
+# Redefine work directory 
 WORKDIR /app
+
+# Copy published output from the publish stage
 COPY --from=publish /app/publish .
 
+# Explicitly specify user again (even though base already has it)
+USER app
+
+# Define entry point
 ENTRYPOINT ["dotnet", "Apha.BST.Web.dll"]

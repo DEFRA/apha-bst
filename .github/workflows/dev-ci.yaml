@@ -83,6 +83,7 @@ jobs:
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
             /d:sonar.branch.name="${{ github.ref_name }}" 
+            
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/Apha.BST.sln
