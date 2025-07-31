@@ -96,7 +96,7 @@ jobs:
         shell: pwsh
         run: >
           dotnet test src/apha.bst.sln --no-build --configuration Release `
-            --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+            --collect:"XPlat Code Coverage" --settings src/coverlet.runsettings
           # dotnet test src/Apha.BST.sln --no-build --configuration Release `
           #   /p:CollectCoverage=true `
           #   /p:CoverletOutputFormat=cobertura `
