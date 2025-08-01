@@ -11,7 +11,7 @@ env:
   DOTNET_VERSION: '8.0.x'
   SOLUTION_FILE: 'src/Apha.BST.sln' # Replace with your solution file
   SONAR_PROJECT_KEY: 'DEFRA_apha-bst'
-  SONAR_ORG: 'DEFRA'
+  SONAR_ORG: 'defra'
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 jobs:
@@ -51,7 +51,7 @@ jobs:
           /p:CoverletOutputFormat=opencover
 
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
+      uses: SonarSource/sonarqube-scan-action@v2
       with:
         args: >
           -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
