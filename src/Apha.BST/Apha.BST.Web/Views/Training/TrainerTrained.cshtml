@@ -1,0 +1,86 @@
+﻿@model TrainerTrainedViewModel
+@{
+	// var trainees = new List<TraineeViewModel>
+	// 	{
+	// 		new TraineeViewModel { PersonID = 1, Person = "John Doe" },
+	// 		new TraineeViewModel { PersonID = 2, Person = "Jane Smith" }
+	// 	};
+
+	// var trainings = new List<TrainingModel>
+	// 	{
+	// 		new TrainingModel { Person = "John Doe", TrainingAnimal = "Dog", Name = "Site A", TrainingDateTime = DateTime.Now.AddDays(-5), PersonID = 1, TrainingType = "Basic" },
+	// 		new TrainingModel { Person = "Jane Smith", TrainingAnimal = "Cat", Name = "Site B", TrainingDateTime = DateTime.Now.AddDays(-3), PersonID = 2, TrainingType = "Advanced" }
+	// 	};
+	ViewData["Title"] = "Trainer Trained";
+}
+
+
+<div class="w-100 h-100 p-2">
+	<div class=" d-flex flex-column mb-3">
+		<form asp-action="TrainerTrained" method="get" asp-controller="Training">
+			<div class="d-flex justify-content-between ">
+				<span class="w-70 fw-bold text-decoration-underline">
+					Trainer trained
+				</span>
+				<span class="w-30 me-5 px-5">
+					<a href="@Url.Action("Index", "Home")" class="back-button" title="Back to home">
+						<img src="~/Images/cancel.jpeg" size="2px" alt="Back to home" />
+					</a>
+				</span>
+			</div>
+			<div class="w-100 d-flex justify-content-start">
+				<span class="w-30 "><label for="ddlTrainingView">Select trainer</label></span>
+				<span class="w-70 mx-5">
+					<select name="selectedTrainerId" class="search-dropdown" asp-items="Model.TrainerSelectList" onchange="this.form.submit()"></select>
+				</span>
+				<span>
+					<p class=" ErrorText text-start">
+						@if (!string.IsNullOrEmpty(ViewBag.message))
+						{
+							@ViewBag.message
+						}
+
+					</p>
+				</span>
+
+			</div>
+		</form>
+
+	</div>
+
+	<div class="w-100 d-flex justify-content-start">
+		<p class="w-30 me-5">Details</p>
+		@if (Model.SelectedTrainerId != 0)
+{
+		<table id="siteTable" class="w-60 mx-5 grid-table">
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>Trainee</th>
+					<th>Site</th>
+					<th>Species</th>
+					<th>Date Trained</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.TraineeTrainingDetails)
+				{
+					<tr>
+							<td>@item.TraineeNo</td>
+							<td>@item.Trainee</td>
+							<td>@item.Site</td>
+							<td>@item.SpeciesTrained</td>
+							<td>@item.DateTrained.ToShortDateString()</td>
+					</tr>
+				}
+			</tbody>
+
+		</table>
+
+}
+	</div>
+
+
+</div>
+
+

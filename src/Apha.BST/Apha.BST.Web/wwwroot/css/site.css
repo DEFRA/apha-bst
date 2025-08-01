@@ -1,0 +1,353 @@
+.applicationTitle {
+    text-align: center;
+    font-family: Times New Roman;
+    font-weight: bold;
+    font-size: 36pt
+}
+
+.hiddencol {
+    display: none;
+}
+
+body {
+    background-color: #ffffff;
+    color: #333333;
+    font-family: verdana, arial, helvetica, sans-serif;
+    font-size: small;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    overflow-x: hidden;
+}
+
+.width-10 {
+    width: 10%;
+    word-wrap: break-word;
+}
+/*---------------layout-----------------*/
+.width-40 {
+    width: 40%;
+    height: 100%
+}
+
+.layout-right-content {
+    width: 20%;
+    text-align: right;
+    vertical-align: middle;
+}
+
+    .layout-right-content span {
+        display: inline-block;
+        font-weight: bold;
+        width: 100%
+    }
+
+
+.img-fluid {
+    max-width: 90%;
+    height: auto;
+}
+
+.large-font {
+    font-size: Large;
+    font-weight: bold;
+}
+
+.large-inline-font {
+    display: inline-block;
+    font-size: Large;
+    font-weight: bold;
+    width: 100%;
+}
+
+nav .menu-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    margin: 0;
+    padding: 0;
+    width: 100%
+}
+
+.menu-bar ul {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    color: #0000C0;
+    background-color: White;
+    font-family: Verdana;
+    font-size: Small;
+    font-weight: bold;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+}
+
+    .menu-bar ul li:first-child {
+        padding-left: 8px;
+    }
+
+    .menu-bar ul li {
+        width: 13%;
+        padding: 6px 3px 2px 3px
+    }
+
+        .menu-bar ul li a {
+            color: #0b2677;
+            background-color: White;
+            font-family: Verdana;
+            font-size: Small;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+            .menu-bar ul li a:hover {
+                color: #E3EAEB;
+                background-color: #666666;
+            }
+
+
+            .menu-bar ul li a:visited {
+                color: #0b2677;
+                text-decoration: none;
+            }
+
+
+            .menu-bar ul li a::after {
+                padding-right: 0px
+            }
+
+        .menu-bar ul li:hover .dropdown-menu {
+            display: block;
+            border-radius: 0;
+            border: 1px solid;
+            left: 0px;
+            margin: 0;
+            padding: 0;
+        }
+
+.dropdown:hover {
+    color: #E3EAEB;
+    background-color: #666666;
+}
+
+    .dropdown:hover .nav-link {
+        color: #E3EAEB;
+        background-color: #666666;
+    }
+
+/*--Home---*/
+.home-container {
+    color: #333333;
+    border-color: Black;
+    height: 8px;
+    border-collapse: collapse;
+    border: 1px solid Gray;
+}
+
+    .home-container .home-title {
+        font-weight: bold;
+    }
+
+    .home-container tr td ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+        .home-container tr td ul li {
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid Gray;
+            border-bottom: 1px solid Gray;
+        }
+
+
+/*---- News----*/
+.news-container {
+    color: Black;
+    border-color: Black;
+    height: 8px;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+.news-header {
+    background-color: #E0E0E0;
+    border-color: Gray;
+}
+
+.news-container .news-title {
+    font-weight: bold;
+}
+
+.news-container tr td {
+    padding: 0;
+}
+
+    .news-container tr td ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+        .news-container tr td ul li {
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            border-left: 2px solid black;
+            border-right: 2px solid black;
+        }
+
+            .news-container tr td ul li:last-child {
+                border-bottom: none;
+            }
+
+            .news-container tr td ul li:not(:last-child) {
+                margin-bottom: 15px;
+            }
+/*search dropdown*/
+.search-dropdown {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: auto;
+    font-family: Verdana;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #333333;
+}
+
+
+/*------------GridView-------*/
+.grid-table {
+    width: 60%;
+    border-collapse: collapse;
+}
+
+    .grid-table th, .grid-table td {
+        border: 1px solid #999;
+        padding: 3px;
+    }
+
+    .grid-table th {
+        background-color: black;
+        color: white;
+        font-weight: bold;
+    }
+
+    .grid-table tr:nth-child(even) {
+        background-color: #cccccc;
+    }
+
+    .grid-table tr form button:hover {
+        text-decoration-line: underline
+    }
+
+.custom-underline-hover {
+    text-decoration: none;
+    font-size: small;
+    color: #000040;
+}
+
+    .custom-underline-hover:hover {
+        text-decoration: underline
+    }
+
+/*input calender */
+input[type="date"].custom-date-input::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    pointer-events: none;
+}
+
+input[type="date"].custom-date-input {
+    position: relative;
+    z-index: 2;
+}
+
+input[type="date"].custom-date-input {
+    -moz-appearance: textfield;
+}
+
+/* TrainerHistory.css */
+
+body {
+    font-family: 'Verdana', sans-serif;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+}
+
+.content-wrapper {
+    width: 15%;
+    vertical-align: top;
+}
+
+.trainer-view h2 {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+    .form-group label {
+        display: inline-block;
+        width: 200px;
+        vertical-align: top;
+    }
+
+.form-control {
+    width: 208px;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.grid-view {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .grid-view th {
+        background-color: #000;
+        color: #fff;
+        font-weight: bold;
+        padding: 8px;
+    }
+
+    .grid-view td {
+        padding: 8px;
+        border: 1px solid #999;
+    }
+
+    .grid-view tr:nth-child(even) {
+        background-color: #ccc;
+    }
+
+    .grid-view tr:hover {
+        background-color: #f5f5f5;
+    }
+
+.error-message {
+    color: red;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        width: 100%;
+    }
+
+    .form-group label,
+    .form-control {
+        width: 100%;
+    }
+}

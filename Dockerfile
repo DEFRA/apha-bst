@@ -1,9 +1,50 @@
-# Base image for running the app
-# FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine3.21 AS base
-FROM defradigital/dotnetcore-development AS base
+# -------- Base runtime image --------
+# Allow parent image version to be set at build time
+ARG PARENT_VERSION=dotnet8.0
 
-# Set the working directory inside the container
-# set this tag as v0.0.1
+
+FROM defradigital/dotnetcore-development:$PARENT_VERSION AS base
+WORKDIR /app
+EXPOSE 8080
+USER app
+
+# -------- Build image with SDK --------
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+
+# Copy application source files
+COPY src/. .
+
+# Restore dependencies for application
+RUN dotnet restore Apha.BST.sln
+
+
+
+# Build
+RUN dotnet build Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
+    -c "$BUILD_CONFIGURATION" -o /app/build
+
+
+
+# -------- Publish stage --------
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
+    -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
+
+# -------- Final runtime image --------
+FROM base AS final
+
+# Redefine work directory 
 WORKDIR /app
 
-EXPOSE 8080
+# Copy published output from the publish stage
+COPY --from=publish /app/publish .
+
+# Explicitly specify user again (even though base already has it)
+USER app
+
+# Define entry point
+ENTRYPOINT ["dotnet", "Apha.BST.Web.dll"]
