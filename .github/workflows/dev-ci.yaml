@@ -113,7 +113,9 @@ jobs:
       - name: Run Unit Tests with Coverage
         shell: pwsh
         run: >
-          dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutput=../../TestResults/Apha.BST.Application.coverage.opencover.xml /p:CoverletOutputFormat=opencover
+          #dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutput=../../TestResults/Apha.BST.Application.coverage.opencover.xml /p:CoverletOutputFormat=opencover
+
+          dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutput=../../TestResults/Apha.BST.Web.coverage.opencover.xml /p:CoverletOutputFormat=opencover
           # dotnet test src/apha.bst.sln --no-build --configuration Release `
           #   --collect:"XPlat Code Coverage" --settings src/coverlet.runsettings
       # - name: Convert coverage to Cobertura
