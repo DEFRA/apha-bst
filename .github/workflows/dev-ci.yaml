@@ -104,7 +104,7 @@ jobs:
           reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coverage -reporttypes:Cobertura -reportfile:coverage.cobertura.xml
       - name: List coverage files
         shell: pwsh
-        run: Get-ChildItem -Recurse -Filter "*.cobertura.xml"
+        run: Get-ChildItem -Recurse -Filter "*cobertura.xml"
       - name: End Sonar Analysis
         shell: pwsh
         env:
