@@ -113,8 +113,9 @@ jobs:
           secrets.SONAR_TOKEN }}"
   push-image:
     name: Push Docker Image
-    needs: build-and-analyze-paused  #remove -paused
+    needs: build-and-analyze
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.pushImage == 'true' }}
     permissions:
       id-token: write
       contents: read
