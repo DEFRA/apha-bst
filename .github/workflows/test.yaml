@@ -40,13 +40,15 @@ jobs:
           --no-build --configuration Release \
           /p:CollectCoverage=true \
           /p:CoverletOutput=../../../TestResults/Apha.BST.Application.coverage.opencover.xml \
-          /p:CoverletOutputFormat=opencover
+          /p:CoverletOutputFormat=opencover \
+          --logger "trx;LogFileName=../../../TestResults/Apha.BST.Application.test_results.trx"
 
         dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
           --no-build --configuration Release \
           /p:CollectCoverage=true \
           /p:CoverletOutput=../../../TestResults/Apha.BST.Web.coverage.opencover.xml \
-          /p:CoverletOutputFormat=opencover
+          /p:CoverletOutputFormat=opencover \
+          --logger "trx;LogFileName=../../../TestResults/Apha.BST.Web.test_results.trx"
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2
@@ -57,6 +59,7 @@ jobs:
           -Dsonar.token=${{ env.SONAR_TOKEN }}
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.cs.opencover.reportsPaths=TestResults/*.opencover.xml
+          -Dsonar.cs.vstest.reportsPaths=TestResults/*.test_results.trx
           -Dsonar.coverage.exclusions=**/Migrations/**
           -Dsonar.branch.name=${{ github.ref_name }}
 
