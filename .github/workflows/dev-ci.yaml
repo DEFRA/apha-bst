@@ -1,15 +1,15 @@
 name: Dev Build and Sonar Analysis
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'feature/*'
-      - 'fix/*'
-      - 'docs/*'
+  # push:
+  #   branches:
+  #     - 'feature/*'
+  #     - 'fix/*'
+  #     - 'docs/*'
 
-  pull_request:
-    branches:
-      - main      
+  # pull_request:
+  #   branches:
+  #     - main      
 env:
   REPOSITORY: apha/bst
 jobs:
@@ -71,6 +71,7 @@ jobs:
         run: >
           $imageTag = "${{ steps.versioning.outputs.version }}-dev-g${{
           steps.shortsha.outputs.shortsha }}"
+
           "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
 
       - name: Print Docker image tag
