@@ -81,16 +81,18 @@ jobs:
 
       - name: Check last commit message for 'ecrpush'
         id: check_commit
+        shell: bash
         run: |
           COMMIT_MSG="$(git log -1 --pretty=%B)"
           echo "Last commit message: $COMMIT_MSG"
           if [[ "$COMMIT_MSG" == *"ecrpush"* ]]; then
-             echo "should_push=true"
+            echo "should_push=true"
             echo "should_push=true" >> $GITHUB_OUTPUT
           else
             echo "should_push=false"
             echo "should_push=false" >> $GITHUB_OUTPUT
-          fi          
+          fi
+    
 
       - name: Start Sonar Analysis
         shell: pwsh
