@@ -1,0 +1,69 @@
+name: Sample Test
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feature/*'
+      # - 'fix/*'
+      # - 'docs/*'
+      # - main
+env:
+  DOTNET_VERSION: '8.0.x'
+  SOLUTION_FILE: 'src/Apha.BST.sln' # Replace with your solution file
+  SONAR_PROJECT_KEY: 'DEFRA_apha-bst'
+  SONAR_ORG: 'DEFRA'
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+jobs:
+  build-test-sonar:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+    - name: Build solution
+      run: dotnet build ${{ env.SOLUTION_FILE }} --no-restore --configuration Release
+
+    - name: Run unit tests with OpenCover coverage
+      run: |
+        mkdir -p src/TestResults
+
+        # Update this block for each test project
+        dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj \
+          --no-build --configuration Release \
+          /p:CollectCoverage=true \
+          /p:CoverletOutput=../../../TestResults/Apha.BST.Application.coverage.opencover.xml \
+          /p:CoverletOutputFormat=opencover
+
+        dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
+          --no-build --configuration Release \
+          /p:CollectCoverage=true \
+          /p:CoverletOutput=../../../TestResults/Apha.BST.Web.coverage.opencover.xml \
+          /p:CoverletOutputFormat=opencover
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        args: >
+          -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+          -Dsonar.organization=${{ env.SONAR_ORG }}
+          -Dsonar.login=${{ env.SONAR_TOKEN }}
+          -Dsonar.cs.opencover.reportsPaths=TestResults/*.opencover.xml
+          -Dsonar.coverage.exclusions=**/Migrations/**
+          -Dsonar.branch.name=${{ github.ref_name }}
+
+    - name: Upload test and coverage artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestResults
+        path: ./TestResults
