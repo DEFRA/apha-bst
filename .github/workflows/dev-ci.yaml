@@ -1,11 +1,12 @@
 name: Dev Build and Sonar Analysis
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - 'feature/*'
-  #     - 'fix/*'
-  #     - 'docs/*'
+  push:
+    branches:
+      # - 'feature/*'
+      # - 'fix/*'
+      # - 'docs/*'
+      - main
 
   # pull_request:
   #   branches:
