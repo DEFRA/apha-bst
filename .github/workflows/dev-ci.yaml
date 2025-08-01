@@ -102,10 +102,8 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
-            /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml" `
             /d:sonar.branch.name="${{ github.ref_name }}"
-            #/d:sonar.cs.cobertura.reportsPaths="coverage/Cobertura.xml" `
-            #/d:sonar.cs.opencover.reportsPaths=**/TestResults/**/coverage.cobertura.xml `
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/Apha.BST.sln
@@ -115,20 +113,11 @@ jobs:
       - name: Run Unit Tests with Coverage
         shell: pwsh
         run: >
-          dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutput=../../TestResults/Apha.BST.Application.coverage.opencover.xml /p:CoverletOutputFormat=opencover
-
-          dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutput=../../TestResults/Apha.BST.Web.coverage.opencover.xml /p:CoverletOutputFormat=opencover
-          # dotnet test src/apha.bst.sln --no-build --configuration Release `
-          #   --collect:"XPlat Code Coverage" --settings src/coverlet.runsettings
-      # - name: Convert coverage to Cobertura
-      #   run: |
-      #     dotnet tool install --global dotnet-reportgenerator-globaltool
-      #     #reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coverage -reporttypes:Cobertura
-      #     reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Xml
-      #     #reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coverage -reporttypes:OpenCover
+          dotnet test src/apha.bst.sln --no-build --configuration Release /p:CollectCoverage=true `
+            /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputFormat=opencover
       - name: List coverage files
         shell: pwsh
-        run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"
+        run: Get-ChildItem -Recurse -Filter "*coverage.opencover.xml"
       - name: End Sonar Analysis
         shell: pwsh
         env:
