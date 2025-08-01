@@ -41,14 +41,14 @@ jobs:
           /p:CollectCoverage=true \
           /p:CoverletOutput=../../../TestResults/Apha.BST.Application.coverage.opencover.xml \
           /p:CoverletOutputFormat=opencover \
-          --logger "trx;LogFileName=../../../TestResults/Apha.BST.Application.test_results.trx"
+          --logger "trx;LogFileName=../../../../TestResults/Apha.BST.Application.test_results.trx"
 
         dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
           --no-build --configuration Release \
           /p:CollectCoverage=true \
           /p:CoverletOutput=../../../TestResults/Apha.BST.Web.coverage.opencover.xml \
           /p:CoverletOutputFormat=opencover \
-          --logger "trx;LogFileName=../../../TestResults/Apha.BST.Web.test_results.trx"
+          --logger "trx;LogFileName=../../../../TestResults/Apha.BST.Web.test_results.trx"
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2
