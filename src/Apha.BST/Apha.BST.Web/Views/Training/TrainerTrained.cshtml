@@ -1,4 +1,4 @@
-﻿@* @model TrainerTrainedViewModel
+﻿@model TrainerTrainedViewModel
 @{
 	// var trainees = new List<TraineeViewModel>
 	// 	{
@@ -13,11 +13,11 @@
 	// 	};
 	ViewData["Title"] = "Trainer Trained";
 }
- *@
+
 
 <div class="w-100 h-100 p-2">
 	<div class=" d-flex flex-column mb-3">
-		<form asp-action="TrainerTrained" method="post" asp-controller="Training">
+		<form asp-action="TrainerTrained" method="get" asp-controller="Training">
 			<div class="d-flex justify-content-between ">
 				<span class="w-70 fw-bold text-decoration-underline">
 					Trainer trained
@@ -31,32 +31,7 @@
 			<div class="w-100 d-flex justify-content-start">
 				<span class="w-30 "><label for="ddlTrainingView">Select trainer</label></span>
 				<span class="w-70 mx-5">
-					@* <select id="traineeSelect" name="traineeId" class="search-dropdown" onchange="this.form.submit()">
-						<option value="SelectTrainee">Select trainer</option>
-						<option value="All">All</option>
-						@foreach (var trainee in trainees)
-						{
-							<option>@trainee.Person</option>
-						}
-					</select> *@
-					@* <select id="trainerSelect" name="selectedTrainerId" class="search-dropdown" onchange="this.form.submit()">
-						<option value="All" selected="@(Model.SelectedTrainerId == "All" ? "selected" : null)">All</option>
-						@foreach (var trainer in Model.AllTrainers)
-						{
-							<option value="@trainer.Value" selected="@(Model.SelectedTrainerId == trainer.Value ? "selected" : null)">
-								@trainer.Text
-							</option>
-						}
-					</select> *@
-					<select id="trainerSelect" name="selectedTrainerId" class="search-dropdown" onchange="this.form.submit()">
-						<option value="All" selected="@(Model.SelectedTrainerId == "All" ? "selected" : null)">All</option>
-						@foreach (var trainer in Model.AllTrainers)
-						{
-							<option value="@trainer.Value" selected="@(Model.SelectedTrainerId == trainer.Value ? "selected" : null)">
-								@trainer.Text
-							</option>
-						}
-					</select>
+					<select name="selectedTrainerId" class="search-dropdown" asp-items="Model.TrainerSelectList" onchange="this.form.submit()"></select>
 				</span>
 				<span>
 					<p class=" ErrorText text-start">
@@ -75,6 +50,8 @@
 
 	<div class="w-100 d-flex justify-content-start">
 		<p class="w-30 me-5">Details</p>
+		@if (Model.SelectedTrainerId != 0)
+{
 		<table id="siteTable" class="w-60 mx-5 grid-table">
 			<thead>
 				<tr>
@@ -86,21 +63,21 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (var item in Model.TrainerTrainedList)
+				@foreach (var item in Model.TraineeTrainingDetails)
 				{
 					<tr>
-						<td>@item.No</td>
-						<td>@item.Trainee</td>
-						<td>@item.Site</td>
-						<td>@item.Species</td>
-						<td>@item.DateTrained.ToString("yyyy-MM-dd")</td>
+							<td>@item.TraineeNo</td>
+							<td>@item.Trainee</td>
+							<td>@item.Site</td>
+							<td>@item.SpeciesTrained</td>
+							<td>@item.DateTrained.ToShortDateString()</td>
 					</tr>
 				}
 			</tbody>
 
 		</table>
 
-
+}
 	</div>
 
 

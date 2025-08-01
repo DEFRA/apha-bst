@@ -6,10 +6,10 @@ namespace Apha.BST.Web.Models
 {
     public class AddTrainingViewModel
     {
-        [Required(ErrorMessage = "Trainee is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Trainee is required")]
         public int PersonId { get; set; }
 
-        [Required(ErrorMessage = "Trainee is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Trainer is required")]
         public int TrainerId { get; set; }
 
         [Required(ErrorMessage = "TrainingType is required")]
@@ -20,8 +20,10 @@ namespace Apha.BST.Web.Models
 
         [Required(ErrorMessage = "TrainingDateTime is required")]
         public DateTime TrainingDateTime { get; set; }
-       
+
         public IEnumerable<SelectListItem> Persons { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> TrainingTypesList { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> TrainingAnimalList { get; set; } = new List<SelectListItem>();
     }
     
 

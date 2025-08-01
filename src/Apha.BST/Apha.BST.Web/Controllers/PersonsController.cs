@@ -18,7 +18,7 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> IndexAsync()
         {
             var person = await _personService.GetAllPersonAsync();
-            _mapper.Map<IEnumerable<PersonsDTO>>(person);
+            _mapper.Map<IEnumerable<PersonsDto>>(person);
             return View(person);
 
         }

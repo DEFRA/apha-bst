@@ -26,45 +26,16 @@ namespace Apha.BST.Application.Services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<IEnumerable<SiteDTO>> GetAllSitesAsync(string plantNo)
-        {
-            try
-            {
+        public async Task<IEnumerable<SiteDto>> GetAllSitesAsync(string plantNo)
+        {          
                 var sites = await _siteRepository.GetAllSitesAsync(plantNo);
-                return _mapper.Map<IEnumerable<SiteDTO>>(sites);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+                return _mapper.Map<IEnumerable<SiteDto>>(sites);            
         }
-        //public async Task<IEnumerable<SiteDTO>> GetAllSitesAsync(string plantNo)
-        //{
-        //    var sites = await _siteRepository.GetAllSitesAsync(plantNo);
 
-        //    var grouped = sites
-        //        .GroupBy(s => new { s.PlantNo, s.Name })
-        //        .Select(g => new SiteDTO
-        //        {
-        //            PlantNo = g.Key.PlantNo,
-        //            Name = g.Key.Name,
-        //            AddressLine1 = g.First().AddressLine1,
-        //            AddressLine2 = g.First().AddressLine2,
-        //            AddressTown = g.First().AddressTown,
-        //            AddressCounty = g.First().AddressCounty,
-        //            AddressPostCode = g.First().AddressPostCode,
-        //            Telephone = g.First().Telephone,
-        //            Fax = g.First().Fax,
-        //            Ahvla = string.Join(", ", g.Select(x => x.Ahvla).Distinct())
-        //        });
-
-        //    return grouped;
-        //}
-
-        public async Task<List<SiteTraineeDTO>> GetSiteTraineesAsync(string plantNo)
+        public async Task<List<SiteTraineeDto>> GetSiteTraineesAsync(string plantNo)
         {
             var trainees = await _siteRepository.GetSiteTraineesAsync(plantNo);
-            return trainees.Select(t => new SiteTraineeDTO
+            return trainees.Select(t => new SiteTraineeDto
             {
                 PersonId = t.PersonId,
                 Person = t.Person,
@@ -75,7 +46,7 @@ namespace Apha.BST.Application.Services
         }
 
         //For Addsite
-        public async Task<string> AddSiteAsync(SiteDTO siteDto)
+        public async Task<string> AddSiteAsync(SiteDto siteDto)
         {
             var site = _mapper.Map<Site>(siteDto);
             var createdSite = await _siteRepository.AddSiteAsync(site);

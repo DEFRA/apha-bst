@@ -21,49 +21,74 @@ namespace Apha.BST.Application.Services
             _trainingRepository = trainingRepository;
             _mapper = mapper;            
         }
-        public async Task<List<PersonsDTO>> GetTraineesAsync()
+        public async Task<List<PersonsDto>> GetTraineesAsync()
         {
             var persons = await _trainingRepository.GetAllTraineesAsync();
-            return _mapper.Map<List<PersonsDTO>>(persons);
+            return _mapper.Map<List<PersonsDto>>(persons);
         }
 
-        public async Task<IEnumerable<TrainerTrainingDTO>> GetTrainingByTraineeAsync(string traineeId)
-        {
-            if (!int.TryParse(traineeId, out int id))
-            {
-                id = 0; // Treat invalid or "All" input as all records
-            }
+        public async Task<IEnumerable<TrainerTrainingDto>> GetTrainingByTraineeAsync(string traineeId)
+        {           
             var trainings = await _trainingRepository.GetTrainingByTraineeAsync(traineeId);
-            return _mapper.Map<IEnumerable<TrainerTrainingDTO>>(trainings);
+            return _mapper.Map<IEnumerable<TrainerTrainingDto>>(trainings);
         }
-        public async Task<IEnumerable<TrainerTrainingDTO>> GetAllTrainingsAsync()
+        public async Task<IEnumerable<TrainerTrainingDto>> GetAllTrainingsAsync()
         {
             var trainings = await _trainingRepository.GetAllTrainingsAsync();
-            return _mapper.Map<IEnumerable<TrainerTrainingDTO>>(trainings);
+            return _mapper.Map<IEnumerable<TrainerTrainingDto>>(trainings);
         }
 
         //For EditTraining      
-        public async Task<EditTrainingDTO?> GetTrainingByKeysAsync(int personId, string species, DateTime dateTrained)
+        public async Task<TrainingDto?> GetTrainingByKeysAsync(int traineeId, int trainerId, string species, DateTime dateTrained, string trainingType)
         {
-            var training = await _trainingRepository.GetTrainingByKeysAsync(personId, species, dateTrained);
-            return _mapper.Map<EditTrainingDTO>(training);
+            var training = await _trainingRepository.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
+            return _mapper.Map<TrainingDto>(training);
         }
 
-        public async Task<string> UpdateTrainingAsync(EditTrainingDTO dto)
+        public async Task<string> UpdateTrainingAsync(EditTrainingDto dto)
         {
-            var training = _mapper.Map<Training>(dto);
-            return await _trainingRepository.UpdateTrainingAsync(training, dto.TrainingDateTimeOld, dto.TrainingAnimalOld);
+            if (dto.TraineeId == dto.TrainerId)
+            {
+                return "Trainee and Trainer cannot be the same person.";
+            }
+            var editTraining = _mapper.Map<EditTraining>(dto);          
+
+            // Fetch names for message
+            var trainee = await _trainingRepository.GetPersonByIdAsync(dto.TraineeId);
+            var trainer = await _trainingRepository.GetPersonByIdAsync(dto.TrainerId);
+
+            string traineeName = trainee?.Person ?? dto.TraineeId.ToString();
+            string trainerName = trainer?.Person ?? dto.TrainerId.ToString();
+            var result = await _trainingRepository.UpdateTrainingAsync(editTraining);
+            if (result.StartsWith("FAIL"))
+            {
+                return $"Save failed.";
+            }
+
+            return $"{traineeName} has been trained in {dto.TrainingAnimal} brainstem removal on {dto.TrainingDateTime:dd/MM/yyyy} by {trainerName}";
+
         }
 
         //For TrainerHistory
-        public async Task<IEnumerable<TrainerHistoryDTO>> GetTrainerHistoryAsync(int personId, string animalType)
+        public async Task<IEnumerable<TrainerHistoryDto>> GetTrainerHistoryAsync(int personId, string animalType)
         {
             var history = await _trainingRepository.GetTrainerHistoryAsync(personId, animalType);
-            return _mapper.Map<IEnumerable<TrainerHistoryDTO>>(history);
+            return _mapper.Map<IEnumerable<TrainerHistoryDto>>(history);
         }
 
-        public async Task<string> AddTrainingAsync(TrainingDTO trainingDto)
-        {           
+        //For TrainerTrained
+        public async Task<IEnumerable<TrainerTrainedDto>> GetTrainerTrainedAsync(int trainerId)
+        {
+            var trained = await _trainingRepository.GetTrainerTrainedAsync(trainerId);
+            return _mapper.Map<IEnumerable<TrainerTrainedDto>>(trained);
+        }
+
+        public async Task<string> AddTrainingAsync(TrainingDto trainingDto)
+        {
+            if (trainingDto.PersonId == trainingDto.TrainerId)
+            {
+                return "Trainee and Trainer cannot be the same person.";
+            }
             var training = _mapper.Map<Training>(trainingDto);
             var result = await _trainingRepository.AddTrainingAsync(training);
             // Fetch names from Persons table
@@ -83,7 +108,16 @@ namespace Apha.BST.Application.Services
         }
         public async Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained)
         {
-            return await _trainingRepository.DeleteTrainingAsync(traineeId, species, dateTrained);
+            var result = await _trainingRepository.DeleteTrainingAsync(traineeId, species, dateTrained);
+            var trainee = await _trainingRepository.GetPersonByIdAsync(traineeId);
+            string traineeName = trainee?.Person ?? traineeId.ToString();
+
+            if (result.StartsWith("FAIL"))
+            {
+                return $"Delete failed.";
+            }
+
+            return $"{traineeName} trained in {species} brainstem removal on {dateTrained:dd/MM/yyyy} has been deleted from the database";
         }
     }
 }

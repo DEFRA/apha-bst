@@ -9,6 +9,7 @@ using Apha.BST.Core.Entities;
 using Apha.BST.Core.Interfaces;
 using AutoMapper;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -16,7 +17,74 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 {
     public class TrainingServiceTests : AbstractTrainingServiceTest
     {
-       
+        [Fact]
+        public async Task AddTrainingAsync_WithValidInput_ShouldReturnSuccessMessage()
+        {
+            var trainingDto = new TrainingDto
+            {
+                PersonId = 1,
+                TrainerId = 2,
+                TrainingType = "Test",
+                TrainingDateTime = DateTime.Now
+            };
+
+            var trainingEntity = new Training();
+            var trainee = new Persons { Person = "John Doe" };
+            var trainer = new Persons { Person = "Jane Smith" };
+
+            MockForAddTrainingAsync(trainingDto, trainingEntity, "SUCCESS", trainee, trainer);
+
+            var result = await _trainingService!.AddTrainingAsync(trainingDto);
+
+            Assert.Contains("John Doe has been trained in Test brainstem removal", result);
+            Assert.Contains("by Jane Smith", result);
+        }
+
+        [Fact]
+        public async Task AddTrainingAsync_WithDuplicateTraining_ShouldReturnErrorMessage()
+        {
+            var trainingDto = new TrainingDto
+            {
+                PersonId = 1,
+                TrainerId = 2,
+                TrainingType = "Test",
+                TrainingDateTime = DateTime.Now
+            };
+
+            var trainingEntity = new Training();
+            var trainee = new Persons { Person = "John Doe" };
+
+            MockForAddTrainingAsync(trainingDto, trainingEntity, "EXISTS", trainee, null);
+
+            var result = await _trainingService!.AddTrainingAsync(trainingDto);
+
+            Assert.Contains("John Doe has already trained for Test brainstem removal", result);
+            Assert.Contains("Cannot save record", result);
+        }        
+
+        [Fact]
+        public async Task AddTrainingAsync_WithNonExistentTrainee_ShouldUseIdAsName()
+        {
+            var trainingDto = new TrainingDto
+            {
+                PersonId = 999,
+                TrainerId = 2,
+                TrainingType = "Test",
+                TrainingDateTime = DateTime.Now
+            };
+
+            var trainingEntity = new Training();
+            Persons? trainee = null;
+            var trainer = new Persons { Person = "Jane Smith" };
+
+            MockForAddTrainingAsync(trainingDto, trainingEntity, "SUCCESS", trainee, trainer);
+
+            var result = await _trainingService!.AddTrainingAsync(trainingDto);
+
+            Assert.Contains("999 has been trained in Test brainstem removal", result);
+            Assert.Contains("by Jane Smith", result);
+        }
+
         [Fact]
         public async Task GetAllTrainingsAsync_ShouldReturnMappedTrainings_WhenTrainingsExist()
         {
@@ -25,10 +93,10 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             new TrainerTraining { PersonID = 1, Name = "Training 1" },
             new TrainerTraining { PersonID = 2, Name = "Training 2" }
         };
-            var mappedTrainings = new List<TrainerTrainingDTO>
+            var mappedTrainings = new List<TrainerTrainingDto>
         {
-            new TrainerTrainingDTO { PersonID = 1, Name = "Training 1" },
-            new TrainerTrainingDTO { PersonID = 2, Name = "Training 2" }
+            new TrainerTrainingDto { PersonID = 1, Name = "Training 1" },
+            new TrainerTrainingDto{ PersonID = 2, Name = "Training 2" }
         };
 
             MockForGetAllTrainings(trainings, mappedTrainings);
@@ -43,7 +111,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetAllTrainingsAsync_ShouldReturnEmptyList_WhenNoTrainingsExist()
         {
             var emptyTrainings = new List<TrainerTraining>();
-            var emptyMapped = new List<TrainerTrainingDTO>();
+            var emptyMapped = new List<TrainerTrainingDto>();
 
             MockForGetAllTrainings(emptyTrainings, emptyMapped);
 
@@ -58,7 +126,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetTrainingByTraineeAsync_ShouldReturnTrainings(string traineeId)
         {
             var trainings = new List<TrainerTraining> { new TrainerTraining() };
-            var mappedDtos = new List<TrainerTrainingDTO> { new TrainerTrainingDTO() };
+            var mappedDtos = new List<TrainerTrainingDto> { new TrainerTrainingDto() };
 
             MockForGetTrainingByTrainee(traineeId, trainings, mappedDtos);
 
@@ -72,7 +140,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetTrainingByTraineeAsync_ShouldReturnEmpty_WhenTraineeIdIsInvalid(string traineeId)
         {
             var trainings = new List<TrainerTraining>();
-            var mappedDtos = new List<TrainerTrainingDTO>();
+            var mappedDtos = new List<TrainerTrainingDto>();
 
             MockForGetTrainingByTrainee(traineeId, trainings, mappedDtos);
 
@@ -86,7 +154,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetTrainingByTraineeAsync_EmptyResult_ReturnsEmptyList()
         {
             var trainings = new List<TrainerTraining>();
-            var mappedDtos = new List<TrainerTrainingDTO>();
+            var mappedDtos = new List<TrainerTrainingDto>();
 
             MockForGetTrainingByTrainee("1", trainings, mappedDtos);
 
@@ -116,7 +184,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             int personId = 1;
             string animalType = "Dog";
             var mockHistory = new List<TrainerHistory> { new TrainerHistory(), new TrainerHistory() };
-            var expectedDtos = new List<TrainerHistoryDTO> { new TrainerHistoryDTO(), new TrainerHistoryDTO() };
+            var expectedDtos = new List<TrainerHistoryDto> { new TrainerHistoryDto(), new TrainerHistoryDto() };
 
             MockForGetTrainerHistory(personId, animalType, mockHistory, expectedDtos);
 
@@ -131,7 +199,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             int personId = 1;
             string animalType = "Cat";
             var mockHistory = new List<TrainerHistory>();
-            var expectedDtos = new List<TrainerHistoryDTO>();
+            var expectedDtos = new List<TrainerHistoryDto>();
 
             MockForGetTrainerHistory(personId, animalType, mockHistory, expectedDtos);
 
@@ -146,7 +214,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             int invalidPersonId = -1;
             string animalType = "Dog";
             var mockHistory = new List<TrainerHistory>();
-            var expectedDtos = new List<TrainerHistoryDTO>();
+            var expectedDtos = new List<TrainerHistoryDto>();
 
             MockForGetTrainerHistory(invalidPersonId, animalType, mockHistory, expectedDtos);
 
@@ -161,7 +229,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             int personId = 1;
             string invalidAnimalType = "InvalidType";
             var mockHistory = new List<TrainerHistory>();
-            var expectedDtos = new List<TrainerHistoryDTO>();
+            var expectedDtos = new List<TrainerHistoryDto>();
 
             MockForGetTrainerHistory(personId, invalidAnimalType, mockHistory, expectedDtos);
 

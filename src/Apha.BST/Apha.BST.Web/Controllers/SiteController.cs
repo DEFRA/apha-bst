@@ -14,14 +14,12 @@ namespace Apha.BST.Web.Controllers
     {
         private readonly ISiteService _siteService;
         private readonly IMapper _mapper;
-        private const string siteName = "All";
-        private readonly ILogger<SiteController> _logger;
+        private const string siteAll = "All";       
 
-        public SiteController(ISiteService siteService, IMapper mapper, ILogger<SiteController> logger)
+        public SiteController(ISiteService siteService, IMapper mapper)
         {
             _siteService = siteService;
-            _mapper = mapper;
-            _logger = logger;
+            _mapper = mapper;          
         }
         public IActionResult Index()
         {
@@ -29,18 +27,26 @@ namespace Apha.BST.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewSite(string selectedSite = siteName)
+        public async Task<IActionResult> ViewSite(string selectedSite = siteAll)
         {
-            var allSitesDto = await _siteService.GetAllSitesAsync(siteName);
+            var allSitesDto = await _siteService.GetAllSitesAsync("All");
             var allSites = _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto);
 
-            IEnumerable<SiteViewModel> filteredSites = selectedSite == siteName
+            var siteSelectList = allSites
+                .Select(site => new SelectListItem
+                {
+                    Value = site.PlantNo,
+                    Text = site.Name,                   
+                })
+                .ToList();           
+
+            IEnumerable<SiteViewModel> filteredSites = selectedSite == "All"
                 ? allSites
                 : allSites.Where(s => s.PlantNo == selectedSite);
 
             var model = new SiteListViewModel
             {
-                AllSites = allSites,
+                AllSites = siteSelectList,
                 FilteredSites = filteredSites,
                 SelectedSite = selectedSite
             };
@@ -49,32 +55,44 @@ namespace Apha.BST.Web.Controllers
         }
 
         //Final code working for SiteTrainee
-        [HttpGet]
-        public async Task<IActionResult> SiteTrainee(string selectedSite = siteName)
+        public async Task<IActionResult> SiteTrainee(string? selectedSite = null)
         {
             // Get all sites for the dropdown
-            var allSitesDto = await _siteService.GetAllSitesAsync(siteName);
+            var allSitesDto = await _siteService.GetAllSitesAsync(siteAll);
             var allSites = _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto);
 
-            // Get trainees for the selected site (or all if "All" is selected)
-            IEnumerable<SiteTraineeViewModel> filteredTrainees = Enumerable.Empty<SiteTraineeViewModel>();
-            if (selectedSite != siteName)
+            var siteSelectList = allSites
+            .Select(site => new SelectListItem
             {
-                var traineeDtos = await _siteService.GetSiteTraineesAsync(selectedSite);
-                filteredTrainees = _mapper.Map<IEnumerable<SiteTraineeViewModel>>(traineeDtos);
-            }
+                Value = site.PlantNo,
+                Text = site.Name,
+                Selected = (site.PlantNo == selectedSite)
+            })
+            .ToList();
 
             var model = new SiteTraineeListViewModel
             {
-                AllSites = allSites,
-                FilteredTrainees = filteredTrainees,
-                SelectedSite = selectedSite
+
+                AllSites = siteSelectList
             };
+            if (selectedSite != null)
+            {
+                // Get trainees for the selected site (or all if "All" is selected)
+                IEnumerable<SiteTraineeViewModel> filteredTrainees;
+
+                var traineeDtos = await _siteService.GetSiteTraineesAsync(selectedSite);
+                filteredTrainees = _mapper.Map<IEnumerable<SiteTraineeViewModel>>(traineeDtos);
+
+                model.FilteredTrainees = filteredTrainees;
+                model.SelectedSite = selectedSite;
+
+            }
 
             return View(model);
-        }      
+        }
 
-       
+
+
         [HttpGet]
         public IActionResult AddSite()
         {
@@ -89,7 +107,7 @@ namespace Apha.BST.Web.Controllers
             {
                 try
                 {
-                    var site = _mapper.Map<SiteDTO>(siteViewModel);
+                    var site = _mapper.Map<SiteDto>(siteViewModel);
                     var message = await _siteService.AddSiteAsync(site);
 
                     TempData["Message"] = message;
@@ -108,6 +126,11 @@ namespace Apha.BST.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteTrainee(int personId, string selectedSite)
         {
+            if(!ModelState.IsValid)
+            {
+                TempData["message"] = "Invalid request";
+                return RedirectToAction("SiteTrainee", new { selectedSite });
+            }
             try
             {
                 var message = await _siteService.DeleteTraineeAsync(personId);

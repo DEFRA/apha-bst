@@ -6,7 +6,7 @@
         public string Code { get; set; }
         public object Details { get; set; }
 
-        public BusinessValidationError(string message, string code, object details = null)
+        public BusinessValidationError(string message, string code, object details)
         {
             Message = message;
             Code = code;

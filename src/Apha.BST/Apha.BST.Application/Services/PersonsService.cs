@@ -19,17 +19,10 @@ namespace Apha.BST.Application.Services
             _personRepository = personRepository ?? throw new ArgumentNullException(nameof(personRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        public async Task<IEnumerable<PersonsDTO>> GetAllPersonAsync()
-        {
-            try
-            {
-                var bookings = await _personRepository.GetAllAsync();
-                return _mapper.Map<IEnumerable<PersonsDTO>>(bookings);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+        public async Task<IEnumerable<PersonsDto>> GetAllPersonAsync()
+        {           
+                var persons = await _personRepository.GetAllAsync();
+                return _mapper.Map<IEnumerable<PersonsDto>>(persons);            
         }
     }
 }

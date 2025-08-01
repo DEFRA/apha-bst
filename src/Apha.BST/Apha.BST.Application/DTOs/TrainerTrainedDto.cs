@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
-namespace Apha.BST.Core.Entities
+namespace Apha.BST.Application.DTOs
 {
-    public class TrainerTrained
+    public class TrainerTrainedDto
     {
         public int TraineeNo { get; set; }
         public string? Trainee { get; set; }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Apha.BST.Application.DTOs
 {
     [Keyless]
-    public class TraineeDTO
+    public class TraineeDto
     {
         public int PersonId { get; set; }
 

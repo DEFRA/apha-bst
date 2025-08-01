@@ -14,13 +14,13 @@ namespace Apha.BST.DataAccess.Repositories
 {
     public class AuditLogRepository : IAuditLogRepository
     {
-        private readonly BSTContext _context;
-        public AuditLogRepository(BSTContext context)
+        private readonly BstContext _context;
+        public AuditLogRepository(BstContext context)
         {
             _context = context;
         }
 
-        public async Task AddAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string error = null)
+        public async Task AddAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string? error = null)
         {
             var paramString = new StringBuilder();
             if (!string.IsNullOrEmpty(error))
@@ -43,7 +43,7 @@ namespace Apha.BST.DataAccess.Repositories
             {
                  new SqlParameter("@Procedure", SqlDbType.VarChar, 100) { Value = procedure },
                  new SqlParameter("@Parameters", SqlDbType.Text) { Value = paramString.ToString() },
-                 new SqlParameter("@User", SqlDbType.VarChar, 50) { Value = WindowsIdentity.GetCurrent().Name },
+                 new SqlParameter("@User", SqlDbType.VarChar, 50) { Value ="BstUser"},
                  new SqlParameter("@TransactionType", SqlDbType.VarChar, 10) { Value = transactionType }
             };
 

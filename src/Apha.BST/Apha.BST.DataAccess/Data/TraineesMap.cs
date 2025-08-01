@@ -11,7 +11,7 @@ namespace Apha.BST.DataAccess.Data
 {
     public class TraineesMap : IEntityTypeConfiguration<Trainees>
     {
-        public void Configure(EntityTypeBuilder<Trainees> entity) 
+        public void Configure(EntityTypeBuilder<Trainees> entity)
         {
             entity.HasKey(e => e.TraineeNo);
 

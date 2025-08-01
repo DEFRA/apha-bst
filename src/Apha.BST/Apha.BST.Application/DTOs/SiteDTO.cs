@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Apha.BST.Application.DTOs
 {
-    public class SiteDTO
+    public class SiteDto
     {
         [Required(ErrorMessage = "Plant / Site No. is required")]
         public string PlantNo { get; set; } = null!;
 
         [Required(ErrorMessage = "Plant Name is required")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public string? AddressLine1 { get; set; }
 

@@ -35,7 +35,7 @@ namespace Apha.BST.Application.UnitTests.Services
             mockRepo.GetAllSitesAsync("PLANT001").Returns(Task.FromResult(sites.AsEnumerable()));
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Site, SiteDTO>()
+                cfg.CreateMap<Site, SiteDto>()
                    .ForMember(dest => dest.PlantNo, opt => opt.MapFrom(src => src.PlantNo))
                    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
             });
@@ -46,7 +46,7 @@ namespace Apha.BST.Application.UnitTests.Services
         }
 
 
-        public void MockForAddSiteAsync(string returnValue, SiteDTO inputDto)
+        public void MockForAddSiteAsync(string returnValue, SiteDto inputDto)
         {
             var mockRepo = Substitute.For<ISiteRepository>();
             var mockMapper = Substitute.For<IMapper>();
@@ -76,7 +76,7 @@ namespace Apha.BST.Application.UnitTests.Services
 
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<SiteTrainee, SiteTraineeDTO>()
+                cfg.CreateMap<SiteTrainee, SiteTraineeDto>()
                    .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
                    .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person))
                    .ForMember(dest => dest.Cattle, opt => opt.MapFrom(src => src.Cattle))

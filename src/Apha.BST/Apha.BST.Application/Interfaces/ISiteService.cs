@@ -11,10 +11,10 @@ namespace Apha.BST.Application.Interfaces
 {
     public interface ISiteService
     {
-        Task<IEnumerable<SiteDTO>> GetAllSitesAsync(string plantNo);
-        Task<List<SiteTraineeDTO>> GetSiteTraineesAsync(string plantNo);
+        Task<IEnumerable<SiteDto>> GetAllSitesAsync(string plantNo);
+        Task<List<SiteTraineeDto>> GetSiteTraineesAsync(string plantNo);
         Task<string> DeleteTraineeAsync(int personId);       
-        Task<string> AddSiteAsync(SiteDTO siteDto);
+        Task<string> AddSiteAsync(SiteDto siteDto);
 
     }
 }

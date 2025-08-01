@@ -5,10 +5,9 @@ namespace Apha.BST.Web.Models
 {
     public class SiteTraineeListViewModel
     {
-        public IEnumerable<SiteViewModel> AllSites { get; set; }
-        public IEnumerable<SiteTraineeViewModel> FilteredTrainees { get; set; }
-        public string SelectedSite { get; set; }
-
+        public IEnumerable<SelectListItem>? AllSites { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SiteTraineeViewModel>? FilteredTrainees { get; set; }
+        public string? SelectedSite { get; set; }
         public string? Message { get; set; }
     }
 }

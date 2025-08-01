@@ -12,8 +12,8 @@ namespace Apha.BST.DataAccess.Repositories
 {
     public class PersonsRepository : IPersonsRepository
     {
-        private readonly BSTContext _context;
-        public PersonsRepository(BSTContext context)
+        private readonly BstContext _context;
+        public PersonsRepository(BstContext context)
         {
             _context = context;
         }

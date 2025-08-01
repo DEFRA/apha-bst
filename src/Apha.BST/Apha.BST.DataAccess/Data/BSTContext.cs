@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Data;
 
-public partial class BSTContext : DbContext
+public partial class BstContext : DbContext
 {
-    public BSTContext()
+    public BstContext()
     {
     }
 
-    public BSTContext(DbContextOptions<BSTContext> options)
+    public BstContext(DbContextOptions<BstContext> options)
         : base(options)
     {
     }
@@ -40,16 +40,12 @@ public partial class BSTContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<VlaLoc> Vlalocs { get; set; }
-    //public object SiteTrainees { get; internal set; }
+    public virtual DbSet<VlaLoc> Vlalocs { get; set; }   
     public DbSet<SiteTrainee> SiteTrainees { get; set; }
     public DbSet<Trainee> Traines { get; set; }
     public DbSet<TrainerTraining> TrainerTrainings { get; set; }
     public DbSet<TrainerHistory> TrainerHistorys { get; set; }
-
-    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-    //        => optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=BST;Integrated Security=True;Encrypt=False;Trust Server Certificate=True");
+    public DbSet<TrainerTrained> TrainerTraineds { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -301,11 +297,10 @@ public partial class BSTContext : DbContext
 
         modelBuilder.Entity<TrainerTraining>().HasNoKey();
         modelBuilder.Entity<TrainerHistory>().HasNoKey();
-
-        OnModelCreatingPartial(modelBuilder);
+        modelBuilder.Entity<TrainerTrained>().HasNoKey();
+       
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    
     public async Task<int> AddSiteAsync(Site site)
     {
         await Sites.AddAsync(site);

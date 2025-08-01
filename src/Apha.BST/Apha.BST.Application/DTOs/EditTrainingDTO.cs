@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace Apha.BST.Application.DTOs
 {
-    public class EditTrainingDTO
-    {       
-        public int PersonId { get; set; }
-        public string TrainingAnimal { get; set; }
+    public class EditTrainingDto
+    {
+        public int TraineeId { get; set; }
+        public int TrainerId { get; set; }
+        public required string TrainingType { get; set; }
+        public required string TrainingAnimal { get; set; }
         public DateTime TrainingDateTime { get; set; }
 
-        // Old values to find the correct record to update
-        public string TrainingAnimalOld { get; set; }
+        // Old values for identifying the record to update
+        public int TraineeIdOld { get; set; }
+        public int TrainerIdOld { get; set; }
+        public required string TrainingAnimalOld { get; set; }
         public DateTime TrainingDateTimeOld { get; set; }
-
-        // Optional fields depending on your DB/table
-        public string Site { get; set; }
-        public int TrainerId { get; set; }
-        public string TrainingType { get; set; }
     }
 }

@@ -8,15 +8,16 @@ namespace Apha.BST.Core.Entities
 {
     public class EditTraining
     {
-        public int PersonId { get; set; }
+        public int TraineeId { get; set; }
         public int TrainerId { get; set; }
-        public string TrainingType { get; set; } = null!;
-        public string TrainingAnimal { get; set; } = null!;
+        public required string TrainingType { get; set; }
+        public required string TrainingAnimal { get; set; }
         public DateTime TrainingDateTime { get; set; }
 
         // Old values for identifying the record to update
+        public int TraineeIdOld { get; set; }
         public int TrainerIdOld { get; set; }
-        public string TrainingAnimalOld { get; set; } = null!;
+        public required string TrainingAnimalOld { get; set; }
         public DateTime TrainingDateTimeOld { get; set; }
     }
 }

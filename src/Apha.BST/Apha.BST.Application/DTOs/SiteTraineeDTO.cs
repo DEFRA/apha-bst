@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apha.BST.Application.DTOs
 {
-    public class SiteTraineeDTO
+    public class SiteTraineeDto
     {
         public int PersonId { get; set; }
         public string? Person { get; set; }

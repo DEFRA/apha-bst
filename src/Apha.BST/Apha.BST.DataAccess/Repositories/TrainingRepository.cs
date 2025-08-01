@@ -15,13 +15,11 @@ namespace Apha.BST.DataAccess.Repositories
 {
     public class TrainingRepository:ITrainingRepository
     {
-        private readonly BSTContext _context;
-        private readonly IAuditLogRepository _auditLogRepository;
+        private readonly BstContext _context;       
 
-        public TrainingRepository(BSTContext context, IAuditLogRepository auditLogRepository)
+        public TrainingRepository(BstContext context)
         {
-            _context = context;
-            _auditLogRepository = auditLogRepository;
+            _context = context;           
         }
 
         public async Task<List<Trainee>> GetAllTraineesAsync()
@@ -57,45 +55,58 @@ namespace Apha.BST.DataAccess.Repositories
             return await _context.Set<TrainerHistory>()
                 .FromSqlRaw("EXEC sp_Trainer_TrainedBy_Trained @PersonID, @AnimalType", personIdParam, animalTypeParam)
                 .ToListAsync();
-        }      
-
-
-        public async Task<Training?> GetTrainingByKeysAsync(int personId, string species, DateTime dateTrained)
-        {
-            return await _context.Trainings.FirstOrDefaultAsync(t =>
-                t.PersonId == personId &&
-                t.TrainingAnimal == species &&
-                t.TrainingDateTime == dateTrained);
         }
 
-        public async Task<string> UpdateTrainingAsync(Training training, DateTime dateTrainedOld, string speciesOld)
+        //For TrainerTrained
+        public async Task<IEnumerable<TrainerTrained>> GetTrainerTrainedAsync(int trainerId)
+        {
+            var param = new SqlParameter("@Trainer", trainerId);
+            return await _context.Set<TrainerTrained>()
+                .FromSqlRaw("EXEC sp_Trainer_Has_Trained @Trainer", param)
+                .ToListAsync();
+        }
+
+        public async Task<Training?> GetTrainingByKeysAsync(int traineeId, int trainerId, string species, DateTime dateTrained, string trainingType)
+        {
+            DateTime fromDate = dateTrained.Date;
+            DateTime toDate = fromDate.AddDays(1);
+
+            return await _context.Trainings.FirstOrDefaultAsync(t =>
+                t.PersonId == traineeId &&
+                t.TrainerId == trainerId &&
+                t.TrainingAnimal == species &&
+                t.TrainingDateTime >= fromDate &&
+                t.TrainingDateTime < toDate &&
+                t.TrainingType == trainingType);
+        }
+
+        public async Task<string> UpdateTrainingAsync(EditTraining editTraining)
         {
             var parameters = new[]
             {
-                 new SqlParameter("@TraineeID", training.PersonId),
-                 new SqlParameter("@TrainerID", training.TrainerId),
-                 new SqlParameter("@Species", training.TrainingAnimal),
-                 new SqlParameter("@TrainingType", training.TrainingType),
-                 new SqlParameter("@DateTrained", training.TrainingDateTime),
-                 new SqlParameter("@DateTrainedOld", dateTrainedOld),
-                 new SqlParameter("@SpeciesOld", speciesOld)
-            };
-
-            string error = null;
+            new SqlParameter("@TraineeID", editTraining.TraineeIdOld),
+            new SqlParameter("@DateTrained", editTraining.TrainingDateTime),
+            new SqlParameter("@DateTrainedOld", editTraining.TrainingDateTimeOld),
+            new SqlParameter("@Species", editTraining.TrainingAnimal),
+            new SqlParameter("@SpeciesOld", editTraining.TrainingAnimalOld),
+            new SqlParameter("@Trainer",  editTraining.TrainerId),
+            new SqlParameter("@TrainerOld", editTraining.TrainerIdOld),
+            new SqlParameter("@TrainingType", editTraining.TrainingType)           
+            };            
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Update @TraineeID, @TrainerID, @Species, @TrainingType, @DateTrained, @DateTrainedOld, @SpeciesOld", parameters);
-                return "Training record updated successfully.";
+                await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC sp_Training_Update @TraineeID, @DateTrained, @DateTrainedOld, @Species, @SpeciesOld, @Trainer, @TrainerOld, @TrainingType",
+                    parameters);
+                return "SUCCESS";
+
             }
-            catch (Exception ex)
+            catch
             {
-                error = ex.ToString();
-                return $"Error updating training record: {ex.Message}";
+                               
+                return $"FAIL";
             }
-            finally
-            {
-                await _auditLogRepository.AddAuditLogAsync("sp_Training_Update", parameters, "Write", error);
-            }
+
         }
 
 
@@ -116,18 +127,16 @@ namespace Apha.BST.DataAccess.Repositories
                 Value = 0
             }
             };
-
-            string error = null;
+           
             try
             {
                 await _context.Database.ExecuteSqlRawAsync(                  
                    "EXEC sp_Training_Add @TraineeID, @TrainerID, @Species, @DateTrained, @TrainingType, @ReturnCode OUT",
                     parameters);
             }
-            catch (Exception ex)
-            {
-                error = ex.Message;
-                throw;
+            catch(Exception ex)
+            {              
+                throw ex;
             }            
             var returnCode = (byte)parameters[5].Value;
 
@@ -143,10 +152,7 @@ namespace Apha.BST.DataAccess.Repositories
         }
         
         public async Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained)
-        {
-            string error = null;
-            string resultMessage;
-
+        { 
             var parameters = new[]
             {
                  new SqlParameter("@TraineeID", traineeId),
@@ -156,21 +162,14 @@ namespace Apha.BST.DataAccess.Repositories
 
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);    
-
-            resultMessage = $"All trained in {species}  brainstem removal on {dateTrained:G} has been deleted from the database";
+                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);
+                return "SUCCESS";
             }
-            catch (Exception ex)
+            catch 
             {
-                error = ex.ToString();
-                resultMessage = $"Delete failed: {ex.Message}";
-            }
-            finally
-            {
-                await _auditLogRepository.AddAuditLogAsync("sp_Training_Delete", parameters, "Write", error);
-            }
-
-            return resultMessage;
+                           
+                return $"FAIL";
+            }          
         }
 
 

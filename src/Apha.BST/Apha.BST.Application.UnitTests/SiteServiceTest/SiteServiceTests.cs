@@ -57,7 +57,7 @@ namespace Apha.BST.Application.UnitTests.Services
         public async Task AddSiteAsync_NewSite_ReturnsSuccessMessage()
         {
             // Arrange
-            var siteDto = new SiteDTO { Name = "Test Site", PlantNo = "1234" };
+            var siteDto = new SiteDto { Name = "Test Site", PlantNo = "1234" };
             MockForAddSiteAsync("CREATED", siteDto);
 
             // Act
@@ -71,7 +71,7 @@ namespace Apha.BST.Application.UnitTests.Services
         public async Task AddSiteAsync_ExistingSite_ReturnsErrorMessage()
         {
             // Arrange
-            var siteDto = new SiteDTO { Name = "Existing Site", PlantNo = "5678" };
+            var siteDto = new SiteDto { Name = "Existing Site", PlantNo = "5678" };
             MockForAddSiteAsync("EXISTS", siteDto);
 
             // Act
@@ -85,7 +85,7 @@ namespace Apha.BST.Application.UnitTests.Services
         public async Task AddSiteAsync_RepositoryThrowsException_PropagatesException()
         {
             // Arrange
-            var siteDto = new SiteDTO { Name = "Test Site", PlantNo = "1234" };
+            var siteDto = new SiteDto { Name = "Test Site", PlantNo = "1234" };
             var mockRepo = Substitute.For<ISiteRepository>();
             var mockMapper = Substitute.For<IMapper>();
             var site = new Site { Name = "Test Site", PlantNo = "1234" };

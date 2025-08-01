@@ -12,17 +12,17 @@ namespace Apha.BST.Application.UnitTests
 {
     public static class SqliteTestContextMother
     {
-        public static BSTContext CreateContext()
+        public static BstContext CreateContext()
         {
             var connection = new SqliteConnection("Data Source=:memory:");
             connection.Open();
 
-            var options = new DbContextOptionsBuilder<BSTContext>()
+            var options = new DbContextOptionsBuilder<BstContext>()
                 .UseSqlite(connection)
                 .Options;
 
 
-            var dbContext = new BSTContext(options);
+            var dbContext = new BstContext(options);
 
             dbContext.Database.EnsureCreated();
 

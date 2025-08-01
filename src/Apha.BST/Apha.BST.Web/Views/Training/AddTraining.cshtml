@@ -19,7 +19,7 @@
 				</td>
 				<td class="px-5">			
 						<select asp-for="PersonId" asp-items="Model.Persons">
-							<option value="">Select trainee...</option>
+							<option value="0">Select trainee...</option>
 						</select>
 					<span asp-for="PersonId" class="text-danger"></span>
 				</td>
@@ -30,7 +30,7 @@
 				</td>
 				<td class="pt-3 px-5">				
 					<select asp-for="TrainerId" asp-items="Model.Persons">
-						<option value="">Select trainer...</option>
+						<option value="0">Select trainer...</option>
 					</select>
 					<span asp-for="TrainerId" class="text-danger"></span>
 				</td>
@@ -40,11 +40,8 @@
 					<label asp-for="TrainingType">Please select training type</label>
 				</td>
 				<td class="pt-3 px-5">
-					<select asp-for="TrainingType">
-						<option value="">Select training type...</option>
-						<option value="Cascade trained">Cascade trained</option>
-						<option value="Trained">Trained</option>
-						<option value="Training confirmed">Training confirmed</option>
+					<select asp-for="TrainingType" asp-items="Model.TrainingTypesList">
+						<option value="">Select training type...</option>						
 					</select>
 					<span asp-for="TrainingType" class="text-danger"></span>
 				</td>
@@ -61,7 +58,7 @@
 						<img src="~/Images/asp-calendar.gif" alt="img" id="calenderImage" />
 					</button>
 
-					<span sp-for="TrainingDate" asp-validation-for="TrainingDateTime" class="text-danger"></span>
+					<span asp-validation-for="TrainingDateTime" class="text-danger"></span>
 				</td>
 			</tr>
 			<tr>
@@ -69,11 +66,8 @@
 					<label asp-for="TrainingAnimal">Please select species</label>
 				</td>
 				<td class="pt-3 px-5">
-					<select asp-for="TrainingAnimal">
-						<option value="">Select species...</option>
-						<option value="Cattle">Cattle</option>
-						<option value="Sheep">Sheep</option>
-						<option value="Goat">Goat</option>
+					<select asp-for="TrainingAnimal" asp-items="Model.TrainingAnimalList">
+						<option value="">Select species...</option>						
 					</select>
 					<span asp-for="TrainingAnimal" class="text-danger"></span>
 				</td>

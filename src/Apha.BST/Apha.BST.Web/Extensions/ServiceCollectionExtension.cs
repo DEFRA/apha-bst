@@ -20,6 +20,7 @@ namespace Apha.BST.Web.Extensions
             services.AddScoped<ISiteService, SiteService>();
             services.AddScoped<IAuditLogService, AuditLogService > ();
             services.AddScoped<ITrainingService, TrainingService>();
+            services.AddScoped<IStaticDropdownService, StaticDropdownService>();
             return services;
         }
         public static IServiceCollection AddRepositories(this IServiceCollection services)

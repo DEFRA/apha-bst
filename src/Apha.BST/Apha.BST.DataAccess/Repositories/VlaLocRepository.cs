@@ -9,10 +9,9 @@ namespace Apha.BST.DataAccess.Repositories
 {
     public class VlaLocRepository
     {
-        private readonly BSTContext _context;
-        public VlaLocRepository(BSTContext context)
+        public VlaLocRepository(BstContext context)
         {
-            _context = context;
+           
         }
     }
 }

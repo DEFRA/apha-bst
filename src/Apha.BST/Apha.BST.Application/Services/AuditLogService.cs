@@ -18,7 +18,7 @@ namespace Apha.BST.Application.Services
             _auditLogRepository = auditLogRepository;
         }
 
-        public async Task WriteAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string error = null)
+        public async Task WriteAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string? error = null)
         {
             await _auditLogRepository.AddAuditLogAsync(procedure, parameters, transactionType, error);
         }

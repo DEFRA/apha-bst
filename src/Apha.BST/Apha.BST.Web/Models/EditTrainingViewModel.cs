@@ -4,31 +4,39 @@ using System.ComponentModel.DataAnnotations;
 namespace Apha.BST.Web.Models
 {   
     public class EditTrainingViewModel
-    {        
+    {
         [Required]
-        public int PersonId { get; set; }
+        public int TraineeId { get; set; }
 
         [Required]
         public int TrainerId { get; set; }
 
         [Required]
-        public string TrainingType { get; set; }
+        public required string TrainingType { get; set; }
 
         [Required]
-        public string TrainingAnimal { get; set; }
+        public required string TrainingAnimal { get; set; }
 
         [Required]
         public DateTime TrainingDateTime { get; set; }
 
         // Dropdown Lists
-        public IEnumerable<SelectListItem> Persons { get; set; } = new List<SelectListItem>();
-        public IEnumerable<SelectListItem> Trainers { get; set; } = new List<SelectListItem>();
-        public IEnumerable<SelectListItem> TrainingTypes { get; set; } = new List<SelectListItem>();
-        public IEnumerable<SelectListItem> Species { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> TraineeList { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> TrainerList { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> TrainingTypesList { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> TrainingAnimalList { get; set; } = new List<SelectListItem>();
 
-        // Keys for locating old record in DB
+        //// Keys for locating old record in DB
+        [Required]
         public DateTime TrainingDateTimeOld { get; set; }
-        public string TrainingAnimalOld { get; set; } = string.Empty;
+        [Required]
+        public int TraineeIdOld { get; set; }
+        [Required]
+        public int TrainerIdOld { get; set; }
+        [Required]
+        public required string TrainingAnimalOld { get; set; }
+        [Required]
+        public required string TrainingTypeOld { get; set; }
     }
 
 }

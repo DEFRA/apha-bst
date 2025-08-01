@@ -8,7 +8,7 @@ namespace Apha.BST.Web.Models
         public string PlantNo { get; set; } = null!;
 
         [Required(ErrorMessage = "Plant Name is required")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public string? AddressLine1 { get; set; }
 

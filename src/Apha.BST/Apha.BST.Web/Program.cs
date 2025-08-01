@@ -12,15 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Host.UseSerilog((ctx, lc) =>
-    {
-        lc.WriteTo.Console();
-        string srvpath = ctx.Configuration.GetValue<string>("AppSettings:LosgPath") ?? string.Empty;
-        string logpath = $"{(ctx.HostingEnvironment.IsDevelopment() ? "Logs" : srvpath)}\\Logsample.log";
-        lc.WriteTo.File(logpath, Serilog.Events.LogEventLevel.Verbose, rollingInterval: RollingInterval.Day);
-        //lc.WriteTo.File(logpath, Serilog.Events.LogEventLevel.Error, rollingInterval: RollingInterval.Day);
-
-    });
+   //Need to add code here.
 }
 else
 {
@@ -31,7 +23,7 @@ else
     });
 }
 
-builder.Services.AddDbContext<BSTContext>(options =>
+builder.Services.AddDbContext<BstContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BSTConnectionString")
     ?? throw new InvalidOperationException("Connection string 'BSTConnectionString' not found.")));
 
@@ -39,7 +31,6 @@ builder.Services.AddDbContext<BSTContext>(options =>
 builder.Services.AddAutoMapper(typeof(EntityMapper).Assembly);
  // Inside builder.Services configuration:
 builder.Services.AddAutoMapper(typeof(ViewModelMapper));
-//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

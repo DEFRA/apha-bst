@@ -8,18 +8,15 @@ namespace Apha.BST.Application.Mappings
     {
         public EntityMapper()
         {
-            // CreateMap<SourceType, DestinationType>();
-            // Add your mappings here
-            // For example:
-            // CreateMap<WeatherForecast, WeatherForecastDto>();
-            CreateMap<Persons, PersonsDTO>().ReverseMap();
-            CreateMap<Site, SiteDTO>().ReverseMap();
-            CreateMap<SiteTrainee, SiteTraineeDTO>().ReverseMap();
-            CreateMap<TrainerTrainingDTO, Training>().ReverseMap();
-            CreateMap<Trainee, PersonsDTO>().ReverseMap();
-            CreateMap<TrainingDTO, Training>().ReverseMap();
-            CreateMap<EditTrainingDTO, EditTraining>().ReverseMap();           
-            CreateMap<TrainerHistoryDTO, TrainerHistory>().ReverseMap();
+            CreateMap<Persons, PersonsDto>().ReverseMap();
+            CreateMap<Site, SiteDto>().ReverseMap();
+            CreateMap<SiteTrainee, SiteTraineeDto>().ReverseMap();
+            CreateMap<TrainerTrainingDto, TrainerTraining>().ReverseMap();
+            CreateMap<Trainee, PersonsDto>().ReverseMap();
+            CreateMap<TrainingDto, Training>().ReverseMap();
+            CreateMap<EditTrainingDto, EditTraining>().ReverseMap();           
+            CreateMap<TrainerHistoryDto, TrainerHistory>().ReverseMap();
+            CreateMap<TrainerTrainedDto, TrainerTrained>().ReverseMap();
         }
     }
 }

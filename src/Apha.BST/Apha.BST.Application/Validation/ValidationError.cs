@@ -6,7 +6,7 @@
         public string Message { get; set; }
         public string Code { get; set; }
 
-        public ValidationError(string field, string message, string code = null)
+        public ValidationError(string field, string message, string code)
         {
             Field = field;
             Message = message;

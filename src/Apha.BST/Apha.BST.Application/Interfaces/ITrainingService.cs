@@ -9,18 +9,20 @@ namespace Apha.BST.Application.Interfaces
 {
     public interface ITrainingService
     {
-        Task<List<PersonsDTO>> GetTraineesAsync();
+        Task<List<PersonsDto>> GetTraineesAsync();
 
         //For EditTraining
-        Task<EditTrainingDTO?> GetTrainingByKeysAsync(int personId, string species, DateTime dateTrained);
-        Task<string> UpdateTrainingAsync(EditTrainingDTO dto);
+        Task<TrainingDto?> GetTrainingByKeysAsync(int traineeId, int trainerId, string species, DateTime dateTrained, string trainingType);
+        Task<string> UpdateTrainingAsync(EditTrainingDto dto);
 
         //TrainerHistory
-        Task<IEnumerable<TrainerHistoryDTO>> GetTrainerHistoryAsync(int personId, string animalType);        
+        Task<IEnumerable<TrainerHistoryDto>> GetTrainerHistoryAsync(int personId, string animalType);
 
-        Task<string> AddTrainingAsync(TrainingDTO trainingDto);
-        Task<IEnumerable<TrainerTrainingDTO>> GetTrainingByTraineeAsync(string traineeId);
-        Task<IEnumerable<TrainerTrainingDTO>> GetAllTrainingsAsync();
+        //For TrainerTrained
+        Task<IEnumerable<TrainerTrainedDto>> GetTrainerTrainedAsync(int trainerId);
+        Task<string> AddTrainingAsync(TrainingDto trainingDto);
+        Task<IEnumerable<TrainerTrainingDto>> GetTrainingByTraineeAsync(string traineeId);
+        Task<IEnumerable<TrainerTrainingDto>> GetAllTrainingsAsync();
         Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained);
     }
 }

@@ -16,9 +16,9 @@ namespace Apha.BST.DataAccess.Repositories
 {
     public class SiteRepository:ISiteRepository
     {
-        private readonly BSTContext _context;
+        private readonly BstContext _context;
         private readonly IAuditLogRepository _auditLogRepository;
-        public SiteRepository(BSTContext context, IAuditLogRepository auditLogRepository)
+        public SiteRepository(BstContext context, IAuditLogRepository auditLogRepository)
         {
             _context = context;
             _auditLogRepository = auditLogRepository;
@@ -61,7 +61,7 @@ namespace Apha.BST.DataAccess.Repositories
             Value = 0
         }
     };
-            string error = null;
+            string? error = null;
             try
             {
                 await _context.Database.ExecuteSqlRawAsync("EXEC sp_Sites_Add @PlantNo, @Name, @Add1, @Add2, @AddTown, @AddCounty, @AddPCode, @AddTel, @AddFax, @AddAHVLA, @ReturnCode OUT", parameters);
@@ -116,7 +116,7 @@ namespace Apha.BST.DataAccess.Repositories
         }
     };
 
-            string error = null;
+           
             try
             {
                 await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
@@ -126,16 +126,11 @@ namespace Apha.BST.DataAccess.Repositories
                 // If person has training records, return false (can't delete)
                 return personTraining == 0;
             }
-            catch (Exception ex)
-            {
-                error = ex.ToString();
+            catch
+            {               
                 // Log error or handle accordingly
                 return false;
-            }
-            finally
-            {
-                await _auditLogRepository.AddAuditLogAsync("sp_Trainee_Delete", parameters, "Write", error);
-            }
+            }            
         }
     }
 }

@@ -8,11 +8,10 @@ using Apha.BST.DataAccess.Data;
 namespace Apha.BST.DataAccess.Repositories
 {
     public class AuditlogArchivedRepository
-    {
-        private readonly BSTContext _context;
-        public AuditlogArchivedRepository(BSTContext context)
+    {      
+        public AuditlogArchivedRepository(BstContext context)
         {
-            _context = context;
+           
         }
     }
 }

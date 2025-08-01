@@ -9,10 +9,9 @@ namespace Apha.BST.DataAccess.Repositories
 {
     public class TrainingsRepository
     {
-        private readonly BSTContext _context;
-        public TrainingsRepository(BSTContext context)
+        public TrainingsRepository(BstContext context)
         {
-            _context = context;
+           
         }
     }
 }

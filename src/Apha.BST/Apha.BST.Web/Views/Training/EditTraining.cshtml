@@ -3,7 +3,7 @@
 	ViewData["Title"] = "EditTraining";
 }
 
-<form asp-action="EditTraining" method="post" id="editTrainingForm">
+<form asp-action="EditTraining" method="post" id="editTrainingForm">	
 	<table class="w-80 h-100 m-4">
 		<tbody class="me-5">
 			<tr>
@@ -15,17 +15,17 @@
 
 			<tr>
 				<td class="pt-2">
-					<label asp-for="PersonId">Trainee</label>
+					<label asp-for="TraineeId">Trainee</label>
 				</td>
 				<td class="px-5">
-					<select asp-for="PersonId">
-						@foreach (var trainee in Model.Persons)
+					<select asp-for="TraineeId">
+						@foreach (var trainee in Model.TraineeList)
 						{
 							@* <option>@trainee.Persons</option> *@
 							<option value="@trainee.Value">@trainee.Text</option>
 						}
 					</select>
-					<span asp-validation-for="PersonId" class="text-danger"></span>
+					<span asp-validation-for="TraineeId" class="text-danger"></span>
 				</td>
 			</tr>
 			<tr>
@@ -34,7 +34,7 @@
 				</td>
 				<td class="pt-1 px-5">
 					<select asp-for="TrainerId">
-						@foreach (var trainer in Model.Persons)
+						@foreach (var trainer in Model.TrainerList)
 						{
 							@* <option>@trainer.Person</option> *@
 							<option value="@trainer.Value">@trainer.Text</option>
@@ -49,16 +49,8 @@
 					<label asp-for="TrainingType">Training Type</label>
 				</td>
 				<td class="pt-1 px-5">
-					<select asp-for="TrainingType">
-						@* <option value="">Select training type...</option>
-						@foreach (var trainingType in trainingTypes)
-						{
-							<option>@trainingType.Value</option>
-						} *@
+					<select asp-for="TrainingType" asp-items="Model.TrainingTypesList">
 						<option value="">Select training type...</option>
-						<option value="Cascade trained">Cascade trained</option>
-						<option value="Trained">Trained</option>
-						<option value="Training confirmed">Training confirmed</option>
 					</select>
 					<span asp-validation-for="TrainingType" class="text-danger"></span>
 				</td>
@@ -75,7 +67,7 @@
 						<img src="~/Images/asp-calendar.gif" alt="img" id="calenderImage" />
 					</button>
 
-					<span sp-for="TrainingDate" asp-validation-for="TrainingDateTime" class="text-danger"></span>
+					<span asp-validation-for="TrainingDateTime" class="text-danger"></span>
 				</td>
 			</tr>
 			<tr>
@@ -83,18 +75,8 @@
 					<label asp-for="TrainingAnimal">Species trained</label>
 				</td>
 				<td class="pt-1 px-5">
-					@* <select asp-for="Species">
+					<select asp-for="TrainingAnimal" asp-items="Model.TrainingAnimalList">
 						<option value="">Select species...</option>
-						@foreach (var species in species)
-						{
-							<option>@species.Value</option>
-						}
-					</select> *@
-					<select asp-for="TrainingAnimal">
-						<option value="">Select species...</option>
-						<option value="Cattle">Cattle</option>
-						<option value="Sheep">Sheep</option>
-						<option value="Goat">Goat</option>
 					</select>
 					<span asp-validation-for="TrainingAnimal" class="text-danger"></span>
 				</td>
@@ -124,7 +106,7 @@
 				<td></td>
 				<td>
 					<p class="pt-2 px-5 ErrorText ">
-					@* 	@if (!string.IsNullOrEmpty(ViewBag.message))
+							@* 	@if (!string.IsNullOrEmpty(ViewBag.message))
 						{
 							@ViewBag.message
 						}
@@ -138,8 +120,13 @@
 						</div>
 				</td>
 			</tr>
-			
+
 		</tbody>
 	</table>
+	<input type="hidden" name="TraineeIdOld" value="@Model.TraineeIdOld" />
+	<input type="hidden" name="TrainerIdOld" value="@Model.TrainerIdOld" />
+	<input type="hidden" name="TrainingTypeOld" value="@Model.TrainingTypeOld" />
+	<input type="hidden" name="TrainingDateTimeOld" value="@Model.TrainingDateTimeOld" />
+	<input type="hidden" name="TrainingAnimalOld" value="@Model.TrainingAnimalOld" />
 </form>
 

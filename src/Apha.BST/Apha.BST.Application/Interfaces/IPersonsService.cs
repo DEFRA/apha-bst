@@ -9,6 +9,6 @@ namespace Apha.BST.Application.Interfaces
 {
     public interface IPersonsService
     {
-        Task<IEnumerable<PersonsDTO>> GetAllPersonAsync();
+        Task<IEnumerable<PersonsDto>> GetAllPersonAsync();
     }
 }

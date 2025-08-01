@@ -8,11 +8,10 @@ using Apha.BST.DataAccess.Data;
 namespace Apha.BST.DataAccess.Repositories
 {
     public class NewsRepository
-    {
-        private readonly BSTContext _context;
-        public NewsRepository(BSTContext context)
+    {        
+        public NewsRepository(BstContext context)
         {
-            _context = context;
+            
         }
     }
 }
