@@ -1,4 +1,4 @@
-name: Sample Test
+name: Sample Test RUn
 on:
   workflow_dispatch:
   push:
