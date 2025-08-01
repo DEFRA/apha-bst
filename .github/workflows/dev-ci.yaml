@@ -90,7 +90,6 @@ jobs:
             echo "should_push=false" >> $GITHUB_OUTPUT
           fi
     
-
       - name: Start Sonar Analysis
         shell: pwsh
         env:
@@ -104,10 +103,9 @@ jobs:
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
             /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
             /d:sonar.branch.name="${{ github.ref_name }}" `
-            /d:sonar.sources="src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web" `
-            /d:sonar.tests="src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests" `
-            /d:sonar.inclusions="**/*.cs" `
-            /d:sonar.test.inclusions="**/*Tests.cs,**/*Test.cs"
+            /d:sonar.verbose=true 
+            #/d:sonar.inclusions="**/*.cs" `
+            #/d:sonar.test.inclusions="**/*Tests.cs,**/*Test.cs"
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/Apha.BST.sln
@@ -126,14 +124,6 @@ jobs:
             --no-build --configuration Release /p:CollectCoverage=true `
             /p:CoverletOutput=../../TestResults/Apha.BST.Web.coverage.opencover.xml `
             /p:CoverletOutputFormat=opencover
-          # dotnet test src/apha.bst.sln --no-build --configuration Release `
-          #   --collect:"XPlat Code Coverage" --settings src/coverlet.runsettings
-      # - name: Convert coverage to Cobertura
-      #   run: |
-      #     dotnet tool install --global dotnet-reportgenerator-globaltool
-      #     #reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coverage -reporttypes:Cobertura
-      #     reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Xml
-      #     #reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coverage -reporttypes:OpenCover
       - name: List coverage files
         shell: pwsh
         run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"
