@@ -101,7 +101,7 @@ jobs:
       - name: Convert coverage to Cobertura
         run: |
           dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coverage -reporttypes:Cobertura -reportfile:coverage.cobertura.xml
+          reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coverage -reporttypes:OpenCover
       - name: List coverage files
         shell: pwsh
         run: Get-ChildItem -Recurse -Filter "*cobertura.xml"
@@ -113,7 +113,7 @@ jobs:
           secrets.SONAR_TOKEN }}"
   push-image:
     name: Push Docker Image
-    needs: build-and-analyze
+    needs: build-and-analyze-paused  #remove -paused
     runs-on: ubuntu-latest
     permissions:
       id-token: write
