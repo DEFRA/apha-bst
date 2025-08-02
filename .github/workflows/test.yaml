@@ -41,18 +41,18 @@ jobs:
         dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj \
           --no-build --configuration Release \
           /p:CollectCoverage=true \
-          /p:CoverletOutput=../../../TestResults/Apha.BST.Application.coverage.opencover.xml \
+          /p:CoverletOutput=$(pwd)/TestResults/Apha.BST.Application.coverage.opencover.xml \
           /p:CoverletOutputFormat=opencover \
           /p:DebugType=full /p:DebugSymbols=true \
-          --logger "trx;LogFileName=../../../../TestResults/Apha.BST.Application.test_results.trx"
+          --logger "trx;LogFileName=$(pwd)/TestResults/Apha.BST.Application.test_results.trx"
 
         dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
           --no-build --configuration Release \
           /p:CollectCoverage=true \
-          /p:CoverletOutput=../../../TestResults/Apha.BST.Web.coverage.opencover.xml \
+          /p:CoverletOutput=$(pwd)/TestResults/Apha.BST.Web.coverage.opencover.xml \
           /p:CoverletOutputFormat=opencover \
           /p:DebugType=full /p:DebugSymbols=true \
-          --logger "trx;LogFileName=../../../../TestResults/Apha.BST.Web.test_results.trx"
+          --logger "trx;LogFileName=$(pwd)/TestResults/Apha.BST.Web.test_results.trx"
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2
@@ -65,12 +65,13 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.cs.opencover.reportsPaths=TestResults/*.opencover.xml
           -Dsonar.cs.vstest.reportsPaths=TestResults/*.test_results.trx
-          -Dsonar.coverage.exclusions=**/wwwroot/**,**/*.csthml
+          -Dsonar.coverage.exclusions=**/wwwroot/**,**/*.cshtml
           -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
           -Dsonar.sources=src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web
           -Dsonar.tests=src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests
           -Dsonar.test.inclusions=**/*.cs
+          -Dsonar.scm.disabled=true
     - name: Upload test and coverage artifacts
       if: always()
       uses: actions/upload-artifact@v4
