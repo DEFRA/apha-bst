@@ -68,7 +68,6 @@ jobs:
           -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
           -Dsonar.scm.exclusions.disabled=true
-          #-Dsonar.exclusions=**/wwwroot/**
     - name: Upload test and coverage artifacts
       if: always()
       uses: actions/upload-artifact@v4
