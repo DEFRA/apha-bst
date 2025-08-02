@@ -43,7 +43,7 @@ jobs:
           /p:CollectCoverage=true \
           /p:CoverletOutput=$(pwd)/TestResults/Apha.BST.Application.coverage.opencover.xml \
           /p:CoverletOutputFormat=opencover \
-          /p:DeterministicSourcePaths=true \
+          /p:Deterministic=true \
           /p:DebugType=full /p:DebugSymbols=true \
           --logger "trx;LogFileName=$(pwd)/TestResults/Apha.BST.Application.test_results.trx"
 
@@ -52,7 +52,7 @@ jobs:
           /p:CollectCoverage=true \
           /p:CoverletOutput=$(pwd)/TestResults/Apha.BST.Web.coverage.opencover.xml \
           /p:CoverletOutputFormat=opencover \
-          /p:DeterministicSourcePaths=true \
+          /p:Deterministic=true \
           /p:DebugType=full /p:DebugSymbols=true \
           --logger "trx;LogFileName=$(pwd)/TestResults/Apha.BST.Web.test_results.trx"
 
