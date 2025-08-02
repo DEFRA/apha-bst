@@ -57,19 +57,19 @@ jobs:
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2
       with:
-        projectBaseDir: src
+        #projectBaseDir: src
         args: >
           -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
           -Dsonar.organization=${{ env.SONAR_ORG }}
           -Dsonar.token=${{ env.SONAR_TOKEN }}
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.cs.opencover.reportsPaths=../TestResults/*.opencover.xml
-          -Dsonar.cs.vstest.reportsPaths=../TestResults/*.test_results.trx
+          -Dsonar.cs.opencover.reportsPaths=TestResults/*.opencover.xml
+          -Dsonar.cs.vstest.reportsPaths=TestResults/*.test_results.trx
           -Dsonar.coverage.exclusions=**/wwwroot/**,**/*.csthml
           -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
-          -Dsonar.sources=Apha.BST/Apha.BST.Application,Apha.BST/Apha.BST.Core,Apha.BST/Apha.BST.DataAccess,Apha.BST/Apha.BST.Web
-          -Dsonar.tests=Apha.BST/Apha.BST.Application.UnitTests,Apha.BST/Apha.BST.Web.UnitTests
+          -Dsonar.sources=src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web
+          -Dsonar.tests=src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests
           -Dsonar.test.inclusions=**/*.cs
     - name: Upload test and coverage artifacts
       if: always()
