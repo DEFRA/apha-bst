@@ -57,6 +57,7 @@ jobs:
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2
       with:
+        projectBaseDir: src
         args: >
           -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
           -Dsonar.organization=${{ env.SONAR_ORG }}
@@ -70,7 +71,6 @@ jobs:
           -Dsonar.sources=Apha.BST/Apha.BST.Application,Apha.BST/Apha.BST.Core,Apha.BST/Apha.BST.DataAccess,Apha.BST/Apha.BST.Web
           -Dsonar.tests=Apha.BST/Apha.BST.Application.UnitTests,Apha.BST/Apha.BST.Web.UnitTests
           -Dsonar.test.inclusions=**/*.cs
-        working-directory: src
     - name: Upload test and coverage artifacts
       if: always()
       uses: actions/upload-artifact@v4
