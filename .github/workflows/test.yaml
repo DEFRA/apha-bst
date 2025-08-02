@@ -35,7 +35,7 @@ jobs:
 
     - name: Run unit tests with OpenCover coverage
       run: |
-        # Update this block for each test project
+        # Update this block for each test project 
         dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj \
           --no-build --configuration Release \
           /p:CollectCoverage=true \
