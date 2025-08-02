@@ -62,12 +62,13 @@ jobs:
           -Dsonar.organization=${{ env.SONAR_ORG }}
           -Dsonar.token=${{ env.SONAR_TOKEN }}
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.cs.opencover.reportsPaths=TestResults/*.opencover.xml
-          -Dsonar.cs.vstest.reportsPaths=TestResults/*.test_results.trx
-          -Dsonar.coverage.exclusions=**/wwwroot/**
+          -Dsonar.cs.opencover.reportsPaths=../TestResults/*.opencover.xml
+          -Dsonar.cs.vstest.reportsPaths=../TestResults/*.test_results.trx
+          -Dsonar.coverage.exclusions=**/wwwroot/**,**/*.csthml
           -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
           -Dsonar.scm.exclusions.disabled=true
+        working-directory: src
     - name: Upload test and coverage artifacts
       if: always()
       uses: actions/upload-artifact@v4
