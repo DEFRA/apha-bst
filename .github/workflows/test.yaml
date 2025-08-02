@@ -33,7 +33,8 @@ jobs:
       run: dotnet restore ${{ env.SOLUTION_FILE }}
 
     - name: Build solution
-      run: dotnet build ${{ env.SOLUTION_FILE }} --no-restore --configuration Release --no-incremental
+      run: dotnet build ${{ env.SOLUTION_FILE }} --no-restore --configuration Release \
+        /p:DebugType=full /p:DebugSymbols=true
 
     - name: Run unit tests with OpenCover coverage
       run: |
@@ -43,6 +44,7 @@ jobs:
           /p:CollectCoverage=true \
           /p:CoverletOutput=../../../TestResults/Apha.BST.Application.coverage.opencover.xml \
           /p:CoverletOutputFormat=opencover \
+          /p:DebugType=full /p:DebugSymbols=true 
           --logger "trx;LogFileName=../../../../TestResults/Apha.BST.Application.test_results.trx"
 
         dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
@@ -65,7 +67,8 @@ jobs:
           -Dsonar.coverage.exclusions=**/wwwroot/**
           -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
-
+          -Dsonar.scm.exclusions.disabled=true
+          #-Dsonar.exclusions=**/wwwroot/**
     - name: Upload test and coverage artifacts
       if: always()
       uses: actions/upload-artifact@v4
