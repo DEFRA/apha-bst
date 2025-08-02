@@ -62,8 +62,9 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.cs.opencover.reportsPaths=TestResults/*.opencover.xml
           -Dsonar.cs.vstest.reportsPaths=TestResults/*.test_results.trx
-          -Dsonar.coverage.exclusions=**/Migrations/**
+          -Dsonar.coverage.exclusions=**/wwwroot/**
           -Dsonar.branch.name=${{ github.ref_name }}
+          -Dsonar.verbose=true
 
     - name: Upload test and coverage artifacts
       if: always()
