@@ -82,8 +82,8 @@ jobs:
           -Dsonar.test.inclusions=**/*.cs
           -Dsonar.scm.disabled=true
 
-          #-Dsonar.sources=src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web
-          #-Dsonar.tests=src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests
+          # -Dsonar.sources=src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web
+          # -Dsonar.tests=src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests
     - name: Upload test and coverage artifacts
       if: always()
       uses: actions/upload-artifact@v4
