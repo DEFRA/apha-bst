@@ -105,7 +105,7 @@ jobs:
             /d:sonar.branch.name="${{ github.ref_name }}" `
             /d:sonar.verbose=true `
             /d:sonar.sources=src `
-            /d:sonar.exclusions=
+            /d:sonar.exclusions="*.xyz"
             #/d:sonar.inclusions="**/*.cs" `
             #/d:sonar.test.inclusions="**/*Tests.cs,**/*Test.cs"
       - name: Restore NuGet packages

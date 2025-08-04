@@ -1,6 +1,12 @@
 name: Sample Test RUn
 on:
   workflow_dispatch:
+    inputs:
+      PromptRun:
+        description: 'Do u want to run?'
+        type: boolean
+        required: false
+        default: false
   push:
     branches:
       - 'feature/*'
@@ -16,6 +22,7 @@ env:
 
 jobs:
   build-test-sonar:
+    if: ${{ github.event.inputs.PromptRun == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
