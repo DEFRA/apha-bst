@@ -60,7 +60,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 
             Assert.Contains("John Doe has already trained for Test brainstem removal", result);
             Assert.Contains("Cannot save record", result);
-        }        
+        }
 
         [Fact]
         public async Task AddTrainingAsync_WithNonExistentTrainee_ShouldUseIdAsName()
@@ -182,7 +182,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetTrainerHistoryAsync_SuccessfulRetrieval_ReturnsTrainerHistory()
         {
             int personId = 1;
-            string animalType = "Dog";
+            string animalType = "Sheep&Goat";
             var mockHistory = new List<TrainerHistory> { new TrainerHistory(), new TrainerHistory() };
             var expectedDtos = new List<TrainerHistoryDto> { new TrainerHistoryDto(), new TrainerHistoryDto() };
 
@@ -197,7 +197,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetTrainerHistoryAsync_EmptyResult_ReturnsEmptyList()
         {
             int personId = 1;
-            string animalType = "Cat";
+            string animalType = "Cattle";
             var mockHistory = new List<TrainerHistory>();
             var expectedDtos = new List<TrainerHistoryDto>();
 
@@ -212,7 +212,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetTrainerHistoryAsync_InvalidPersonId_ReturnsEmptyList()
         {
             int invalidPersonId = -1;
-            string animalType = "Dog";
+            string animalType = "Sheep&Goat";
             var mockHistory = new List<TrainerHistory>();
             var expectedDtos = new List<TrainerHistoryDto>();
 
@@ -237,5 +237,306 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 
             Assert.Empty(result);
         }
+        [Fact]
+        public async Task GetTraineesAsync_ShouldReturnMappedTrainees_WhenTraineesExist()
+        {
+            var trainees = new List<TraineeTrainer>
+    {
+        new TraineeTrainer { PersonId = 1, Person = "John Doe" },
+        new TraineeTrainer { PersonId = 2, Person = "Jane Smith" }
+    };
+            var mappedDtos = new List<PersonsDto>
+    {
+        new PersonsDto { PersonId = 1, Person = "John Doe" },
+        new PersonsDto { PersonId = 2, Person = "Jane Smith" }
+    };
+
+            MockForGetTraineesAsync(trainees, mappedDtos);
+
+            var result = await _trainingService!.GetTraineesAsync();
+
+            Assert.NotNull(result);
+            Assert.Equal(mappedDtos.Count, result.Count);
+            Assert.Equal(mappedDtos, result);
+        }
+
+        [Fact]
+        public async Task GetTraineesAsync_ShouldReturnEmptyList_WhenNoTraineesExist()
+        {
+            var trainees = new List<TraineeTrainer>();
+            var mappedDtos = new List<PersonsDto>();
+
+            MockForGetTraineesAsync(trainees, mappedDtos);
+
+            var result = await _trainingService!.GetTraineesAsync();
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+
+        [Fact]
+        public async Task GetTrainingByKeysAsync_ShouldReturnMappedDto_WhenTrainingExists()
+        {
+            int traineeId = 1;
+            int trainerId = 2;
+            string species = "Sheep&Goat";
+            DateTime dateTrained = DateTime.Now;
+            string trainingType = "Cascade Trained";
+
+            var training = new Training { PersonId = traineeId };
+            var mappedDto = new TrainingDto { PersonId = traineeId };
+
+            MockForGetTrainingByKeys(training, mappedDto, traineeId, trainerId, species, dateTrained, trainingType);
+
+            var result = await _trainingService!.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
+
+            Assert.NotNull(result);
+            Assert.Equal(mappedDto, result);
+        }
+        [Fact]
+        public async Task GetTrainingByKeysAsync_ShouldReturnNull_WhenNoTrainingFound()
+        {
+            int traineeId = 1;
+            int trainerId = 2;
+            string species = "Cattle";
+            DateTime dateTrained = DateTime.Now;
+            string trainingType = "Trained";
+
+            MockForGetTrainingByKeys(null, null, traineeId, trainerId, species, dateTrained, trainingType);
+
+            var result = await _trainingService!.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
+
+            Assert.Null(result);
+        }
+        [Fact]
+        public async Task GetTrainingByKeysAsync_ShouldCallRepoCorrectly_WithEdgeInputs()
+        {
+            int traineeId = 0;
+            int trainerId = int.MaxValue;
+            string species = "";
+            DateTime dateTrained = DateTime.MinValue;
+            string trainingType = string.Empty;
+
+            var mockRepo = Substitute.For<ITrainingRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            mockRepo.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType).Returns((Training)null!);
+
+            _trainingService = new TrainingService(mockRepo, mockMapper);
+
+            await _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
+
+            await mockRepo.Received(1).GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
+        }
+        [Fact]
+        public async Task GetTrainingByKeysAsync_ShouldThrowException_WhenRepoFails()
+        {
+            int traineeId = 1;
+            int trainerId = 2;
+            string species = "Cattle";
+            DateTime dateTrained = DateTime.Now;
+            string trainingType = "Training Confirmed";
+
+            var mockRepo = Substitute.For<ITrainingRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            mockRepo.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType)
+                    .ThrowsAsync(new Exception("Database error"));
+
+            _trainingService = new TrainingService(mockRepo, mockMapper);
+
+            await Assert.ThrowsAsync<Exception>(() =>
+                _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType));
+        }
+
+        [Fact]
+        public async Task UpdateTrainingAsync_TraineeAndTrainerAreSamePerson_ReturnsErrorMessage()
+        {
+            var dto = new EditTrainingDto
+            {
+                TraineeId = 1,
+                TrainerId = 1,
+                TrainingType = "Cascade training",
+                TrainingAnimal = "Sheep&Goat",
+                TrainingAnimalOld = "Cattle",
+                TrainingDateTime = new DateTime(2025, 8, 2, 11, 0, 0, DateTimeKind.Utc)
+            };
+
+            var editTraining = new EditTraining
+            {
+                TrainingType = dto.TrainingType,
+                TrainingAnimal = dto.TrainingAnimal,
+                TrainingAnimalOld = dto.TrainingAnimalOld
+            };
+
+            MockForUpdateTrainingAsync(dto, editTraining, "", null, null);
+
+            var result = await _trainingService!.UpdateTrainingAsync(dto);
+
+            Assert.Equal("Trainee and Trainer cannot be the same person.", result);
+        }
+
+        [Fact]
+        public async Task UpdateTrainingAsync_ValidData_ReturnsSuccessMessage()
+        {
+            var dto = new EditTrainingDto
+            {
+                TraineeId = 1,
+                TrainerId = 2,
+                TrainingAnimal = "Cattle",
+                TrainingAnimalOld = "Cattle",
+                TrainingType = "Brainstem",
+                TrainingDateTime = new DateTime(2023, 5, 1, 10, 0, 0, DateTimeKind.Utc)
+            };
+
+            var editTraining = new EditTraining
+            {
+                TrainingType = dto.TrainingType,
+                TrainingAnimal = dto.TrainingAnimal,
+                TrainingAnimalOld = dto.TrainingAnimalOld
+            };
+
+            var trainee = new Persons { Person = "John" };
+            var trainer = new Persons { Person = "Jane" };
+
+            MockForUpdateTrainingAsync(dto, editTraining, "SUCCESS", trainee, trainer);
+
+            var result = await _trainingService!.UpdateTrainingAsync(dto);
+
+            Assert.Equal("John has been trained in Cattle brainstem removal on 01/05/2023 by Jane", result);
+        }
+
+        [Fact]
+        public async Task UpdateTrainingAsync_UpdateFails_ReturnsFailureMessage()
+        {
+            var dto = new EditTrainingDto
+            {
+                TraineeId = 1,
+                TrainerId = 2,
+                TrainingAnimal = "Cattle",
+                TrainingAnimalOld = "Cattle",
+                TrainingType = "Brainstem",
+                TrainingDateTime = new DateTime(2025, 8, 1, 10, 0, 0, DateTimeKind.Utc)
+            };
+
+            var editTraining = new EditTraining
+            {
+                TrainingType = dto.TrainingType,
+                TrainingAnimal = dto.TrainingAnimal,
+                TrainingAnimalOld = dto.TrainingAnimalOld
+            };
+
+            var trainee = new Persons { Person = "Alice" };
+            var trainer = new Persons { Person = "Bob" };
+
+            MockForUpdateTrainingAsync(dto, editTraining, "FAIL: Some error occurred", trainee, trainer);
+
+            var result = await _trainingService!.UpdateTrainingAsync(dto);
+
+            Assert.Equal("Save failed.", result);
+        }
+        [Fact]
+        public async Task GetTrainerTrainedAsync_ShouldReturnMappedDtos_WhenTrainerHasMultipleRecords()
+        {
+            var trainerId = 1;
+            var trainerTrained = new List<TrainerTrained>
+    {
+        new TrainerTrained { TraineeNo = trainerId, Site = "John Doe", SpeciesTrained = "Sheep&Goat" },
+        new TrainerTrained { TraineeNo = trainerId, Site = "Jane Smith", SpeciesTrained = "Cattle" }
+    };
+
+            var mappedDtos = new List<TrainerTrainedDto>
+    {
+        new TrainerTrainedDto { TraineeNo = trainerId, Site = "John Doe", SpeciesTrained = "Sheep&Goat" },
+        new TrainerTrainedDto { TraineeNo = trainerId, Site = "Jane Smith", SpeciesTrained = "Cattle" }
+    };
+
+            MockForGetTrainerTrained(trainerId, trainerTrained, mappedDtos);
+
+            var result = await _trainingService!.GetTrainerTrainedAsync(trainerId);
+
+            Assert.NotNull(result);
+            Assert.Equal(mappedDtos, result);
+        }
+
+        [Fact]
+        public async Task GetTrainerTrainedAsync_ShouldReturnEmptyList_WhenTrainerHasNoRecords()
+        {
+            var trainerId = 2;
+            var trainerTrained = new List<TrainerTrained>();
+            var mappedDtos = new List<TrainerTrainedDto>();
+
+            MockForGetTrainerTrained(trainerId, trainerTrained, mappedDtos);
+
+            var result = await _trainingService!.GetTrainerTrainedAsync(trainerId);
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task GetTrainerTrainedAsync_ShouldReturnEmptyList_WhenTrainerIdIsInvalid()
+        {
+            var trainerId = -1;
+            var trainerTrained = new List<TrainerTrained>();
+            var mappedDtos = new List<TrainerTrainedDto>();
+
+            MockForGetTrainerTrained(trainerId, trainerTrained, mappedDtos);
+
+            var result = await _trainingService!.GetTrainerTrainedAsync(trainerId);
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+        [Fact]
+        public async Task DeleteTrainingAsync_SuccessfulDeletion_ReturnsSuccessMessage()
+        {
+            // Arrange
+            int traineeId = 1;
+            string species = "Sheep&Goat";
+            DateTime dateTrained = new DateTime(2025, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+            var person = new Persons { PersonId = traineeId, Person = "John Doe" }; // Use Persons here
+
+            MockForDeleteTrainingAsync(traineeId, species, dateTrained, "SUCCESS", person);
+
+            // Act
+            var result = await _trainingService!.DeleteTrainingAsync(traineeId, species, dateTrained);
+
+            // Assert
+            Assert.Contains("John Doe trained in Sheep&Goat brainstem removal on 01/01/2025 has been deleted from the database", result);
+        }
+        [Fact]
+        public async Task DeleteTrainingAsync_FailedDeletion_ReturnsFailureMessage()
+        {
+            // Arrange
+            int traineeId = 1;
+            string species = "Cattle";
+            DateTime dateTrained = new DateTime(2025, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+
+            MockForDeleteTrainingAsync(traineeId, species, dateTrained, "FAIL: Record not found", null);  // Pass null for the person
+
+            // Act
+            var result = await _trainingService!.DeleteTrainingAsync(traineeId, species, dateTrained);
+
+            // Assert
+            Assert.Equal("Delete failed.", result);
+        }
+
+        [Fact]
+        public async Task DeleteTrainingAsync_PersonNotFound_UsesIdAsName()
+        {
+            // Arrange
+            int traineeId = 1;
+            string species = "Sheep&Goat";
+            DateTime dateTrained = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+
+            MockForDeleteTrainingAsync(traineeId, species, dateTrained, "SUCCESS", null);  // Pass null for the person
+
+            // Act
+            var result = await _trainingService!.DeleteTrainingAsync(traineeId, species, dateTrained);
+
+            // Assert
+            Assert.Contains("1 trained in Sheep&Goat brainstem removal on 01/01/2024 has been deleted from the database", result);
+        }
+
     }
 }

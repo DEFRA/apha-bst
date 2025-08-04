@@ -11,8 +11,7 @@ namespace Apha.BST.Application.DTOs
         public int PersonId { get; set; }
         public string? Person { get; set; }
         public bool Cattle { get; set; }
-        public bool Sheep { get; set; }
-        public bool Goats { get; set; }
+        public bool SheepAndGoat { get; set; }
         public bool HasTraining { get; internal set; }
     }
 }

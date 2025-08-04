@@ -18,6 +18,8 @@ namespace Apha.BST.DataAccess.Repositories
     {
         private readonly BstContext _context;
         private readonly IAuditLogRepository _auditLogRepository;
+        public const string Success = "SUCCESS";
+        public const string Exists = "EXISTS";
         public SiteRepository(BstContext context, IAuditLogRepository auditLogRepository)
         {
             _context = context;
@@ -69,7 +71,6 @@ namespace Apha.BST.DataAccess.Repositories
             catch (Exception ex)
             {
                 error = ex.ToString();
-                // Optionally: send email notification here if required (omitted for brevity)
                 throw;
             }
             finally
@@ -88,9 +89,9 @@ namespace Apha.BST.DataAccess.Repositories
             }
             var returnCode = (byte)parameters[10].Value;          
             if (returnCode == 1)
-                return "EXISTS"; // Code 1 = Site already exists
+                return Exists; // Code 1 = Site already exists
 
-            return "SUCCESS"; // Code 0 = Insert success
+            return Success; // Code 0 = Insert success
         }
 
         public async Task<string?> GetPersonNameByIdAsync(int personId)

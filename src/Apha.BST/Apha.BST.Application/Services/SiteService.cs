@@ -18,7 +18,8 @@ namespace Apha.BST.Application.Services
     {
 
         private readonly ISiteRepository _siteRepository;
-        private readonly IMapper _mapper;            
+        private readonly IMapper _mapper;
+        public const string Exists = "EXISTS";
 
         public SiteService(ISiteRepository siteRepository, IMapper mapper)
         {
@@ -40,8 +41,7 @@ namespace Apha.BST.Application.Services
                 PersonId = t.PersonId,
                 Person = t.Person,
                 Cattle = t.Cattle,
-                Sheep = t.Sheep,
-                Goats = t.Goats,                
+                SheepAndGoat = t.SheepAndGoat
             }).ToList();
         }
 
@@ -50,7 +50,7 @@ namespace Apha.BST.Application.Services
         {
             var site = _mapper.Map<Site>(siteDto);
             var createdSite = await _siteRepository.AddSiteAsync(site);
-            if (createdSite == "EXISTS")
+            if (createdSite == Exists)
             {
                 return "Site already exists. Please choose another Site / Plant No.";
             }

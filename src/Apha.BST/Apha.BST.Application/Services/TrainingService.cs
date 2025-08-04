@@ -15,6 +15,8 @@ namespace Apha.BST.Application.Services
     {
         private readonly ITrainingRepository _trainingRepository;
         private readonly IMapper _mapper;
+        public const string Fail = "FAIL";
+        public const string Exists = "EXISTS";
 
         public TrainingService(ITrainingRepository trainingRepository, IMapper mapper)
         {
@@ -60,7 +62,7 @@ namespace Apha.BST.Application.Services
             string traineeName = trainee?.Person ?? dto.TraineeId.ToString();
             string trainerName = trainer?.Person ?? dto.TrainerId.ToString();
             var result = await _trainingRepository.UpdateTrainingAsync(editTraining);
-            if (result.StartsWith("FAIL"))
+            if (result.StartsWith(Fail))
             {
                 return $"Save failed.";
             }
@@ -98,7 +100,7 @@ namespace Apha.BST.Application.Services
             string traineeName = trainee?.Person ?? trainingDto.PersonId.ToString();
             string trainerName = trainer?.Person ?? trainingDto.TrainerId.ToString();
 
-            if (result == "EXISTS")
+            if (result == Exists)
             {
                 return $"{traineeName} has already trained for {trainingDto.TrainingType} brainstem removal: Cannot save record";
             }
@@ -112,7 +114,7 @@ namespace Apha.BST.Application.Services
             var trainee = await _trainingRepository.GetPersonByIdAsync(traineeId);
             string traineeName = trainee?.Person ?? traineeId.ToString();
 
-            if (result.StartsWith("FAIL"))
+            if (result.StartsWith(Fail))
             {
                 return $"Delete failed.";
             }

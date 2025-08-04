@@ -20,8 +20,7 @@ namespace Apha.BST.Application.Services
         public List<SelectListItem> GetTrainingAnimal() => new List<SelectListItem>
         {
             new SelectListItem { Value = "Cattle", Text = "Cattle" },
-            new SelectListItem { Value = "Sheep", Text = "Sheep" },
-            new SelectListItem { Value = "Goat", Text = "Goat" }
+            new SelectListItem { Value = "Sheep & Goat", Text = "Sheep & Goat" }
         };
 
     }

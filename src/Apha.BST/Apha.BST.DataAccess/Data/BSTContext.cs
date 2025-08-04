@@ -42,7 +42,7 @@ public partial class BstContext : DbContext
 
     public virtual DbSet<VlaLoc> Vlalocs { get; set; }   
     public DbSet<SiteTrainee> SiteTrainees { get; set; }
-    public DbSet<Trainee> Traines { get; set; }
+    public DbSet<TraineeTrainer> Traines { get; set; }
     public DbSet<TrainerTraining> TrainerTrainings { get; set; }
     public DbSet<TrainerHistory> TrainerHistorys { get; set; }
     public DbSet<TrainerTrained> TrainerTraineds { get; set; }
@@ -291,7 +291,7 @@ public partial class BstContext : DbContext
 
         modelBuilder.Entity<SiteTrainee>().HasNoKey();
         modelBuilder
-            .Entity<Trainee>()
+            .Entity<TraineeTrainer>()
             .HasNoKey()  // Redundant if you use [Keyless], but explicit
             .ToView(null);  // Prevents EF from trying to map to a table or view
 

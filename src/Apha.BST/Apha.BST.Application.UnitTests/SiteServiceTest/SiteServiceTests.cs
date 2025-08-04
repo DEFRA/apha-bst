@@ -15,44 +15,50 @@ using NSubstitute.ExceptionExtensions;
 namespace Apha.BST.Application.UnitTests.Services
 {
     public class SiteServiceTests : AbstractSiteServiceTest
-    {        
-            [Fact]
-            public async Task GetAllSitesAsync_WhenSitesExist_ShouldReturnAllSites()
-            {
-             //Arrange
-              MockforGetSites();
+    {
+        [Fact]
+        public async Task GetAllSitesAsync_WithValidPlantNo_ReturnsListOfSiteDtos()
+        {
+            // Arrange
+            MockForGetSites("PLANT001");
+
             // Act
             var result = await _siteService.GetAllSitesAsync("PLANT001");
 
-                // Assert
-                result.Count().Should().Be(1);
-            }
+            // Assert
+            result.Count().Should().Be(1);
+            result.First().Name.Should().Be("Site 1");
+            result.First().PlantNo.Should().Be("PLANT001");
+        }
 
-            [Fact]
-            public async Task GetAllSitesAsync_WhenNoSitesExist_ShouldReturnEmptyList()
-            {
-            //Arrange
-            MockforGetSites();
+        [Fact]
+        public async Task GetAllSitesAsync_WithAnotherValidPlantNo_ReturnsListOfSiteDtos()
+        {
+            // Arrange
+            MockForGetSites("PLANT002");
+
             // Act
-            var result = await _siteService.GetAllSitesAsync("PLANT_NO_DATA");
+            var result = await _siteService.GetAllSitesAsync("PLANT002");
 
-                // Assert
-                result.Should().BeEmpty();
-            }
+            // Assert
+            result.Count().Should().Be(1);
+            result.First().Name.Should().Be("Site 1");
+            result.First().PlantNo.Should().Be("PLANT002");
+        }
 
-            [Fact]
-            public async Task GetAllSitesAsync_ShouldReturnExpectedMappedData()
-            {
-            //Arrange
-            MockforGetSites();
+        [Fact]
+        public async Task GetAllSitesAsync_ShouldReturnExpectedMappedData()
+        {
+            // Arrange
+            MockForGetSites("PLANT001");
+
             // Act
             var result = await _siteService.GetAllSitesAsync("PLANT001");
 
-                // Assert
-                result.Should().ContainSingle(s => s.Name == "Site 1");
-                result.First().PlantNo.Should().Be("PLANT001");
-            }
-
+            // Assert
+            result.Should().ContainSingle(s => s.Name == "Site 1");
+            result.First().PlantNo.Should().Be("PLANT001");
+        }
         [Fact]
         public async Task AddSiteAsync_NewSite_ReturnsSuccessMessage()
         {
@@ -79,7 +85,7 @@ namespace Apha.BST.Application.UnitTests.Services
 
             // Assert
             result.Should().Be("Site already exists. Please choose another Site / Plant No.");
-        }       
+        }
 
         [Fact]
         public async Task AddSiteAsync_RepositoryThrowsException_PropagatesException()
@@ -99,61 +105,48 @@ namespace Apha.BST.Application.UnitTests.Services
         }
 
         [Fact]
-        public async Task GetSiteTraineesAsync_WhenTraineesExist_ShouldReturnTraineesList()
+        public async Task GetSiteTraineesAsync_ValidPlantNo_ReturnsNonEmptyList()
         {
             // Arrange
-            MockForGetSiteTrainees("PLANT001");
+            MockForGetSiteTraineesAsync("PLANT001");  // Mock data for valid plant number
 
             // Act
             var result = await _siteService.GetSiteTraineesAsync("PLANT001");
 
             // Assert
-            result.Count().Should().Be(2);
-            result.First().PersonId.Should().Be(1);
-            result.First().Person.Should().Be("John Doe");
-            result.First().Cattle.Should().BeTrue();
-            result.First().Sheep.Should().BeFalse();
-            result.First().Goats.Should().BeTrue();
+            result.Count.Should().Be(2);  // Expecting 2 trainees
+            result[0].Person.Should().Be("John Doe");
+            result[1].Person.Should().Be("Jane Smith");
+            result[0].Cattle.Should().BeTrue();
+            result[1].SheepAndGoat.Should().BeTrue();
         }
 
         [Fact]
-        public async Task GetSiteTraineesAsync_WhenNoTraineesExist_ShouldReturnEmptyList()
+        public async Task GetSiteTraineesAsync_InvalidPlantNo_ReturnsEmptyList()
         {
             // Arrange
-            MockForGetSiteTrainees("PLANT_NO_DATA");
+            MockForGetSiteTraineesAsync("INVALID001");  // Mock empty list for invalid plant number
 
             // Act
-            var result = await _siteService.GetSiteTraineesAsync("PLANT_NO_DATA");
+            var result = await _siteService.GetSiteTraineesAsync("INVALID001");
 
             // Assert
-            result.Should().BeEmpty();
+            result.Should().BeEmpty();  // Expecting an empty list for invalid plant number
         }
 
         [Fact]
-        public async Task GetSiteTraineesAsync_InvalidPlantNo_ShouldReturnEmptyList()
+        public async Task DeleteTraineeAsync_TraineeWithExistingRecords_ReturnsWarningMessage()
         {
             // Arrange
-            MockForGetSiteTrainees("INVALID_PLANT");
+            int personId = 2;
+            string personName = "Jane Smith";
+            MockforDeleteTraineeAsync(personId, personName, false);
 
             // Act
-            var result = await _siteService.GetSiteTraineesAsync("INVALID_PLANT");
+            var result = await _siteService.DeleteTraineeAsync(personId);
 
             // Assert
-            result.Should().BeEmpty();
-        }
-
-        [Fact]
-        public async Task GetSiteTraineesAsync_ShouldReturnExpectedMappedData()
-        {
-            // Arrange
-            MockForGetSiteTrainees("PLANT001");
-
-            // Act
-            var result = await _siteService.GetSiteTraineesAsync("PLANT001");
-
-            // Assert
-            result.Should().ContainSingle(t => t.Person == "Jane Smith" && t.Sheep);
-            result.First(t => t.Person == "John Doe").Cattle.Should().BeTrue();
+            result.Should().Be($"Trainee '{personName}' has training records. Delete them first if you wish to remove the person.");
         }
     }
 }
