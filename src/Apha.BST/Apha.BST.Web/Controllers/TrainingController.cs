@@ -158,7 +158,7 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> ViewTraining(string selectedTraineeId = "")
         {
             var allPersons = await _personService.GetAllPersonAsync();
-            var allTrainee = _mapper.Map<IEnumerable<TraineeViewModel>>(allPersons);
+            var allTrainee = _mapper.Map<IEnumerable<TraineeTrainerViewModel>>(allPersons);
 
             var viewSelectList = allTrainee
                .Select(p => new SelectListItem
@@ -200,7 +200,7 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> TrainerHistory(int selectedTrainerId = 0, string selectedSpecies = "Cattle")
         {
             var allPersons = await _personService.GetAllPersonAsync();
-            var allTrainers = _mapper.Map<List<TraineeViewModel>>(allPersons);
+            var allTrainers = _mapper.Map<List<TraineeTrainerViewModel>>(allPersons);
 
             var historyDto = await _trainingService.GetTrainerHistoryAsync(selectedTrainerId, selectedSpecies);
 

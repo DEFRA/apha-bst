@@ -9,7 +9,7 @@ namespace Apha.BST.Core.Interfaces
 {
     public interface ITrainingRepository
     {
-        Task<List<Trainee>> GetAllTraineesAsync();
+        Task<List<TraineeTrainer>> GetAllTraineesAsync();
 
         //For EditTraining    
         Task<Training?> GetTrainingByKeysAsync(int traineeId, int trainerId, string species, DateTime dateTrained, string trainingType);

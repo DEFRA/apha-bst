@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Apha.BST.Core.Entities
 {
         [Keyless]
-        public class Trainee
+        public class TraineeTrainer
         {
             public int PersonId { get; set; }
 

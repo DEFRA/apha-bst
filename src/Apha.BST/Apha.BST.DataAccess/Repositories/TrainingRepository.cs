@@ -15,14 +15,17 @@ namespace Apha.BST.DataAccess.Repositories
 {
     public class TrainingRepository:ITrainingRepository
     {
-        private readonly BstContext _context;       
+        private readonly BstContext _context;
+        public const string Success = "SUCCESS";
+        public const string Fail = "FAIL";
+        public const string Exists = "EXISTS";
 
         public TrainingRepository(BstContext context)
         {
             _context = context;           
         }
 
-        public async Task<List<Trainee>> GetAllTraineesAsync()
+        public async Task<List<TraineeTrainer>> GetAllTraineesAsync()
         {
             return await _context.Traines
                 .FromSqlRaw("EXEC sp_Trainee_Training_Select")
@@ -98,13 +101,13 @@ namespace Apha.BST.DataAccess.Repositories
                 await _context.Database.ExecuteSqlRawAsync(
                     "EXEC sp_Training_Update @TraineeID, @DateTrained, @DateTrainedOld, @Species, @SpeciesOld, @Trainer, @TrainerOld, @TrainingType",
                     parameters);
-                return "SUCCESS";
+                return Success;
 
             }
             catch
             {
                                
-                return $"FAIL";
+                return Fail;
             }
 
         }
@@ -141,9 +144,9 @@ namespace Apha.BST.DataAccess.Repositories
             var returnCode = (byte)parameters[5].Value;
 
             if (returnCode == 1)
-                return "EXISTS"; 
+                return Exists; 
 
-            return "SUCCESS";             
+            return Success;             
         }
 
         public async Task<Persons?> GetPersonByIdAsync(int personId)
@@ -163,12 +166,12 @@ namespace Apha.BST.DataAccess.Repositories
             try
             {
                 await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);
-                return "SUCCESS";
+                return Success;
             }
             catch 
             {
                            
-                return $"FAIL";
+                return Fail;
             }          
         }
 
