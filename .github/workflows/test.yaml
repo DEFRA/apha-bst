@@ -67,7 +67,7 @@ jobs:
       uses: SonarSource/sonarqube-scan-action@v2
       with:
         #projectBaseDir: src
-        args: >
+        args: |
           -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
           -Dsonar.organization=${{ env.SONAR_ORG }}
           -Dsonar.token=${{ env.SONAR_TOKEN }}
