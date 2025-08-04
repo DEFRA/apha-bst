@@ -1,12 +1,12 @@
 name: Sample Test RUn
 on:
   workflow_dispatch:
-    inputs:
-      PromptRun:
-        description: 'Do u want to run?'
-        type: boolean
-        required: false
-        default: false
+    # inputs:
+    #   PromptRun:
+    #     description: 'Do u want to run?'
+    #     type: boolean
+    #     required: false
+    #     default: false
   push:
     branches:
       - 'feature/*'
@@ -22,7 +22,7 @@ env:
 
 jobs:
   build-test-sonar:
-    if: ${{ github.event.inputs.PromptRun == 'true' }}
+    # if: ${{ github.event.inputs.PromptRun == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -78,10 +78,12 @@ jobs:
           -Dsonar.exclusions=**/wwwroot/**
           -Dsonar.branch.name=${{ github.ref_name }}
           -Dsonar.verbose=true
-          -Dsonar.sources=src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web
-          -Dsonar.tests=src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests
+          -Dsonar.sources=.
           -Dsonar.test.inclusions=**/*.cs
           -Dsonar.scm.disabled=true
+
+          #-Dsonar.sources=src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web
+          #-Dsonar.tests=src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests
     - name: Upload test and coverage artifacts
       if: always()
       uses: actions/upload-artifact@v4

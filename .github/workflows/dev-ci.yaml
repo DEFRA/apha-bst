@@ -102,12 +102,12 @@ jobs:
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
             /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
+            /d:sonar.cs.vstest.reportsPaths="src/TestResults/*.test_results.trx""
             /d:sonar.branch.name="${{ github.ref_name }}" `
             /d:sonar.verbose=true `
             /d:sonar.sources=. `
-            /d:sonar.sonarcloud.enableCache=false
-            #/d:sonar.inclusions="**/*.cs" `
-            #/d:sonar.test.inclusions="**/*Tests.cs,**/*Test.cs"
+            /d:sonar.exclusions="**/wwwroot/**" `
+            /d:sonar.coverage.exclusions=**/wwwroot/**,**/*.cshtml
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/Apha.BST.sln
@@ -120,15 +120,21 @@ jobs:
           dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj `
             --no-build --configuration Release /p:CollectCoverage=true `
             /p:CoverletOutput=../../TestResults/Apha.BST.Application.coverage.opencover.xml `
-            /p:CoverletOutputFormat=opencover
+            /p:CoverletOutputFormat=opencover `
+            /p:Deterministic=true `
+            /p:DebugType=full /p:DebugSymbols=true `
+            --logger "trx;LogFileName=$($PWD.Path)/TestResults/Apha.BST.Application.test_results.trx"
 
           dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj `
             --no-build --configuration Release /p:CollectCoverage=true `
             /p:CoverletOutput=../../TestResults/Apha.BST.Web.coverage.opencover.xml `
-            /p:CoverletOutputFormat=opencover
+            /p:CoverletOutputFormat=opencover `
+            /p:Deterministic=true `
+            /p:DebugType=full /p:DebugSymbols=true `
+            --logger "trx;LogFileName=$($PWD.Path)/TestResults/Apha.BST.Application.test_results.trx"
       - name: List coverage files
         shell: pwsh
-        run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"
+        run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"; Get-ChildItem -Recurse -Filter "*.test_results.trx"
       - name: End Sonar Analysis
         shell: pwsh
         env:
