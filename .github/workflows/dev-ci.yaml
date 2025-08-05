@@ -95,19 +95,21 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          echo "Image Tag Value being used for /v: parameter: ${{ steps.imgtag.outputs.image_tag }}"
+          
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"DEFRA_apha-bst" `
             /o:"defra" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
+            /v:"${{ steps.imgtag.outputs.image_tag }}" `
             /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
             /d:sonar.cs.vstest.reportsPaths="src/TestResults/*.test_results.trx" `
             /d:sonar.branch.name="${{ github.ref_name }}" `
             /d:sonar.verbose=true `
             /d:sonar.sources=. `
             /d:sonar.exclusions="**/wwwroot/**" `
-            /d:sonar.coverage.exclusions="**/wwwroot/**,**/*.cshtml" `
-            /d:sonar.projectVersion="${{ steps.imgtag.outputs.image_tag }}"
+            /d:sonar.coverage.exclusions="**/wwwroot/**,**/*.cshtml"
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/Apha.BST.sln
