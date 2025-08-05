@@ -55,9 +55,13 @@ var app = builder.Build();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-    // Optionally limit to known proxies (recommended in production)
-    // KnownProxies = { IPAddress.Parse("YOUR_LOAD_BALANCER_IP") }
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Request Scheme: {context.Request.Scheme}");
+    Console.WriteLine($"X-Forwarded-Proto Header: {context.Request.Headers["X-Forwarded-Proto"]}");
+    await next();
 });
 
 
