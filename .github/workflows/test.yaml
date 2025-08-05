@@ -24,6 +24,9 @@ jobs:
   build-test-sonar:
     # if: ${{ github.event.inputs.PromptRun == 'true' }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - name: Checkout code
