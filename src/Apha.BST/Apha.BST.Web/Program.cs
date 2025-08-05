@@ -71,4 +71,4 @@ app.MapControllerRoute(
 
 
 app.MapHealthChecks("/health");
-app.Run();
+await app.RunAsync();

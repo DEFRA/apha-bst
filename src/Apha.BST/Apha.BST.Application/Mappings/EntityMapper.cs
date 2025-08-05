@@ -17,6 +17,7 @@ namespace Apha.BST.Application.Mappings
             CreateMap<EditTrainingDto, EditTraining>().ReverseMap();           
             CreateMap<TrainerHistoryDto, TrainerHistory>().ReverseMap();
             CreateMap<TrainerTrainedDto, TrainerTrained>().ReverseMap();
+            CreateMap<NewsDto, News>().ReverseMap();
         }
     }
 }

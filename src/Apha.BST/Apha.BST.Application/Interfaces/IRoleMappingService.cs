@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Apha.BST.Application.Interfaces
 {
-    public interface IDataEntryService
+    public interface IRoleMappingService
     {
-        Task<bool> CanEditPage(string action);
+
+        public  Task<string> GetRoleName(byte roleId);
+       
+
     }
 }

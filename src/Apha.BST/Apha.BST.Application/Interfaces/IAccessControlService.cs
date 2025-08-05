@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Apha.BST.Application.Interfaces
 {
-    public interface IDataEntryService
+    public interface IAccessControlService
     {
-        Task<bool> CanEditPage(string action);
+        Task<(byte? RoleId, string? Username)?> GetRoleIdAndUsernameByEmailAsync(string email);
     }
 }

@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Application.Interfaces;
+using Apha.BST.Core.Interfaces;
+using Apha.BST.DataAccess.Repositories;
+using AutoMapper;
+
+namespace Apha.BST.Application.Services
+{
+    public class AccessControlService : IAccessControlService
+    {
+        private readonly IAccessControlRepository _AccessControlRepository;
+        public AccessControlService(IAccessControlRepository accessControlRepository)
+        {
+            _AccessControlRepository = accessControlRepository ?? throw new ArgumentNullException(nameof(accessControlRepository));
+           
+        }
+        public async Task<(byte? RoleId, string? Username)?> GetRoleIdAndUsernameByEmailAsync(string email)
+        {
+            var result = await _AccessControlRepository.GetRoleIdAndUsernameByEmailAsync(email);
+            if (result != null)
+            {
+                return (result.Value.RoleId, result.Value.Username);
+            }
+            return null;
+        }
+    }
+}
