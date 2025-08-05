@@ -7,12 +7,6 @@ on:
     #     type: boolean
     #     required: false
     #     default: false
-  push:
-    branches:
-      - 'feature/*'
-      # - 'fix/*'
-      # - 'docs/*'
-      # - main
 env:
   DOTNET_VERSION: '8.0.x'
   SOLUTION_FILE: 'src/Apha.BST.sln' # Replace with your solution file
