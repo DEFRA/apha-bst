@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Apha.BST.DataAccess\Apha.BST.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>

@@ -34,7 +34,7 @@ namespace Apha.BST.Web.Extensions
                              var roleMappingService = context.HttpContext.RequestServices.GetRequiredService<IRoleMappingService>();
                              var result = await accessControlService.GetRoleIdAndUsernameByEmailAsync(email);
 
-                             if (result?.RoleId != null && !string.IsNullOrWhiteSpace(result?.Username))
+                             if (result?.RoleId != null)
                              {
                                  string roleName = await roleMappingService.GetRoleName(result.Value.RoleId.Value);
                                  string username = result.Value.Username!;
@@ -59,9 +59,11 @@ namespace Apha.BST.Web.Extensions
                      },
                      OnRemoteFailure = context =>
                      {
-                         // Handles failed login or unauthorized user
-                         context.Response.Redirect("/Unauthorised.htm");
-                         context.HandleResponse(); // Prevents default error handling
+                         var errorMessage = context.Failure?.Message ?? "Unknown authentication error.";
+                         var errorUrl = $"/Error/AccessDenied?error={Uri.EscapeDataString(errorMessage)}";
+
+                         context.Response.Redirect(errorUrl);
+                         context.HandleResponse(); // Prevents default handling
                          return Task.CompletedTask;
                      }
                  };

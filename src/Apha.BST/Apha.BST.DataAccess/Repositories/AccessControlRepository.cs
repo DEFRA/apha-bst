@@ -22,11 +22,11 @@ namespace Apha.BST.DataAccess.Repositories
                 .FromSqlRaw("EXEC sp_User_Get @UserID", param)
                 .AsNoTracking()
                .ToListAsync();
-            
-            if (result.Count>0)
+
+            if (result.Count > 0)
             {
-                var item = result.FirstOrDefault(); 
-                if(item == null)
+                var item = result[0];
+                if (item == null)
                 {
                     return null;
                 }
