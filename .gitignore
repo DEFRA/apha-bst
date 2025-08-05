@@ -6,6 +6,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+**/launchSettings.json
+
 
 # Build results
 [Bb]in/
@@ -67,10 +69,10 @@ publish/
 *.tlog
 
 # Test results
-#TestResults/
-#*.trx
-#*.coverage
-#*.coveragexml
+TestResults/
+*.trx
+*.coverage
+*.coverage.xml
 
 # Packages
 packages/

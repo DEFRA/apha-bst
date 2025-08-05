@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Apha.BST.Web.Controllers
 {
-    [Authorize]
+    
     public class HomeController : Controller
     {
         private readonly INewsService _newsServicee;
@@ -25,6 +25,7 @@ namespace Apha.BST.Web.Controllers
         {
             var latestNewsDto = await _newsServicee.GetLatestNewsAsync();
             var latestNews = _mapper.Map<IEnumerable<NewsViewModel>>(latestNewsDto);
+            _logger.LogError("test for log error");
             return View(latestNews);
         }
 
