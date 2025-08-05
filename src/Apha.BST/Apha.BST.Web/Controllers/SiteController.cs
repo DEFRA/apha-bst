@@ -4,12 +4,14 @@ using Apha.BST.Application.Interfaces;
 using Apha.BST.Core.Entities;
 using Apha.BST.Web.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static Apha.BST.Web.Models.SiteViewModel;
 
 namespace Apha.BST.Web.Controllers
 {
+    [Authorize]
     public class SiteController : Controller
     {
         private readonly ISiteService _siteService;

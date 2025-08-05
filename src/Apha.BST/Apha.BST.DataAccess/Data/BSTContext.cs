@@ -46,6 +46,7 @@ public partial class BstContext : DbContext
     public DbSet<TrainerTraining> TrainerTrainings { get; set; }
     public DbSet<TrainerHistory> TrainerHistorys { get; set; }
     public DbSet<TrainerTrained> TrainerTraineds { get; set; }
+    public DbSet<UserRoleInfo> UserRoleInfos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

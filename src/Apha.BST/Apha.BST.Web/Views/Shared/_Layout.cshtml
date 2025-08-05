@@ -1,7 +1,11 @@
 ﻿@{
 	var pageTitle = ViewData["Title"] ?? "Brainstem training database";
 }
-
+@using System.Security.Claims
+@{
+	var username = User.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown User";
+	var rolename = User.FindFirst("rolename")?.Value;
+}
 <!DOCTYPE html>
 <head>
 	<meta charset="utf-8" />
@@ -61,8 +65,14 @@
 				<td class="layout-right-content">
 					<br>
 					<br>
-					<span>EVIDENDEV\pooja.saini</span>
-					<span>Role: Superuser</span>
+					@if (User.Identity?.IsAuthenticated ?? false)
+					{
+						<span>User: @username</span>
+						if (@rolename.Any())
+						{
+							<span>Role: @string.Join(", ", rolename)</span>
+						}
+					}
 				</td>
 			</tr>
 
