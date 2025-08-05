@@ -95,8 +95,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          echo "Image Tag Value being used for /v: parameter: ${{ steps.imgtag.outputs.image_tag }}"
-          
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"DEFRA_apha-bst" `
             /o:"defra" `
