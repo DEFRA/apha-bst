@@ -1,0 +1,93 @@
+name: Sample Test RUn
+on:
+  workflow_dispatch:
+    # inputs:
+    #   PromptRun:
+    #     description: 'Do u want to run?'
+    #     type: boolean
+    #     required: false
+    #     default: false
+  push:
+    branches:
+      - 'feature/*'
+      # - 'fix/*'
+      # - 'docs/*'
+      # - main
+env:
+  DOTNET_VERSION: '8.0.x'
+  SOLUTION_FILE: 'src/Apha.BST.sln' # Replace with your solution file
+  SONAR_PROJECT_KEY: 'DEFRA_apha-bst'
+  SONAR_ORG: 'defra'
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+jobs:
+  build-test-sonar:
+    # if: ${{ github.event.inputs.PromptRun == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required to fetch all history and refs
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+    - name: Build solution
+      run: dotnet build ${{ env.SOLUTION_FILE }} --no-restore --configuration Release /p:DebugType=full /p:DebugSymbols=true
+
+    - name: Run unit tests with OpenCover coverage
+      run: |
+        # Update this block for each test project 
+        dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj \
+          --no-build --configuration Release \
+          /p:CollectCoverage=true \
+          /p:CoverletOutput=$(pwd)/TestResults/Apha.BST.Application.coverage.opencover.xml \
+          /p:CoverletOutputFormat=opencover \
+          /p:Deterministic=true \
+          /p:DebugType=full /p:DebugSymbols=true \
+          --logger "trx;LogFileName=$(pwd)/TestResults/Apha.BST.Application.test_results.trx"
+
+        dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
+          --no-build --configuration Release \
+          /p:CollectCoverage=true \
+          /p:CoverletOutput=$(pwd)/TestResults/Apha.BST.Web.coverage.opencover.xml \
+          /p:CoverletOutputFormat=opencover \
+          /p:Deterministic=true \
+          /p:DebugType=full /p:DebugSymbols=true \
+          --logger "trx;LogFileName=$(pwd)/TestResults/Apha.BST.Web.test_results.trx"
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarqube-scan-action@v2
+      with:
+        #projectBaseDir: src
+        args: |
+          -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+          -Dsonar.organization=${{ env.SONAR_ORG }}
+          -Dsonar.token=${{ env.SONAR_TOKEN }}
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.cs.opencover.reportsPaths=TestResults/*.opencover.xml
+          -Dsonar.cs.vstest.reportsPaths=TestResults/*.test_results.trx
+          -Dsonar.coverage.exclusions=**/wwwroot/**,**/*.cshtml
+          -Dsonar.exclusions=**/wwwroot/**
+          -Dsonar.branch.name=${{ github.ref_name }}
+          -Dsonar.verbose=true
+          -Dsonar.sources=src/Apha.BST/Apha.BST.Application,src/Apha.BST/Apha.BST.Core,src/Apha.BST/Apha.BST.DataAccess,src/Apha.BST/Apha.BST.Web
+          -Dsonar.tests=src/Apha.BST/Apha.BST.Application.UnitTests,src/Apha.BST/Apha.BST.Web.UnitTests
+          -Dsonar.test.inclusions=**/*.cs
+          -Dsonar.scm.disabled=true
+    - name: Upload test and coverage artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestResults
+        path: ./TestResults

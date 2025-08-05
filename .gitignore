@@ -67,10 +67,10 @@ publish/
 *.tlog
 
 # Test results
-TestResults/
-*.trx
-*.coverage
-*.coveragexml
+#TestResults/
+#*.trx
+#*.coverage
+#*.coveragexml
 
 # Packages
 packages/
