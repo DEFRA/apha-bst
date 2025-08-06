@@ -19,8 +19,6 @@ if (builder.Environment.IsEnvironment("local"))
         string srvpath = ctx.Configuration.GetValue<string>("AppSettings:LogsPath") ?? string.Empty;
         string logpath = $"{("Logs")}\\Logsample.log";
         lc.WriteTo.File(logpath, Serilog.Events.LogEventLevel.Verbose, rollingInterval: RollingInterval.Day);
-
-
     });
 }
 else
@@ -34,7 +32,7 @@ else
 
 builder.Services.AddDbContext<BstContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BSTConnectionString")
-    ?? throw new InvalidOperationException("Connection string 'BSTConnectionString' not found.")));
+    ?? throw new InvalidOperationException("Database Connection string 'BSTConnectionString' not found.")));
 
 
 builder.Services.AddAutoMapper(typeof(EntityMapper).Assembly);
@@ -64,7 +62,6 @@ app.Use(async (context, next) =>
     await next();
 });
 
-
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -92,4 +89,18 @@ app.MapControllerRoute(
 
 
 app.MapHealthChecks("/health");
+
+// Middleware to log request headers
+app.Use(async (context, next) =>
+{
+    var headersText = string.Join(Environment.NewLine,
+        context.Request.Headers
+            .Where(h => !string.Equals(h.Key, "Cookie", StringComparison.OrdinalIgnoreCase))
+            .Select(h => $"{h.Key}: {h.Value}")
+    );
+
+    Console.WriteLine($"Incoming request1: {context.Request.Method} {context.Request.Path}\nHeaders:\n{headersText}");
+    await next();
+});
+
 await app.RunAsync();
