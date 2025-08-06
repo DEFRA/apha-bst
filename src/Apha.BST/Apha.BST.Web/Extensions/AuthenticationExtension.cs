@@ -1,9 +1,7 @@
 ﻿using Apha.BST.Application.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Identity.Web;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace Apha.BST.Web.Extensions
