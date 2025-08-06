@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,14 +94,22 @@ app.MapHealthChecks("/health");
 // Middleware to log request headers
 app.Use(async (context, next) =>
 {
-    var headersText = string.Join(Environment.NewLine,
-        context.Request.Headers
+    var logObject = new
+    {
+        Tag = "RequestLog", // Static text for easy CloudWatch search
+        Method = context.Request.Method,
+        Path = context.Request.Path.ToString(),
+        Headers = context.Request.Headers
             .Where(h => !string.Equals(h.Key, "Cookie", StringComparison.OrdinalIgnoreCase))
-            .Select(h => $"{h.Key}: {h.Value}")
-    );
+            .ToDictionary(h => h.Key, h => h.Value.ToString())
+    };
 
-    Console.WriteLine($"Incoming request1: {context.Request.Method} {context.Request.Path}\nHeaders:\n{headersText}");
+    // Serialize to JSON (compact)
+    var json = JsonSerializer.Serialize(logObject);
+
+    Console.WriteLine(json); // One row in CloudWatch
     await next();
 });
+
 
 await app.RunAsync();
