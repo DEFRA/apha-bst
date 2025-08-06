@@ -104,7 +104,7 @@ app.Use(async (context, next) =>
             .ToDictionary(h => h.Key, h => h.Value.ToString())
     };
 
-    // Serialize to JSON (compact)
+    // Serialize to JSON (compact)..
     var json = JsonSerializer.Serialize(logObject);
 
     Console.WriteLine(json); // One row in CloudWatch
