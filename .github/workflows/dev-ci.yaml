@@ -1,4 +1,4 @@
-name: Dev Build and Sonar Analysis
+﻿name: Dev Build and Sonar Analysis
 on:
   workflow_dispatch:
   push:
@@ -118,19 +118,19 @@ jobs:
         run: >
           dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj `
             --no-build --configuration Release /p:CollectCoverage=true `
-            /p:CoverletOutput=../../TestResults/Apha.BST.Application.coverage.opencover.xml `
+            /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Application.coverage.opencover.xml" `
             /p:CoverletOutputFormat=opencover `
             /p:Deterministic=true `
             /p:DebugType=full /p:DebugSymbols=true `
-            --logger "trx;LogFileName=$($PWD.Path)/TestResults/Apha.BST.Application.test_results.trx"
+            --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Application.test_results.trx"
 
           dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj `
             --no-build --configuration Release /p:CollectCoverage=true `
-            /p:CoverletOutput=../../TestResults/Apha.BST.Web.coverage.opencover.xml `
+            /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Web.coverage.opencover.xml" `
             /p:CoverletOutputFormat=opencover `
             /p:Deterministic=true `
             /p:DebugType=full /p:DebugSymbols=true `
-            --logger "trx;LogFileName=$($PWD.Path)/TestResults/Apha.BST.Application.test_results.trx"
+            --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Web.test_results.trx"
       - name: List coverage files
         shell: pwsh
         run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"; Get-ChildItem -Recurse -Filter "*.test_results.trx"
@@ -232,7 +232,7 @@ jobs:
           image_tag=${{ needs.build-and-analyze.outputs.image_tag }}
           docker build -t bst:$image_tag .
           echo "Running local image: $image_tag"
-          docker run -d --name test-container -p 8080:8080 bst:$image_tag
+          docker run -d --name test-container -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=local bst:$image_tag
       - name: Wait for service to start
         run: >
           echo "Waiting for the service to start..."
@@ -241,8 +241,12 @@ jobs:
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health || echo "000")
             echo "HTTP Status: $STATUS"
             if [ "$STATUS" -eq 200 ]; then
+              echo "Service is healthy..."
               break
             fi
+            echo "--- Last 5 log lines from container ---"
+            docker logs test-container --tail 5 || true
+            echo "---------------------------------------"
             sleep 3
           done
       - name: Test application response

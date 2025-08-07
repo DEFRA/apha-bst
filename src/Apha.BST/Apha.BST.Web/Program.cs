@@ -5,9 +5,11 @@ using Apha.BST.Web.Extensions;
 using Apha.BST.Web.Mappings;
 using Apha.BST.Web.Middleware;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +21,6 @@ if (builder.Environment.IsEnvironment("local"))
         string srvpath = ctx.Configuration.GetValue<string>("AppSettings:LogsPath") ?? string.Empty;
         string logpath = $"{("Logs")}\\Logsample.log";
         lc.WriteTo.File(logpath, Serilog.Events.LogEventLevel.Verbose, rollingInterval: RollingInterval.Day);
-
-
     });
 }
 else
@@ -34,7 +34,7 @@ else
 
 builder.Services.AddDbContext<BstContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BSTConnectionString")
-    ?? throw new InvalidOperationException("Connection string 'BSTConnectionString' not found.")));
+    ?? throw new InvalidOperationException("Database Connection string 'BSTConnectionString' not found.")));
 
 
 builder.Services.AddAutoMapper(typeof(EntityMapper).Assembly);
@@ -64,8 +64,10 @@ app.Use(async (context, next) =>
     await next();
 });
 
-
-app.UseMiddleware<ExceptionMiddleware>();
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => false // skip expensive checks
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -74,8 +76,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-
 }
 app.UseHsts();
 app.UseHttpsRedirection();
@@ -85,11 +85,31 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Middleware to log request headers
+app.Use(async (context, next) =>
+{
+    var logObject = new
+    {
+        Tag = "RequestLog", // Static text for easy CloudWatch search
+        Method = context.Request.Method,
+        Path = context.Request.Path.ToString(),
+        Headers = context.Request.Headers
+            .Where(h => !string.Equals(h.Key, "Cookie", StringComparison.OrdinalIgnoreCase))
+            .ToDictionary(h => h.Key, h => h.Value.ToString())
+    };
 
-app.MapHealthChecks("/health");
+    // Serialize to JSON (compact)..
+    var json = JsonSerializer.Serialize(logObject);
+
+    Console.WriteLine(json); // One row in CloudWatch
+    await next();
+});
+
+
 await app.RunAsync();
