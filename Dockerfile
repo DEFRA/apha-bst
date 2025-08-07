@@ -37,7 +37,7 @@ CMD dotnet watch --project ./Apha.BST.Web run --urls http://*:${PORT}
 # ================================
 # -------- Production Stage --------
 # ================================
-FROM defradigital/dotnetcor:$PARENT_VERSION AS production
+FROM defradigital/dotnetcore:$PARENT_VERSION AS production
 
 # Label image metadata
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
