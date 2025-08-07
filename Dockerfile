@@ -13,15 +13,8 @@ LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
 USER dotnet
 WORKDIR /home/dotnet
 
-# Create project directory structure
-RUN mkdir -p Apha.BST.Web
-
-# Copy project file and restore dependencies
-COPY --chown=dotnet:dotnet ./src/Apha.BST/Apha.BST.Web/*.csproj ./Apha.BST.Web/
-RUN dotnet restore ./Apha.BST.Web/Apha.BST.Web.csproj
-
 # Copy full source code for build
-COPY --chown=dotnet:dotnet ./src/Apha.BST/Apha.BST.Web/ ./Apha.BST.Web/
+COPY --chown=dotnet:dotnet src/. .
 
 # Build and publish
 RUN dotnet publish ./Apha.BST.Web -c Release -o /home/dotnet/out /p:UseAppHost=false
