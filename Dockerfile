@@ -28,7 +28,6 @@ FROM defradigital/dotnetcore:$PARENT_VERSION AS production
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
 
 ARG PORT=8080
-ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT}
 EXPOSE ${PORT}
 
 USER dotnet
