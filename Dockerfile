@@ -1,5 +1,5 @@
 # -------- Set base image version --------
-ARG PARENT_VERSION=1.9.1-dotnet8.0
+ARG PARENT_VERSION=latest
 
 # ================================
 # -------- Development Stage --------
