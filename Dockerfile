@@ -4,7 +4,7 @@ ARG PARENT_VERSION=latest
 # ================================
 # -------- Development Stage --------
 # ================================
-FROM defra-dotnetcore-development:$PARENT_VERSION AS development
+FROM defradigital/dotnetcore-development:$PARENT_VERSION AS development
 
 # Label image metadata
 LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
@@ -37,7 +37,7 @@ CMD dotnet watch --project ./Apha.BST.Web run --urls http://*:${PORT}
 # ================================
 # -------- Production Stage --------
 # ================================
-FROM defra-dotnetcore:$PARENT_VERSION AS production
+FROM defradigital/dotnetcor:$PARENT_VERSION AS production
 
 # Label image metadata
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
