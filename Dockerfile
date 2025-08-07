@@ -6,9 +6,7 @@ ARG PARENT_VERSION=latest
 # ================================
 FROM defradigital/dotnetcore-development:$PARENT_VERSION AS development
 
-# Label image metadata
 LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
-
 WORKDIR /home/dotnet/src
 
 # Copy all source code into the image under /home/dotnet/src
@@ -26,17 +24,15 @@ EXPOSE ${PORT}
 # -------- Production Stage --------
 # ================================
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production
-ARG PARENT_VERSION=latest
+
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
 
 ARG PORT=8080
-ENV ASPNETCORE_URLS=http://*:${PORT}
+ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT}
 EXPOSE ${PORT}
 
 USER dotnet
 WORKDIR /home/dotnet/app
-
 COPY --from=development /home/dotnet/out/ ./
 
-# Define entry point
 ENTRYPOINT ["dotnet", "Apha.BST.Web.dll"]
