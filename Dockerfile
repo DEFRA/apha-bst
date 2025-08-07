@@ -4,12 +4,9 @@ ARG PARENT_VERSION=dotnet8.0
 
 
 FROM defradigital/dotnetcore-development:$PARENT_VERSION AS base
-WORKDIR /app
 EXPOSE 8080
 USER app
 
-# -------- Build image with SDK --------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
