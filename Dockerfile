@@ -22,13 +22,11 @@ ARG PORT=8080
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
-CMD dotnet watch --project ./Apha.BST/Apha.BST.Web run --urls http://*:${PORT}
-
 # ================================
 # -------- Production Stage --------
 # ================================
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production
-
+ARG PARENT_VERSION=latest
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
 
 ARG PORT=8080
@@ -40,4 +38,5 @@ WORKDIR /home/dotnet/app
 
 COPY --from=development /home/dotnet/out/ ./
 
-CMD ["dotnet", "Apha.BST.Web.dll"]
+# Define entry point
+ENTRYPOINT ["dotnet", "Apha.BST.Web.dll"]
