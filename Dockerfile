@@ -1,34 +1,58 @@
-# -------- Build stage (SDK image with source) --------
+# -------- Set base image version --------
 ARG PARENT_VERSION=dotnet8.0
-FROM defradigital/dotnetcore-development:$PARENT_VERSION AS build
 
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
+# ================================
+# -------- Development Stage --------
+# ================================
+FROM defra-dotnetcore-development:$PARENT_VERSION AS development
 
-# Copy source files
-COPY src/. .
+# Label image metadata
+LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
 
-# Restore dependencies
-RUN dotnet restore Apha.BST.sln
+# Use a non-root user
+USER dotnet
+WORKDIR /home/dotnet
 
-# Build and publish the application
-RUN dotnet publish Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
-    -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
+# Create project directory structure
+RUN mkdir -p Apha.BST.Web
 
-# -------- Final runtime image (clean, smaller) --------
-FROM defradigital/dotnetcore:$PARENT_VERSION AS final
+# Copy project file and restore dependencies
+COPY --chown=dotnet:dotnet ./src/Apha.BST/Apha.BST.Web/*.csproj ./Apha.BST.Web/
+RUN dotnet restore ./Apha.BST.Web/Apha.BST.Web.csproj
 
-# Set working directory for runtime
-WORKDIR /app
+# Copy full source code for build
+COPY --chown=dotnet:dotnet ./src/Apha.BST/Apha.BST.Web/ ./Apha.BST.Web/
 
-# Copy published app from build stage
-COPY --from=build /app/publish .
+# Build and publish
+RUN dotnet publish ./Apha.BST.Web -c Release -o /home/dotnet/out /p:UseAppHost=false
 
-# Expose port
-EXPOSE 8080
+# Set up environment and exposed port for dev
+ARG PORT=8080
+ENV PORT=${PORT}
+EXPOSE ${PORT}
 
-# Set non-root user
-USER app
+# Default command for development
+CMD dotnet watch --project ./Apha.BST.Web run --urls http://*:${PORT}
 
-# Define entry point
-ENTRYPOINT ["dotnet", "Apha.BST.Web.dll"]
+# ================================
+# -------- Production Stage --------
+# ================================
+FROM defra-dotnetcore:$PARENT_VERSION AS production
+
+# Label image metadata
+LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
+
+# Set environment for ASP.NET Core runtime
+ARG PORT=8080
+ENV ASPNETCORE_URLS=http://*:${PORT}
+EXPOSE ${PORT}
+
+# Use non-root user and set working dir
+USER dotnet
+WORKDIR /home/dotnet/app
+
+# Copy published output from dev stage
+COPY --from=development /home/dotnet/out/ ./
+
+# Default entrypoint
+CMD ["dotnet", "Apha.BST.Web.dll"]
