@@ -1,12 +1,25 @@
 # -------- Set base image version --------
 ARG PARENT_VERSION=latest
 
+# -------- Globalization Setup Snippet --------
+# Define common ENV and ICU install logic in ARGs so they can be reused
+ARG DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+ARG ICU_INSTALL="apt-get update && apt-get install -y --no-install-recommends libicu-dev && rm -rf /var/lib/apt/lists/*"
+
+
 # ================================
 # -------- Development Stage --------
 # ================================
 FROM defradigital/dotnetcore-development:$PARENT_VERSION AS development
 
 LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
+
+# Reuse common args
+ARG DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+ARG ICU_INSTALL
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=$DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+RUN bash -c "$ICU_INSTALL"
+
 WORKDIR /home/dotnet/src
 
 # Copy all source code into the image under /home/dotnet/src
@@ -26,6 +39,12 @@ EXPOSE ${PORT}
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production
 
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
+
+# Reuse common args
+ARG DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+ARG ICU_INSTALL
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=$DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+RUN bash -c "$ICU_INSTALL"
 
 ARG PORT=8080
 EXPOSE ${PORT}
