@@ -5,6 +5,7 @@ using Apha.BST.Web.Extensions;
 using Apha.BST.Web.Mappings;
 using Apha.BST.Web.Middleware;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -63,7 +64,10 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.UseMiddleware<ExceptionMiddleware>();
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => false // skip expensive checks
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -72,8 +76,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-
 }
 app.UseHsts();
 app.UseHttpsRedirection();
@@ -83,13 +85,11 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
-app.MapHealthChecks("/health");
 
 // Middleware to log request headers
 app.Use(async (context, next) =>
