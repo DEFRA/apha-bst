@@ -51,6 +51,17 @@
         "js/bootstrap.min.js",
         "js/bootstrap.min.js.map"
       ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "jquery-validation@latest",
+      "files": [
+        "dist/jquery.validate.js",
+        "dist/jquery.validate.min.js",
+        "dist/additional-methods.js",
+        "dist/additional-methods.min.js"
+      ],
+      "destination": "wwwroot/lib/jquery-validation/"
     }
   ]
 }
