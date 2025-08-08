@@ -1,12 +1,6 @@
 # -------- Set base image version --------
 ARG PARENT_VERSION=latest
 
-# -------- Globalization Setup Snippet --------
-# Define common ENV and ICU install logic in ARGs so they can be reused
-ARG DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-ARG ICU_INSTALL="apt-get update && apt-get install -y --no-install-recommends libicu-dev && rm -rf /var/lib/apt/lists/*"
-
-
 # ================================
 # -------- Development Stage --------
 # ================================
