@@ -12,7 +12,7 @@ using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Set culture to invariant globally to avoid CultureNotFoundException test
+// Set culture to invariant globally to avoid CultureNotFoundException test....
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
