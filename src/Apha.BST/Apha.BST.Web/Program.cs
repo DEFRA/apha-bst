@@ -8,8 +8,13 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Set culture to invariant globally to avoid CultureNotFoundException
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
 if (builder.Environment.IsEnvironment("local"))
 {
