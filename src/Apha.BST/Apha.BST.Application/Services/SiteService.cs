@@ -46,10 +46,10 @@ namespace Apha.BST.Application.Services
         }
 
         //For Addsite
-        public async Task<string> AddSiteAsync(SiteDto siteDto)
+        public async Task<string> AddSiteAsync(SiteDto siteDto, string userName)
         {
             var site = _mapper.Map<Site>(siteDto);
-            var createdSite = await _siteRepository.AddSiteAsync(site);
+            var createdSite = await _siteRepository.AddSiteAsync(site,userName);
             if (createdSite == Exists)
             {
                 return "Site already exists. Please choose another Site / Plant No.";

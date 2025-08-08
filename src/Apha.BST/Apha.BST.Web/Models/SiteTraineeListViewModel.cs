@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Apha.BST.Web.Models
 {
-    public class SiteTraineeListViewModel
+    public class SiteTraineeListViewModel:BaseViewModel
     {
         public IEnumerable<SelectListItem>? AllSites { get; set; } = new List<SelectListItem>();
         public IEnumerable<SiteTraineeViewModel>? FilteredTrainees { get; set; }

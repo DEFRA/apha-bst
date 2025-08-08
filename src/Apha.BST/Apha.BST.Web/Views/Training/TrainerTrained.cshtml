@@ -1,16 +1,5 @@
 ﻿@model TrainerTrainedViewModel
-@{
-	// var trainees = new List<TraineeViewModel>
-	// 	{
-	// 		new TraineeViewModel { PersonID = 1, Person = "John Doe" },
-	// 		new TraineeViewModel { PersonID = 2, Person = "Jane Smith" }
-	// 	};
-
-	// var trainings = new List<TrainingModel>
-	// 	{
-	// 		new TrainingModel { Person = "John Doe", TrainingAnimal = "Dog", Name = "Site A", TrainingDateTime = DateTime.Now.AddDays(-5), PersonID = 1, TrainingType = "Basic" },
-	// 		new TrainingModel { Person = "Jane Smith", TrainingAnimal = "Cat", Name = "Site B", TrainingDateTime = DateTime.Now.AddDays(-3), PersonID = 2, TrainingType = "Advanced" }
-	// 	};
+@{	
 	ViewData["Title"] = "Trainer Trained";
 }
 
@@ -63,6 +52,8 @@
 				</tr>
 			</thead>
 			<tbody>
+				@if (Model.TraineeTrainingDetails != null)
+				{
 				@foreach (var item in Model.TraineeTrainingDetails)
 				{
 					<tr>
@@ -73,6 +64,7 @@
 							<td>@item.DateTrained.ToShortDateString()</td>
 					</tr>
 				}
+					}
 			</tbody>
 
 		</table>

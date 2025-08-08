@@ -358,7 +358,8 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
                 TrainingType = "Cascade training",
                 TrainingAnimal = "Sheep&Goat",
                 TrainingAnimalOld = "Cattle",
-                TrainingDateTime = new DateTime(2025, 8, 2, 11, 0, 0, DateTimeKind.Utc)
+                TrainingDateTime = new DateTime(2025, 8, 2, 11, 0, 0, DateTimeKind.Utc),                
+                TraineeIdOld = 1  // This makes TraineeIdOld == TrainerId
             };
 
             var editTraining = new EditTraining

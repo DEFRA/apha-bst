@@ -5,26 +5,32 @@ using Apha.BST.Application.Services;
 using Apha.BST.Core.Entities;
 using Apha.BST.Core.Interfaces;
 using Apha.BST.Web.Models;
+using Apha.BST.Web.PresentationService;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 
 namespace Apha.BST.Web.Controllers
 {
+    [Authorize]
     public class TrainingController : Controller
     {
         private readonly ITrainingService _trainingService;
-        private readonly IPersonsService _personService;
+        private readonly ILogger<TrainingController> _logger;
+        private readonly IUserDataService _userDataService;
         private readonly IMapper _mapper;
         private readonly IStaticDropdownService _staticDropdownService;         
         private const string traineeAll = "All";
 
-        public TrainingController(ITrainingService trainingService, IMapper mapper, IPersonsService personService,IStaticDropdownService staticDropdownService)
+        public TrainingController(ILogger<TrainingController> logger,ITrainingService trainingService, IMapper mapper,IStaticDropdownService staticDropdownService, IUserDataService userDataService)
         {
             _trainingService = trainingService;
             _mapper = mapper;
-            _personService = personService;
             _staticDropdownService = staticDropdownService;
+            _userDataService = userDataService;
+            _logger = logger;
         }
         public IActionResult Index()
         {
@@ -33,8 +39,10 @@ namespace Apha.BST.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTraining()
         {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             var viewModel = new AddTrainingViewModel
             {
+                CanEdit = canEdit,
                 Persons = (await _trainingService.GetTraineesAsync())
                     .Select(p => new SelectListItem { Value = p.PersonId.ToString(), Text = p.Person })
                     .ToList()
@@ -55,6 +63,7 @@ namespace Apha.BST.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddTraining(AddTrainingViewModel viewModel)
         {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             if (!ModelState.IsValid)
             {
                 viewModel.Persons = (await _trainingService.GetTraineesAsync())
@@ -71,15 +80,24 @@ namespace Apha.BST.Web.Controllers
                 return View(viewModel);
             }
             try
-            {               
-                var dto = _mapper.Map<TrainingDto>(viewModel);
-                var message = await _trainingService.AddTrainingAsync(dto);
-                TempData["Message"] = message;
+            {   if (canEdit)
+                {
+                    var dto = _mapper.Map<TrainingDto>(viewModel);
+                    var message = await _trainingService.AddTrainingAsync(dto);
+                    TempData["Message"] = message;
+                }
             }
-            catch (Exception)
+            catch (SqlException sqlEx)
             {
+                // Log SQL Exception with identifier (CloudWatch will receive this)
+                _logger.LogError(sqlEx, "[BST.SQLException] Error in [AddTraining]: {Message}", sqlEx.Message);
                 TempData["Message"] = "Save failed";
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [AddTraining]: {Message}", ex.Message);
+                TempData["Message"] = "Save failed";
+            }          
 
             return RedirectToAction(nameof(AddTraining));
         }
@@ -87,8 +105,12 @@ namespace Apha.BST.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> EditTraining(int traineeId, int trainerId, string species, DateTime dateTrained, string trainingType)
         {
-
-            var dto = await _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(ViewTraining));
+            }
+            var dto = await _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);            
             if (dto == null)
             {
                 TempData["Message"] = "Invalid data provided for deletion.";
@@ -97,6 +119,7 @@ namespace Apha.BST.Web.Controllers
             var persons = await _trainingService.GetTraineesAsync();
             var viewModel = new EditTrainingViewModel
             {
+                CanEdit = canEdit,
                 TraineeId = dto.PersonId,
                 TrainerId = dto.TrainerId,
                 TrainingType = dto.TrainingType,
@@ -128,9 +151,11 @@ namespace Apha.BST.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditTraining(EditTrainingViewModel viewModel)
         {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             if (!ModelState.IsValid)
             {
                 var persons = await _trainingService.GetTraineesAsync();
+                viewModel.CanEdit = canEdit;
 
                 viewModel.TraineeList = persons
                     .Select(p => new SelectListItem { Value = p.PersonId.ToString(), Text = p.Person, Selected = p.PersonId == viewModel.TraineeIdOld })
@@ -147,17 +172,37 @@ namespace Apha.BST.Web.Controllers
                 viewModel.TrainingDateTime = viewModel.TrainingDateTimeOld;
                 return View(viewModel);
             }
-
+            
             var editTraining = _mapper.Map<EditTrainingDto>(viewModel);
-            var message = await _trainingService.UpdateTrainingAsync(editTraining);
-            TempData["Message"] = message;
+
+            try 
+            {
+                if (canEdit)
+                {
+                    var message = await _trainingService.UpdateTrainingAsync(editTraining);
+                    TempData["Message"] = message;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                // Log SQL Exception with identifier (CloudWatch will receive this)
+                _logger.LogError(sqlEx, "[BST.SQLException] Error in [UpdateTraining]: {Message}", sqlEx.Message);
+                TempData["Message"] = "Error updating training";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [UpdateTraining]: {Message}", ex.Message);
+                TempData["Message"] = "Error updating training";
+            }           
+            
             return RedirectToAction("ViewTraining", new { selectedTraineeId = viewModel.TraineeIdOld });            
         }
 
         [HttpGet]
         public async Task<IActionResult> ViewTraining(string selectedTraineeId = "")
         {
-            var allPersons = await _personService.GetAllPersonAsync();
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            var allPersons = await _trainingService.GetTraineesAsync();
             var allTrainee = _mapper.Map<IEnumerable<TraineeTrainerViewModel>>(allPersons);
 
             var viewSelectList = allTrainee
@@ -171,7 +216,8 @@ namespace Apha.BST.Web.Controllers
 
             var model = new TrainingListViewModel
             {
-                AllTrainees = viewSelectList
+                AllTrainees = viewSelectList,
+                CanEdit = canEdit,
 
             };
             IEnumerable<TrainingViewModel> filteredTrainings;
@@ -198,8 +244,13 @@ namespace Apha.BST.Web.Controllers
         // For TrainerHistory
         [HttpGet]
         public async Task<IActionResult> TrainerHistory(int selectedTrainerId = 0, string selectedSpecies = "Cattle")
-        {
-            var allPersons = await _personService.GetAllPersonAsync();
+        {            
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(TrainerHistory)); // Redirect if ModelState is invalid
+            }
+            var allPersons = await _trainingService.GetTraineesAsync();
             var allTrainers = _mapper.Map<List<TraineeTrainerViewModel>>(allPersons);
 
             var historyDto = await _trainingService.GetTrainerHistoryAsync(selectedTrainerId, selectedSpecies);
@@ -210,6 +261,7 @@ namespace Apha.BST.Web.Controllers
 
             var model = new TrainerHistoryViewModel
             {
+                CanEdit = canEdit,
                 SelectedTrainerId = selectedTrainerId,
                 SelectedSpecies = selectedSpecies,
                 AllTrainers = allTrainers,
@@ -240,7 +292,12 @@ namespace Apha.BST.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> TrainerTrained(int selectedTrainerId = 0)
         {
-            var allPersons = await _personService.GetAllPersonAsync();
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(TrainerHistory)); // Redirect if ModelState is invalid
+            }
+            var allPersons = await _trainingService.GetTraineesAsync();
             var allTrainers = _mapper.Map<List<TrainerTrainedModel>>(allPersons);
 
             var trainedList = selectedTrainerId != 0
@@ -250,6 +307,7 @@ namespace Apha.BST.Web.Controllers
 
             var model = new TrainerTrainedViewModel
             {
+                CanEdit = canEdit,
                 SelectedTrainerId = selectedTrainerId,
                 AllTrainers = allTrainers,
                 TraineeTrainingDetails = trainedList.ToList()
@@ -278,16 +336,34 @@ namespace Apha.BST.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTraining(int traineeId, string species, DateTime dateTrained)
         {
-            if(!ModelState.IsValid) 
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            if (!ModelState.IsValid) 
             {
                 TempData["Message"] = "Invalid data provided for deletion.";
                 return RedirectToAction(nameof(ViewTraining), new { selectedTraineeId = traineeId });
             }
-            var message = await _trainingService.DeleteTrainingAsync(traineeId, species, dateTrained);
-            TempData["Message"] = message;
+            try
+            {
+                if (canEdit)
+                {
+                    var message = await _trainingService.DeleteTrainingAsync(traineeId, species, dateTrained);
+                    TempData["Message"] = message;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                // Log SQL Exception with identifier (CloudWatch will receive this)
+                _logger.LogError(sqlEx, "[BST.SQLException] Error in [DeleteTraining]: {Message}", sqlEx.Message);
+                TempData["Message"] = "Delete failed";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [DeleteTraining]: {Message}", ex.Message);
+                TempData["Message"] = "Delete failed";
+            }
+           
             return RedirectToAction(nameof(ViewTraining), new { selectedTraineeId = traineeId });
-        }
-
+        }      
 
     }
 }

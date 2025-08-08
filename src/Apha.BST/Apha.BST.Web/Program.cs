@@ -18,9 +18,9 @@ if (builder.Environment.IsEnvironment("local"))
     builder.Host.UseSerilog((ctx, lc) =>
     {
         lc.WriteTo.Console();
-        string srvpath = ctx.Configuration.GetValue<string>("AppSettings:LogsPath") ?? string.Empty;
-        string logpath = $"{("Logs")}\\Logsample.log";
-        lc.WriteTo.File(logpath, Serilog.Events.LogEventLevel.Verbose, rollingInterval: RollingInterval.Day);
+        string srvpath = ctx.Configuration.GetValue<string>("LogsPath") ?? string.Empty;
+        string logpath = $"{(srvpath)}\\Logsample.log";
+        lc.WriteTo.File(logpath, Serilog.Events.LogEventLevel.Error, rollingInterval: RollingInterval.Day);
     });
 }
 else
@@ -49,6 +49,7 @@ builder.Services.AddApplicationServices();
 
 // Register Authentication services
 builder.Services.AddAuthenticationServices(builder.Configuration);
+builder.Services.AddHttpContextAccessor(); // Required
 
 builder.Services.AddHealthChecks();
 var app = builder.Build();

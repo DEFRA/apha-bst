@@ -13,8 +13,8 @@ namespace Apha.BST.Application.Interfaces
     {
         Task<IEnumerable<SiteDto>> GetAllSitesAsync(string plantNo);
         Task<List<SiteTraineeDto>> GetSiteTraineesAsync(string plantNo);
-        Task<string> DeleteTraineeAsync(int personId);       
-        Task<string> AddSiteAsync(SiteDto siteDto);
+        Task<string> DeleteTraineeAsync(int personId);
+        Task<string> AddSiteAsync(SiteDto siteDto, string userName);
 
     }
 }

@@ -23,21 +23,25 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<bool> CanEditPage(string action)
         {
-            var actionnameParam = new SqlParameter("@ActiveView", action);
-
-            var result = await _context.Database
-                .SqlQueryRaw<string>("EXEC sp_DataEntry_Get @ActiveView", actionnameParam)
-                .ToListAsync();
-            if(result == null || !result.Any())
+            try
             {
-                return false; // No result found
+                string? CanWrite = await _context.DataEntries
+                .Where(p => p.ActiveViewName == action)
+                    .Select(p => p.CanWrite)
+                    .FirstOrDefaultAsync();
+                if (!string.IsNullOrEmpty(CanWrite))
+                {
+                    if (CanWrite == "S")
+                        return false; // User can not edit the page                
+                    else
+                        return true; // User can edit the page               
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
-            {
-                // the result is a single string indicating the status
-                return result.FirstOrDefault() == "D"; // Return true if status is 'D', false otherwise
-            }           
-
+            catch { throw; }
         }
     }
 }

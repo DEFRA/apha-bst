@@ -32,7 +32,7 @@
 
 						</p>
 					</span>
-
+					</span>
 			</div>
 			<div class="w-100 d-flex justify-content-start">
 				<span class="width-10"><label asp-for="SelectedSpecies">Select species (Cattle by default)</label></span>				
@@ -67,6 +67,8 @@
 					</tr>
 				</thead>
 				<tbody>
+					@if (Model.HistoryDetails != null)
+					{
 					@foreach (var item in Model.HistoryDetails)
 					{
 						<tr>
@@ -79,6 +81,7 @@
 						<td>@item.Trainer</td>
 					</tr>
 				}
+					}
 			</tbody>
 
 		</table>

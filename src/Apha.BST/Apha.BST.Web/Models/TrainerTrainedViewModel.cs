@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Apha.BST.Web.Models
 {
-    public class TrainerTrainedViewModel
+    public class TrainerTrainedViewModel:BaseViewModel
     {
         public int SelectedTrainerId { get; set; }
 

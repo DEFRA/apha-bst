@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Apha.BST.Web.Models
 {   
-    public class EditTrainingViewModel
+    public class EditTrainingViewModel:BaseViewModel
     {
         [Required]
         public int TraineeId { get; set; }

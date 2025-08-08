@@ -41,7 +41,7 @@ namespace Apha.BST.DataAccess.Repositories
                 .ToListAsync();
         }
         
-        public async Task<string> AddSiteAsync(Site site)
+        public async Task<string> AddSiteAsync(Site site, string userName)
         {
             var parameters = new[]
             {
@@ -83,6 +83,7 @@ namespace Apha.BST.DataAccess.Repositories
                         "sp_Sites_Add",
                         parameters,
                         "Write",
+                        userName,
                         error
                     );
                 }
@@ -105,19 +106,17 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<bool> DeleteTraineeAsync(int personId)
         {
-            var parameters = new[]
-            {
-        new SqlParameter("@PersonID", personId),
-        new SqlParameter
-        {
-            ParameterName = "@PersonTraining",
-            SqlDbType = SqlDbType.TinyInt,
-            Direction = ParameterDirection.Output,
-            Value = 0
-        }
-    };
-
-           
+           var parameters = new[]
+                    {
+                new SqlParameter("@PersonID", personId),
+                new SqlParameter
+                {
+                    ParameterName = "@PersonTraining",
+                    SqlDbType = SqlDbType.TinyInt,
+                    Direction = ParameterDirection.Output,
+                    Value = 0
+                }
+            };           
             try
             {
                 await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
@@ -128,9 +127,8 @@ namespace Apha.BST.DataAccess.Repositories
                 return personTraining == 0;
             }
             catch
-            {               
-                // Log error or handle accordingly
-                return false;
+            {
+                throw;
             }            
         }
     }

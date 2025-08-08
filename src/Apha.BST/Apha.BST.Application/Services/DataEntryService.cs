@@ -13,10 +13,10 @@ namespace Apha.BST.Application.Services
     public class DataEntryService:IDataEntryService
     {
         private readonly IDataEntryRepository _dataEntryRepository;
-        public DataEntryService(IDataEntryRepository dataEntryRepository, IMapper mapper)
+        public DataEntryService(IDataEntryRepository dataEntryRepository)
         {
             _dataEntryRepository = dataEntryRepository ?? throw new ArgumentNullException(nameof(dataEntryRepository));
-            //_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+           
         }
         public async Task<bool> CanEditPage(string action)
         {

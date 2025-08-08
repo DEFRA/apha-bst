@@ -9,6 +9,6 @@ namespace Apha.BST.Core.Interfaces
 {
     public interface IAuditLogRepository
     {
-        Task AddAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string? error = null);
+        Task AddAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string userName,string? error = null);
     }
 }

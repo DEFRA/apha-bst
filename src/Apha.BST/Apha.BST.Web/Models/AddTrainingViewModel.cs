@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Apha.BST.Web.Models
 {
-    public class AddTrainingViewModel
+    public class AddTrainingViewModel:BaseViewModel
     {
         [Range(1, int.MaxValue, ErrorMessage = "Trainee is required")]
         public int PersonId { get; set; }

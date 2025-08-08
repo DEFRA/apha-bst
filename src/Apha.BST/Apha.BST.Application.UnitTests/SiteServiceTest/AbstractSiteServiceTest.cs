@@ -52,16 +52,14 @@ namespace Apha.BST.Application.UnitTests.Services
             _mapper = config.CreateMapper();
             _siteService = new SiteService(mockRepo, _mapper);
         }
-
-
-        public void MockForAddSiteAsync(string returnValue, SiteDto inputDto)
+        public void MockForAddSiteAsync(string returnValue, SiteDto inputDto, string userName)
         {
             var mockRepo = Substitute.For<ISiteRepository>();
             var mockMapper = Substitute.For<IMapper>();
 
             var site = new Site { Name = inputDto.Name, PlantNo = inputDto.PlantNo };
             mockMapper.Map<Site>(inputDto).Returns(site);
-            mockRepo.AddSiteAsync(site).Returns(returnValue);
+            mockRepo.AddSiteAsync(site, userName).Returns(returnValue);
             _mapper = mockMapper;
             _siteService = new SiteService(mockRepo, mockMapper);
         }

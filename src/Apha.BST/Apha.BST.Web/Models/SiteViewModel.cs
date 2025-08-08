@@ -2,7 +2,7 @@
 
 namespace Apha.BST.Web.Models
 {
-    public class SiteViewModel
+    public class SiteViewModel:BaseViewModel
     {
         [Required(ErrorMessage = "Plant / Site No. is required")]
         public string PlantNo { get; set; } = null!;
