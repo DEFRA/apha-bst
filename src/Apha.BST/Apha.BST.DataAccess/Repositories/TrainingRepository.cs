@@ -137,9 +137,9 @@ namespace Apha.BST.DataAccess.Repositories
                    "EXEC sp_Training_Add @TraineeID, @TrainerID, @Species, @DateTrained, @TrainingType, @ReturnCode OUT",
                     parameters);
             }
-            catch(Exception ex)
-            {              
-                throw ex;
+            catch
+            {
+                throw;
             }            
             var returnCode = (byte)parameters[5].Value;
 

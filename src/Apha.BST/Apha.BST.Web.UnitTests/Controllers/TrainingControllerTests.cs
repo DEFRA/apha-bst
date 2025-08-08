@@ -16,6 +16,12 @@ using Apha.BST.Core.Interfaces;
 using Apha.BST.Core.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Apha.BST.Web.PresentationService;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Data.SqlClient;
+using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace Apha.BST.Web.UnitTests.Controllers
 {
@@ -24,27 +30,83 @@ namespace Apha.BST.Web.UnitTests.Controllers
         private readonly TrainingController _controller;
         private readonly ITrainingService _trainingService;
         private readonly IMapper _mapper;
-        private readonly IPersonsService _personService;
         private readonly IStaticDropdownService _staticDropdownService;
+        private readonly ILogger<TrainingController> _logger;
+        private readonly IUserDataService _userDataService;
+        private static SqlException CreateSqlException()
+        {
+            // This creates an uninitialized SqlException instance for testing purposes.
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(typeof(SqlException));
+        }
 
         public TrainingControllerTests()
         {
             // Mock all dependencies
             _trainingService = Substitute.For<ITrainingService>();
             _mapper = Substitute.For<IMapper>();
-            _personService = Substitute.For<IPersonsService>();
             _staticDropdownService = Substitute.For<IStaticDropdownService>();
+            _logger = Substitute.For<ILogger<TrainingController>>();
+            _userDataService = Substitute.For<IUserDataService>();
 
             // Initialize the controller with the mocked dependencies
-            _controller = new TrainingController(_trainingService, _mapper, _personService, _staticDropdownService);
+            _controller = new TrainingController(_logger, _trainingService, _mapper, _staticDropdownService, _userDataService);
 
+            // Setup ControllerContext with ControllerActionDescriptor (not just ActionDescriptor)
+            var controllerActionDescriptor = new ControllerActionDescriptor
+            {
+                ActionName = "Index" // Default action name, will be overridden in tests as needed
+            };
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                ActionDescriptor = controllerActionDescriptor
+            };
             // Ensure TempData is mocked
             _controller.TempData = Substitute.For<ITempDataDictionary>();
         }
+
+        [Fact]
+        public async Task AddTraining_GET_ReturnsViewWithModel()
+        {
+            // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "AddTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var persons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            _trainingService.GetTraineesAsync().Returns(persons);
+
+            var trainingTypes = new List<SelectListItem> { new SelectListItem { Value = "Basic", Text = "Basic" } };
+            _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
+
+            var animals = new List<SelectListItem> { new SelectListItem { Value = "Cattle", Text = "Cattle" } };
+            _staticDropdownService.GetTrainingAnimal().Returns(animals);
+
+            // Act
+            var result = await _controller.AddTraining();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<AddTrainingViewModel>(viewResult.Model);
+            Assert.Equal(canEdit, model.CanEdit);
+            Assert.NotNull(model.Persons);
+            Assert.NotNull(model.TrainingTypesList);
+            Assert.NotNull(model.TrainingAnimalList);
+            Assert.Equal(DateTime.Today, model.TrainingDateTime);
+        }
+
         [Fact]
         public async Task AddTraining_ValidModel_ReturnsRedirectToActionResult()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "AddTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var viewModel = new AddTrainingViewModel
             {
                 // Set valid properties here (e.g., valid PersonId, TrainingAnimal, etc.)
@@ -67,9 +129,41 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         [Fact]
+        public async Task AddTraining_CannotEdit_DoesNotCallAddTrainingAsync()
+        {
+            // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "AddTraining";
+            bool canEdit = false;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var viewModel = new AddTrainingViewModel
+            {
+                PersonId = 1,
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = DateTime.Now
+            };
+
+            // Act
+            var result = await _controller.AddTraining(viewModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(nameof(TrainingController.AddTraining), redirectResult.ActionName);
+            await _trainingService.DidNotReceive().AddTrainingAsync(Arg.Any<TrainingDto>());
+        }
+
+        [Fact]
         public async Task AddTraining_ExceptionThrown_ReturnsRedirectToActionResultWithErrorMessage()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "AddTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var viewModel = new AddTrainingViewModel();
             var trainingDto = new TrainingDto();
             _mapper.Map<TrainingDto>(viewModel).Returns(trainingDto);
@@ -84,9 +178,71 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal("Save failed", _controller.TempData["Message"]);
         }
         [Fact]
+        public async Task AddTraining_WhenSqlExceptionThrown_LogsSqlError()
+        {
+            // Arrange
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "AddTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var viewModel = new AddTrainingViewModel
+            {
+                PersonId = 1,
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = DateTime.Now
+            };
+
+            var sqlException = CreateSqlException();
+            _mapper.Map<TrainingDto>(viewModel).Returns(new TrainingDto());
+            _trainingService.AddTrainingAsync(Arg.Any<TrainingDto>()).Throws(sqlException);
+
+            // Act
+            await _controller.AddTraining(viewModel);
+
+            // Assert
+            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);            
+            Assert.Equal("Save failed", _controller.TempData["Message"]);
+        }
+        [Fact]
+        public async Task AddTraining_WhenGeneralExceptionThrown_LogsError()
+        {
+            // Arrange
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "AddTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var viewModel = new AddTrainingViewModel
+            {
+                PersonId = 1,
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = DateTime.Now
+            };
+
+            var generalException = new Exception("Test general exception");
+            _mapper.Map<TrainingDto>(viewModel).Returns(new TrainingDto());
+            _trainingService.AddTrainingAsync(Arg.Any<TrainingDto>()).Throws(generalException);
+
+            // Act
+            await _controller.AddTraining(viewModel);
+
+            // Assert
+            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal("Save failed", _controller.TempData["Message"]);
+        }
+
+
+        [Fact]
         public async Task EditTraining_GET_ValidData_ReturnsViewWithModel()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int traineeId = 1;
             int trainerId = 2;
             string species = "Cattle";
@@ -117,6 +273,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(traineeId, model.TraineeId);
             Assert.Equal(trainerId, model.TrainerId);
             Assert.Equal(species, model.TrainingAnimal);
@@ -128,6 +285,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditTraining_GET_InvalidData_RedirectsToViewTraining()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int traineeId = 1;
             int trainerId = 2;
             string species = "Cattle";
@@ -145,10 +308,17 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal("ViewTraining", redirectResult.ActionName);
             Assert.Equal("Invalid data provided for deletion.", _controller.TempData["Message"]);
         }
+
         [Fact]
         public async Task EditTraining_POST_ValidModel_UpdatesTrainingAndRedirects()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var viewModel = new EditTrainingViewModel
             {
                 TraineeId = 1,
@@ -192,9 +362,63 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         [Fact]
+        public async Task EditTraining_POST_CannotEdit_DoesNotUpdateTraining()
+        {
+            // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = false;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var viewModel = new EditTrainingViewModel
+            {
+                TraineeId = 1,
+                TrainerId = 2,
+                TrainingType = "Basic",
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = DateTime.Now,
+                TraineeIdOld = 1,
+                TrainerIdOld = 2,
+                TrainingAnimalOld = "Cattle",
+                TrainingTypeOld = "Basic",
+                TrainingDateTimeOld = DateTime.Now
+            };
+
+            var editTrainingDto = new EditTrainingDto
+            {
+                TraineeId = viewModel.TraineeId,
+                TrainerId = viewModel.TrainerId,
+                TrainingType = viewModel.TrainingType,
+                TrainingAnimal = viewModel.TrainingAnimal,
+                TrainingDateTime = viewModel.TrainingDateTime,
+                TraineeIdOld = viewModel.TraineeIdOld,
+                TrainerIdOld = viewModel.TrainerIdOld,
+                TrainingAnimalOld = viewModel.TrainingAnimalOld,
+                TrainingDateTimeOld = viewModel.TrainingDateTimeOld
+            };
+
+            _mapper.Map<EditTrainingDto>(viewModel).Returns(editTrainingDto);
+
+            // Act
+            var result = await _controller.EditTraining(viewModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("ViewTraining", redirectResult.ActionName);
+            await _trainingService.DidNotReceive().UpdateTrainingAsync(Arg.Any<EditTrainingDto>());
+        }
+
+        [Fact]
         public async Task EditTraining_POST_InvalidModel_ReturnsViewWithModel()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var viewModel = new EditTrainingViewModel
             {
                 TraineeId = 0, // Invalid, triggers model error
@@ -215,12 +439,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _trainingService.GetTraineesAsync().Returns(Task.FromResult(persons));
 
             _staticDropdownService.GetTrainingTypes().Returns(new List<SelectListItem> {
-        new SelectListItem { Value = "Basic", Text = "Basic" }
-    });
+                new SelectListItem { Value = "Basic", Text = "Basic" }
+            });
 
             _staticDropdownService.GetTrainingAnimal().Returns(new List<SelectListItem> {
-        new SelectListItem { Value = "Cattle", Text = "Cattle" }
-    });
+                new SelectListItem { Value = "Cattle", Text = "Cattle" }
+            });
 
             // Act
             var result = await _controller.EditTraining(viewModel);
@@ -228,7 +452,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
-
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(viewModel.TraineeIdOld, model.TraineeIdOld);
             Assert.Equal(viewModel.TrainerIdOld, model.TrainerIdOld);
             Assert.Equal(viewModel.TrainingTypeOld, model.TrainingTypeOld);
@@ -240,6 +464,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditTraining_GET_PopulatesSelectLists()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int traineeId = 1;
             int trainerId = 2;
             string species = "Cattle";
@@ -259,24 +489,24 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 .Returns(dto);
 
             var persons = new List<PersonsDto>
-    {
-        new PersonsDto { PersonId = 1, Person = "John" },
-        new PersonsDto { PersonId = 2, Person = "Jane" }
-    };
+            {
+                new PersonsDto { PersonId = 1, Person = "John" },
+                new PersonsDto { PersonId = 2, Person = "Jane" }
+            };
             _trainingService.GetTraineesAsync().Returns(Task.FromResult(persons));
 
             var trainingTypes = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "Basic", Text = "Basic" },
-        new SelectListItem { Value = "Advanced", Text = "Advanced" }
-    };
+            {
+                new SelectListItem { Value = "Basic", Text = "Basic" },
+                new SelectListItem { Value = "Advanced", Text = "Advanced" }
+            };
             _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
 
             var animals = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "Cattle", Text = "Cattle" },
-        new SelectListItem { Value = "Sheep&Goat", Text = "Sheep&Goat" }
-    };
+            {
+                new SelectListItem { Value = "Cattle", Text = "Cattle" },
+                new SelectListItem { Value = "Sheep&Goat", Text = "Sheep&Goat" }
+            };
             _staticDropdownService.GetTrainingAnimal().Returns(animals);
 
             // Act
@@ -285,6 +515,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(2, model.TraineeList.Count());
             Assert.Equal(2, model.TrainingTypesList.Count());
             Assert.Equal(2, model.TrainingAnimalList.Count());
@@ -295,6 +526,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditTraining_POST_CallsUpdateTrainingAsync()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var viewModel = new EditTrainingViewModel
             {
                 TraineeId = 1,
@@ -335,6 +572,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditTraining_GET_TrainingNotFound_ShowsTempDataAndRedirects()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int traineeId = 1;
             int trainerId = 2;
             string species = "Cattle";
@@ -358,6 +601,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditTraining_ModelStateNotValid_ReturnsViewWithModel()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var viewModel = new EditTrainingViewModel
             {
                 TraineeId = 1,
@@ -378,12 +627,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _trainingService.GetTraineesAsync().Returns(Task.FromResult(persons));
 
             _staticDropdownService.GetTrainingTypes().Returns(new List<SelectListItem> {
-        new SelectListItem { Value = "Basic", Text = "Basic" }
-    });
+                new SelectListItem { Value = "Basic", Text = "Basic" }
+            });
 
             _staticDropdownService.GetTrainingAnimal().Returns(new List<SelectListItem> {
-        new SelectListItem { Value = "Cattle", Text = "Cattle" }
-    });
+                new SelectListItem { Value = "Cattle", Text = "Cattle" }
+            });
 
             // Act
             var result = await _controller.EditTraining(viewModel);
@@ -391,6 +640,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(viewModel.TraineeIdOld, model.TraineeIdOld);
         }
 
@@ -398,6 +648,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditTraining_ModelStateValid_UpdateSuccessful_RedirectsToViewTraining()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var viewModel = new EditTrainingViewModel
             {
                 TraineeId = 1,
@@ -425,7 +681,6 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = viewModel.TrainingDateTimeOld
             };
 
-
             _mapper.Map<EditTrainingDto>(viewModel).Returns(editTrainingDto);
             _trainingService.UpdateTrainingAsync(editTrainingDto).Returns("Update successful");
 
@@ -434,21 +689,143 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewTraining", redirectResult.ActionName!); // null-forgiving operator
+            Assert.Equal("ViewTraining", redirectResult.ActionName!);
             Assert.NotNull(redirectResult.RouteValues);
             Assert.True(redirectResult.RouteValues!.ContainsKey("selectedTraineeId"));
             Assert.Equal(viewModel.TraineeIdOld, redirectResult.RouteValues["selectedTraineeId"]);
         }
         [Fact]
+        public async Task EditTraining_WhenSqlExceptionThrown_LogsSqlError()
+        {
+            // Arrange
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var viewModel = new EditTrainingViewModel
+            {
+                TraineeId = 1,
+                TrainerId = 2,
+                TrainingType = "Basic",
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = DateTime.Now,
+                TraineeIdOld = 1,
+                TrainerIdOld = 2,
+                TrainingAnimalOld = "Cattle",
+                TrainingTypeOld = "Basic",
+                TrainingDateTimeOld = DateTime.Now
+            };
+
+            var sqlException = CreateSqlException();
+            _mapper.Map<EditTrainingDto>(viewModel).Returns(new EditTrainingDto
+            {
+                TraineeId = 1,
+                TrainerId = 2,
+                TrainingType = "Basic",
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = viewModel.TrainingDateTime,
+                TraineeIdOld = 1,
+                TrainerIdOld = 2,
+                TrainingAnimalOld = "Cattle",
+                TrainingDateTimeOld = viewModel.TrainingDateTimeOld
+            });
+            _trainingService.UpdateTrainingAsync(Arg.Any<EditTrainingDto>()).Throws(sqlException);
+
+            // Act
+            await _controller.EditTraining(viewModel);
+
+            // Assert
+            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal("Error updating training", _controller.TempData["Message"]);
+        }
+        [Fact]
+        public async Task EditTraining_WhenGeneralExceptionThrown_LogsError()
+        {
+            // Arrange
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "EditTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var viewModel = new EditTrainingViewModel
+            {
+                TraineeId = 1,
+                TrainerId = 2,
+                TrainingType = "Basic",
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = DateTime.Now,
+                TraineeIdOld = 1,
+                TrainerIdOld = 2,
+                TrainingAnimalOld = "Cattle",
+                TrainingTypeOld = "Basic",
+                TrainingDateTimeOld = DateTime.Now
+            };
+
+            var generalException = new Exception("Test general exception");
+            _mapper.Map<EditTrainingDto>(viewModel).Returns(new EditTrainingDto
+            {
+                TraineeId = 1,
+                TrainerId = 2,
+                TrainingType = "Basic",
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = viewModel.TrainingDateTime,
+                TraineeIdOld = 1,
+                TrainerIdOld = 2,
+                TrainingAnimalOld = "Cattle",
+                TrainingDateTimeOld = viewModel.TrainingDateTimeOld
+            });
+            _trainingService.UpdateTrainingAsync(Arg.Any<EditTrainingDto>()).Throws(generalException);
+
+            // Act
+            await _controller.EditTraining(viewModel);
+
+            // Assert
+            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal("Error updating training", _controller.TempData["Message"]);
+        }
+
+        [Fact]
+        public async Task ViewTraining_ReturnsViewWithCanEditProperty()
+        {
+            // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "ViewTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var allTrainee = new List<TraineeTrainerViewModel> { new TraineeTrainerViewModel { PersonID = 1, Person = "John Doe" } };
+
+            _trainingService.GetTraineesAsync().Returns(allPersons);
+            _mapper.Map<IEnumerable<TraineeTrainerViewModel>>(allPersons).Returns(allTrainee);
+
+            // Act
+            var result = await _controller.ViewTraining() as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var model = Assert.IsType<TrainingListViewModel>(result.Model);
+            Assert.Equal(canEdit, model.CanEdit);
+        }
+
+        [Fact]
         public async Task ViewTraining_WhenSelectedTraineeIdIsAll_ReturnsViewWithAllTrainings()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "ViewTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
             var allTrainee = new List<TraineeTrainerViewModel> { new TraineeTrainerViewModel { PersonID = 1, Person = "John Doe" } };
             var allTrainings = new List<TrainerTrainingDto> { new TrainerTrainingDto { PersonID = 1, TrainingType = "Type1" } };
             var mappedTrainings = new List<TrainingViewModel> { new TrainingViewModel { TraineeId = 1, TrainingType = "Type1" } };
 
-            _personService.GetAllPersonAsync().Returns(allPersons);
+            _trainingService.GetTraineesAsync().Returns(allPersons);
             _mapper.Map<IEnumerable<TraineeTrainerViewModel>>(allPersons).Returns(allTrainee);
             _trainingService.GetAllTrainingsAsync().Returns(allTrainings);
             _mapper.Map<IEnumerable<TrainingViewModel>>(allTrainings).Returns(mappedTrainings);
@@ -459,6 +836,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             var model = Assert.IsType<TrainingListViewModel>(result.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             // Ensure collections are not null before checking their length
             Assert.NotNull(model.FilteredTrainings);
             Assert.NotNull(model.AllTrainees);
@@ -466,16 +844,23 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Single(model.AllTrainees);  // Check that there is only one trainee
             Assert.Equal("All", model.SelectedTraineeId);  // Ensure the "All" option is selected
         }
+
         [Fact]
         public async Task TrainerHistory_WithDefaultParameters_ReturnsCorrectViewModel()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "TrainerHistory";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
             var historyDto = new List<TrainerHistoryDto> { new TrainerHistoryDto { TrainerID = 1, TrainingAnimal = "Cattle" } };
             var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel { TrainerID = 1, TrainingAnimal = "Cattle" } };
             var trainingAnimalList = new List<SelectListItem> { new SelectListItem { Value = "Cattle", Text = "Cattle" } };
 
-            _personService.GetAllPersonAsync().Returns(allPersons);
+            _trainingService.GetTraineesAsync().Returns(allPersons);
             _trainingService.GetTrainerHistoryAsync(0, "Cattle").Returns(historyDto);
             _mapper.Map<List<TraineeTrainerViewModel>>(allPersons).Returns(new List<TraineeTrainerViewModel> { new TraineeTrainerViewModel { PersonID = 1, Person = "John Doe" } });
             _mapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
@@ -487,6 +872,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             var model = Assert.IsType<TrainerHistoryViewModel>(result.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(0, model.SelectedTrainerId);
             Assert.Equal("Cattle", model.SelectedSpecies);
             Assert.NotNull(model.AllTrainers);
@@ -501,6 +887,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task TrainerHistory_WithNonDefaultParameters_ReturnsCorrectViewModel()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "TrainerHistory";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int selectedTrainerId = 1;
             string selectedSpecies = "Sheep";
 
@@ -509,7 +901,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel { TrainerID = 1, TrainingAnimal = "Sheep" } };
             var trainingAnimalList = new List<SelectListItem> { new SelectListItem { Value = "Sheep", Text = "Sheep" } };
 
-            _personService.GetAllPersonAsync().Returns(allPersons);
+            _trainingService.GetTraineesAsync().Returns(allPersons);
             _trainingService.GetTrainerHistoryAsync(selectedTrainerId, selectedSpecies).Returns(historyDto);
             _mapper.Map<List<TraineeTrainerViewModel>>(allPersons).Returns(new List<TraineeTrainerViewModel> { new TraineeTrainerViewModel { PersonID = 1, Person = "John Doe" } });
             _mapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
@@ -521,6 +913,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             var model = Assert.IsType<TrainerHistoryViewModel>(result.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(selectedTrainerId, model.SelectedTrainerId);
             Assert.Equal(selectedSpecies, model.SelectedSpecies);
             Assert.NotNull(model.AllTrainers);
@@ -535,12 +928,18 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task TrainerHistory_WithNoTrainers_ReturnsEmptyViewModel()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "TrainerHistory";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var allPersons = new List<PersonsDto>();
             var historyDto = new List<TrainerHistoryDto>();
             var historyModel = new List<TrainingHistoryModel>();
             var trainingAnimalList = new List<SelectListItem>();
 
-            _personService.GetAllPersonAsync().Returns(allPersons);
+            _trainingService.GetTraineesAsync().Returns(allPersons);
             _trainingService.GetTrainerHistoryAsync(0, "Cattle").Returns(historyDto);
             _mapper.Map<List<TraineeTrainerViewModel>>(allPersons).Returns(new List<TraineeTrainerViewModel>());
             _mapper.Map<List<TrainingHistoryModel>>(historyDto).Returns(historyModel);
@@ -552,6 +951,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             var model = Assert.IsType<TrainerHistoryViewModel>(result.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.NotNull(model.AllTrainers);
             Assert.Empty(model.AllTrainers);
             Assert.NotNull(model.HistoryDetails);
@@ -559,14 +959,21 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Empty(model.TrainingAnimalList);
             Assert.Single(model.AllTrainersList); // Only "All people" option
         }
+
         [Fact]
         public async Task TrainerTrained_WhenSelectedTrainerIdIsZero_ReturnsViewWithEmptyTraineeTrainingDetails()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "TrainerTrained";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
             var allTrainers = new List<TrainerTrainedModel> { new TrainerTrainedModel { PersonID = 1, Person = "John Doe" } };
 
-            _personService.GetAllPersonAsync().Returns(allPersons);
+            _trainingService.GetTraineesAsync().Returns(allPersons);
             _mapper.Map<List<TrainerTrainedModel>>(allPersons).Returns(allTrainers);
 
             // Act
@@ -575,6 +982,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             var model = Assert.IsType<TrainerTrainedViewModel>(result.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(0, model.SelectedTrainerId);
             Assert.NotNull(model.TraineeTrainingDetails);
             Assert.Empty(model.TraineeTrainingDetails);
@@ -586,12 +994,18 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task TrainerTrained_WhenSelectedTrainerIdIsValid_ReturnsViewWithTraineeTrainingDetails()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "TrainerTrained";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int selectedTrainerId = 1;
             var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
             var allTrainers = new List<TrainerTrainedModel> { new TrainerTrainedModel { PersonID = 1, Person = "John Doe" } };
             var trainedList = new List<TrainerTrainedDto> { new TrainerTrainedDto { TraineeNo = 2, Trainee = "Jane Doe" } };
 
-            _personService.GetAllPersonAsync().Returns(allPersons);
+            _trainingService.GetTraineesAsync().Returns(allPersons);
             _mapper.Map<List<TrainerTrainedModel>>(allPersons).Returns(allTrainers);
             _trainingService.GetTrainerTrainedAsync(selectedTrainerId).Returns(trainedList);
 
@@ -601,6 +1015,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             var model = Assert.IsType<TrainerTrainedViewModel>(result.Model);
+            Assert.Equal(canEdit, model.CanEdit);
             Assert.Equal(selectedTrainerId, model.SelectedTrainerId);
             Assert.Equal(trainedList, model.TraineeTrainingDetails);
             Assert.Equal(allTrainers, model.AllTrainers);
@@ -611,7 +1026,13 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task TrainerTrained_WhenGetAllPersonAsyncThrowsException_ThrowsException()
         {
             // Arrange
-            _personService.GetAllPersonAsync().Throws(new Exception("Database error"));
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "TrainerTrained";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            _trainingService.GetTraineesAsync().Throws(new Exception("Database error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _controller.TrainerTrained());
@@ -621,19 +1042,32 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task TrainerTrained_WhenGetTrainerTrainedAsyncThrowsException_ThrowsException()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "TrainerTrained";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int selectedTrainerId = 1;
             var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
 
-            _personService.GetAllPersonAsync().Returns(allPersons);
+            _trainingService.GetTraineesAsync().Returns(allPersons);
             _trainingService.GetTrainerTrainedAsync(selectedTrainerId).Throws(new Exception("Database error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _controller.TrainerTrained(selectedTrainerId));
         }
+
         [Fact]
-        public async Task DeleteTraining_ValidInput_ReturnsRedirectToActionResult()
+        public async Task DeleteTraining_ValidInput_CanEdit_ReturnsRedirectToActionResult()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "DeleteTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int traineeId = 1;
             string species = "Cattle";
             DateTime dateTrained = DateTime.Now;
@@ -654,9 +1088,40 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         [Fact]
+        public async Task DeleteTraining_ValidInput_CannotEdit_DoesNotCallDeleteTrainingAsync()
+        {
+            // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "DeleteTraining";
+            bool canEdit = false;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            int traineeId = 1;
+            string species = "Cattle";
+            DateTime dateTrained = DateTime.Now;
+
+            // Act
+            var result = await _controller.DeleteTraining(traineeId, species, dateTrained);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("ViewTraining", redirectResult.ActionName);
+            Assert.NotNull(redirectResult.RouteValues);
+            Assert.Equal(traineeId, redirectResult.RouteValues["selectedTraineeId"]);
+            await _trainingService.DidNotReceive().DeleteTrainingAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTime>());
+        }
+
+        [Fact]
         public async Task DeleteTraining_InvalidModelState_ReturnsRedirectToActionResult()
         {
             // Arrange
+            // Set the action name for this specific test
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "DeleteTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
             int traineeId = 1;
             string species = "Cattle";
             DateTime dateTrained = DateTime.Now;
@@ -674,6 +1139,53 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal("Invalid data provided for deletion.", _controller.TempData["Message"]);
             await _trainingService.DidNotReceive().DeleteTrainingAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTime>());
         }
+        [Fact]
+        public async Task DeleteTraining_WhenSqlExceptionThrown_LogsSqlError()
+        {
+            // Arrange
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "DeleteTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            int traineeId = 1;
+            string species = "Cattle";
+            DateTime dateTrained = DateTime.Now;
+
+            var sqlException = CreateSqlException();
+            _trainingService.DeleteTrainingAsync(traineeId, species, dateTrained).Throws(sqlException);
+
+            // Act
+            await _controller.DeleteTraining(traineeId, species, dateTrained);
+
+            // Assert            
+            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal("Delete failed", _controller.TempData["Message"]);
+        }
+        [Fact]
+        public async Task DeleteTraining_WhenGeneralExceptionThrown_LogsError()
+        {
+            // Arrange
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "DeleteTraining";
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            int traineeId = 1;
+            string species = "Cattle";
+            DateTime dateTrained = DateTime.Now;
+
+            var generalException = new Exception("Test general exception");
+            _trainingService.DeleteTrainingAsync(traineeId, species, dateTrained).Throws(generalException);
+
+            // Act
+            await _controller.DeleteTraining(traineeId, species, dateTrained);
+
+            // Assert
+            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal("Delete failed", _controller.TempData["Message"]);
+        }
+
     }
 
 }

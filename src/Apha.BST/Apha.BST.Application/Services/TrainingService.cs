@@ -49,7 +49,7 @@ namespace Apha.BST.Application.Services
 
         public async Task<string> UpdateTrainingAsync(EditTrainingDto dto)
         {
-            if (dto.TraineeId == dto.TrainerId)
+            if (dto.TraineeIdOld == dto.TrainerId)
             {
                 return "Trainee and Trainer cannot be the same person.";
             }

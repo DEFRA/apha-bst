@@ -2,7 +2,7 @@
 
 namespace Apha.BST.Web.Models
 {
-    public class SiteListViewModel
+    public class SiteListViewModel:BaseViewModel
     {        
         public IEnumerable<SelectListItem> AllSites { get; set; } = new List<SelectListItem>();
         public IEnumerable<SiteViewModel>? FilteredSites { get; set; }

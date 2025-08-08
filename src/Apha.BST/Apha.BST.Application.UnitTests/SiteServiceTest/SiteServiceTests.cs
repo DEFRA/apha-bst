@@ -64,10 +64,11 @@ namespace Apha.BST.Application.UnitTests.Services
         {
             // Arrange
             var siteDto = new SiteDto { Name = "Test Site", PlantNo = "1234" };
-            MockForAddSiteAsync("CREATED", siteDto);
+            var userName = "testUser";
+            MockForAddSiteAsync("CREATED", siteDto, userName);
 
             // Act
-            var result = await _siteService.AddSiteAsync(siteDto);
+            var result = await _siteService.AddSiteAsync(siteDto, userName);
 
             // Assert
             result.Should().Be("'Test Site' saved as site");
@@ -78,10 +79,11 @@ namespace Apha.BST.Application.UnitTests.Services
         {
             // Arrange
             var siteDto = new SiteDto { Name = "Existing Site", PlantNo = "5678" };
-            MockForAddSiteAsync("EXISTS", siteDto);
+            var userName = "testUser";
+            MockForAddSiteAsync("EXISTS", siteDto, userName);
 
             // Act
-            var result = await _siteService.AddSiteAsync(siteDto);
+            var result = await _siteService.AddSiteAsync(siteDto, userName);
 
             // Assert
             result.Should().Be("Site already exists. Please choose another Site / Plant No.");
@@ -92,16 +94,17 @@ namespace Apha.BST.Application.UnitTests.Services
         {
             // Arrange
             var siteDto = new SiteDto { Name = "Test Site", PlantNo = "1234" };
+            var userName = "testUser";
             var mockRepo = Substitute.For<ISiteRepository>();
             var mockMapper = Substitute.For<IMapper>();
             var site = new Site { Name = "Test Site", PlantNo = "1234" };
             mockMapper.Map<Site>(siteDto).Returns(site);
-            mockRepo.AddSiteAsync(site).ThrowsAsync(new Exception("Repository error"));
+            mockRepo.AddSiteAsync(site, userName).ThrowsAsync(new Exception("Repository error"));
 
             _siteService = new SiteService(mockRepo, mockMapper);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _siteService.AddSiteAsync(siteDto));
+            await Assert.ThrowsAsync<Exception>(() => _siteService.AddSiteAsync(siteDto, userName));
         }
 
         [Fact]

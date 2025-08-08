@@ -2,6 +2,7 @@
 using Apha.BST.Application.Services;
 using Apha.BST.Core.Interfaces;
 using Apha.BST.DataAccess.Repositories;
+using Apha.BST.Web.PresentationService;
 
 namespace Apha.BST.Web.Extensions
 {
@@ -25,6 +26,7 @@ namespace Apha.BST.Web.Extensions
             services.AddScoped<IRoleMappingService, RoleMappingService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IDataEntryService, DataEntryService>();
+            services.AddScoped<IUserDataService, UserDataService>();
             return services;
         }
         public static IServiceCollection AddRepositories(this IServiceCollection services)

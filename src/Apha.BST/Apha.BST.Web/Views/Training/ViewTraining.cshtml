@@ -57,7 +57,8 @@
 				</tr>
 			</thead>
 			<tbody>
-					@foreach (var training in Model.FilteredTrainings)
+				@if (Model.FilteredTrainings != null) {
+				@foreach (var training in Model.FilteredTrainings)
 				{
 					<tr>
 						<td>@training.Person</td>
@@ -66,9 +67,7 @@
 						<td>@training.TrainingDateTime.ToString()</td>
 						<td>@training.PersonID</td>
 						<td>@training.TrainingType</td>
-						<td>
-							@* <a href="@Url.Action("EditTraining", "Training", new { id = training.PersonID })" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">Edit</a> *@
-							@* <a href="@Url.Action("EditTraining", "Training",new {trainerId = training.PersonID,species = training.TrainingAnimal,dateTrained = training.TrainingDateTime.ToString()})" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">Edit</a> *@
+						<td>						
 							<a asp-action ="EditTraining"
 										 asp-controller="Training"
 										 asp-route-traineeId="@training.TraineeId"
@@ -87,6 +86,7 @@
 							</form>
 						</td>
 					</tr>
+				}
 				}
 			</tbody>
 

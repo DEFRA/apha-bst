@@ -12,7 +12,7 @@ namespace Apha.BST.Core.Interfaces
         Task<IEnumerable<Site>> GetAllSitesAsync(string plantNo);
         Task<List<SiteTrainee>> GetSiteTraineesAsync(string plantNo);
         Task<bool> DeleteTraineeAsync(int personId);        
-        Task<string> AddSiteAsync(Site site);
+        Task<string> AddSiteAsync(Site site, string userName);
 
         // For deleting trainee by person ID
         // For getting person name by ID
