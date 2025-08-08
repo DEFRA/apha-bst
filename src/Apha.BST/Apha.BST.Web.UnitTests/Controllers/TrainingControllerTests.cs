@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Data.SqlClient;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace Apha.BST.Web.UnitTests.Controllers
 {
@@ -35,7 +36,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         private static SqlException CreateSqlException()
         {
             // This creates an uninitialized SqlException instance for testing purposes.
-            return (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(typeof(SqlException));
         }
 
         public TrainingControllerTests()

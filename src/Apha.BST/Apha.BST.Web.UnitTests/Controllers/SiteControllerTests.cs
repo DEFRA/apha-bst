@@ -34,10 +34,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
             foreach (var ctor in ctors)
             {
                 var parameters = ctor.GetParameters();
-                var args = new object[parameters.Length];
+               
+                object?[] args = new object?[parameters.Length];
+
                 for (int i = 0; i < parameters.Length; i++)
                 {
-                    // Provide default values for each parameter type
                     args[i] = parameters[i].ParameterType.IsValueType
                         ? Activator.CreateInstance(parameters[i].ParameterType)
                         : null;
