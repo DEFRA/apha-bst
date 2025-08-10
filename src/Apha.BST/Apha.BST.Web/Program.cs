@@ -56,18 +56,10 @@ var app = builder.Build();
 
 //app.UseForwardedHeaders(new ForwardedHeadersOptions
 //{
-//    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+//    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+//    KnownNetworks = { }, // clears known networks
+//    KnownProxies = { }   // clears known proxies
 //});
-var forwardOptions = new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-};
-
-// Trust all networks (for testing) — better to set your LB CIDR in production
-forwardOptions.KnownNetworks.Clear();
-forwardOptions.KnownProxies.Clear();
-
-app.UseForwardedHeaders(forwardOptions);
 
 app.Use(async (context, next) =>
 {
