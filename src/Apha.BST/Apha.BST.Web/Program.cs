@@ -54,10 +54,21 @@ builder.Services.AddHttpContextAccessor(); // Required
 builder.Services.AddHealthChecks();
 var app = builder.Build();
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+//app.UseForwardedHeaders(new ForwardedHeadersOptions
+//{
+//    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+//});
+var forwardOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
+};
+
+// Trust all networks (for testing) — better to set your LB CIDR in production
+forwardOptions.KnownNetworks.Clear();
+forwardOptions.KnownProxies.Clear();
+
+app.UseForwardedHeaders(forwardOptions);
+
 app.Use(async (context, next) =>
 {
     Console.WriteLine($"Request Scheme: {context.Request.Scheme}");
