@@ -70,7 +70,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     Predicate = _ => false // skip expensive checks
 });
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || builder.Environment.IsEnvironment("local"))
 {
     app.UseDeveloperExceptionPage();
 }

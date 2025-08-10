@@ -82,10 +82,9 @@ namespace Apha.BST.Web.Extensions
             if (context.ProtocolMessage.RedirectUri?.StartsWith("http://", StringComparison.OrdinalIgnoreCase) == true)
             {
                 // Replace "http://" with "https://"
-                context.ProtocolMessage.RedirectUri =
-                    string.Concat("https://", context.ProtocolMessage.RedirectUri.AsSpan("http://".Length));
+                //context.ProtocolMessage.RedirectUri =
+                //    string.Concat("https://", context.ProtocolMessage.RedirectUri.AsSpan("http://".Length));
                 Console.WriteLine($"Redirect URL After replace : {context.ProtocolMessage.RedirectUri}");
-
             }
             return Task.CompletedTask;
         }
