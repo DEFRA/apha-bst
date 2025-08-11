@@ -19,6 +19,7 @@ namespace Apha.BST.Web.Controllers
         private readonly ILogService _logService;
         private readonly IMapper _mapper;
         private const string siteAll = "All";
+        private const string personMessage = "PersonMessage";
 
         public PersonsController(IPersonsService personService, IMapper mapper, IUserDataService userDataService, ILogService logService)
         {
@@ -73,18 +74,18 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit) 
                 { 
                     var message = await _personService.DeletePersonAsync(personId);
-                    TempData["PersonMessage"] = message;
+                    TempData[personMessage] = message;
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, "DeletePerson");
-                TempData["PersonMessage"] = failmessage;
+                TempData[personMessage] = failmessage;
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, "DeletePerson");
-                TempData["PersonMessage"] = failmessage;
+                TempData[personMessage] = failmessage;
             }
 
             return RedirectToAction("ViewPerson");
@@ -123,18 +124,18 @@ namespace Apha.BST.Web.Controllers
                 { 
                     var personData = _mapper.Map<AddPersonDto>(viewModel);
                     var message = await _personService.AddPersonAsync(personData, userName);
-                    TempData["PersonMessage"] = message;
+                    TempData[personMessage] = message;
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, "AddPerson");               
-                TempData["PersonMessage"] = "Save failed";
+                TempData[personMessage] = "Save failed";
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, "AddPerson");               
-                TempData["PersonMessage"] = "Save failed";
+                TempData[personMessage] = "Save failed";
             }
            
             return RedirectToAction(nameof(AddPerson));
@@ -190,19 +191,19 @@ namespace Apha.BST.Web.Controllers
                     var editTraining = _mapper.Map<EditPersonDto>(viewModel);
                     var message = await _personService.UpdatePersonAsync(editTraining);
 
-                    TempData["PersonMessage"] = message;
+                    TempData[personMessage] = message;
                 }            
 
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, "EditPerson");
-                TempData["PersonMessage"] = "Update failed";
+                TempData[personMessage] = "Update failed";
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, "EditPerson");
-                TempData["PersonMessage"] = "Update failed";
+                TempData[personMessage] = "Update failed";
             }
 
             return RedirectToAction(nameof(EditPerson));

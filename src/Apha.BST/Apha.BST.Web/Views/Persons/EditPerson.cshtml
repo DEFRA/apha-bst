@@ -7,6 +7,7 @@
 
 <form asp-action="EditPerson" method="post">
     <table class="w-100 h-100 mt-3 mx-2">
+        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
         <tbody class="mx-2">
             <tr>
                 <td class="fw-bold text-decoration-underline">
@@ -16,10 +17,10 @@
             </tr>
             <tr class="mb-4">
                 <td class="w-25 py-3">
-                    <label asp-for="Person">Alter person name (Surname, first)</label>
+                    <label for="Person" id="Person">Alter person name (Surname, first)</label>
                 </td>
                 <td class="w-50">
-                    <input class="w-50" asp-for="Person" class="form-control" autocomplete="off" />
+                    <input class="w-50" id="Person" asp-for="Person" class="form-control" autocomplete="off" />
                     <span asp-validation-for="Person" class="text-danger"></span>
                 </td>
               
@@ -27,10 +28,10 @@
 
             <tr>
                 <td class="w-25 py-3">
-                    <label asp-for="Name">Alter site</label>
+                    <label for="Name" id="Name">Alter site</label>
                 </td>
                 <td class="w-50">
-                    <select asp-for="Name" asp-items="Model.SiteOptions">                        
+                    <select id="Name" asp-for="Name" asp-items="Model.SiteOptions">
                     </select>
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </td>
@@ -38,10 +39,10 @@
 
             <tr>
                 <td class="w-25 py-3">
-                    <label asp-for="PersonId">Person ID</label>
+                    <label for="PersonId">Person ID</label>
                 </td>
                 <td class="w-50">
-                    <input class="w-50" asp-for="PersonId" class="form-control" readonly />
+                    <input id="PersonId" class="w-50" asp-for="PersonId" class="form-control" readonly />
                 </td>
             </tr>
 
@@ -49,9 +50,10 @@
                 <td class="w-25 py-3"></td>
                 <td class="w-50">
                     <table class="w-100">
+                        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
                         <tr>
                             <td class="w-20">
-                                <button type="submit" class="btn p-0" tabindex="10">
+                                <button type="submit" class="btn p-0">
                                     <img src="~/Images/tick.gif" alt="Save site" />
                                 </button>
                             </td>
