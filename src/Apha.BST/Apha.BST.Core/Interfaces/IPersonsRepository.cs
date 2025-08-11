@@ -9,6 +9,13 @@ namespace Apha.BST.Core.Interfaces
 {
     public interface IPersonsRepository
     {
-        Task<IEnumerable<Persons>> GetAllAsync();
+        Task<IEnumerable<PersonDetail>> GetAllPersonByNameAsync(int person);
+        Task<IEnumerable<PersonLookup>> GetAllPersonsForDropdownAsync();
+        Task<bool> DeletePersonAsync(int personId);
+        Task<string?> GetPersonNameByIdAsync(int personId);
+        Task<IEnumerable<PersonSiteLookup>> GetAllSitesAsync(string plantNo);
+        Task<string> AddPersonAsync(AddPerson persons, string userName);
+        Task<string> UpdatePersonAsync(EditPerson editPerson);
+        Task<string?> GetSiteByIdAsync(int personId);
     }
 }

@@ -93,9 +93,9 @@
 				</div>
 
 				<div class="dropdown-menu" aria-labelledby="navbarDropdownPerson">
-					<a class="dropdown-item" asp-action="Index" asp-route-part="adte">Add a person</a>
-					<a class="dropdown-item" asp-action="Index" asp-route-part="chte">Edit/Delete a person</a>
-					<a class="dropdown-item" asp-action="Index" asp-route-part="vwte">View people</a>
+					<a class="dropdown-item" asp-controller="Persons" asp-action="AddPerson">Add a person</a>
+					<a class="dropdown-item" asp-controller="Persons" asp-action="ViewPerson">Edit/Delete a person</a>
+					<a class="dropdown-item" asp-controller="Persons" asp-action="ViewPerson">View people</a>
 				</div>
 			</li>
 			<li class="dropdown">
@@ -106,10 +106,10 @@
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
 				</div>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdownTraining">
-					<a class="dropdown-item" asp-controller="Training" asp-action="AddTraining" asp-route-part="adtg">Add training</a>
-					<a class="dropdown-item" asp-controller="Training" asp-action="ViewTraining" asp-route-part="vwtg">View, alter, delete training details</a>
-					<a class="dropdown-item" asp-controller="Training" asp-action="TrainerHistory" asp-route-part="vwtr">Trainer History</a>
-					<a class="dropdown-item" asp-controller="Training" asp-action="TrainerTrained" asp-route-part="vwth">Trainer trained</a>
+					<a class="dropdown-item" asp-controller="Training" asp-action="AddTraining">Add training</a>
+					<a class="dropdown-item" asp-controller="Training" asp-action="ViewTraining">View, alter, delete training details</a>
+					<a class="dropdown-item" asp-controller="Training" asp-action="TrainerHistory">Trainer History</a>
+					<a class="dropdown-item" asp-controller="Training" asp-action="TrainerTrained">Trainer trained</a>
 				</div>
 			</li>
 			<li class="dropdown">
@@ -120,9 +120,9 @@
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
 				</div>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdownSite">
-					<a class="dropdown-item" asp-controller="Site" asp-action="AddSite" asp-route-part="adst">Add a site</a>
-					<a class="dropdown-item" asp-controller="Site" asp-action="ViewSite" asp-route-part="vwst">View, alter, delete site details</a>
-					<a class="dropdown-item" asp-controller="Site" asp-action="SiteTrainee" asp-route-part="stte">Site trainees</a>
+					<a class="dropdown-item" asp-controller="Site" asp-action="AddSite">Add a site</a>
+					<a class="dropdown-item" asp-controller="Site" asp-action="ViewSite">View, alter, delete site details</a>
+					<a class="dropdown-item" asp-controller="Site" asp-action="SiteTrainee">Site trainees</a>
 				</div>
 			</li>
 
@@ -159,13 +159,13 @@
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
 				</div>
 				<div class="dropdown-menu" id="navbarDropdownHelp" aria-labelledby="navbarDropdownHelp">
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hphm">Home</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpur">Users</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpnw">News</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpte">Persons</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hptr">Trainer</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hptg">Training</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpst">Site</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help"  asp-route-index="7">Home</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-index="0">Users</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-index="6">News</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-index="2">Persons</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-index="3">Trainer</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-index="4">Training</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-index="1">Site</a>
 				</div>
 			</li>
 			<li class="dropdown">

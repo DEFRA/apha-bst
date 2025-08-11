@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Application.DTOs
+{
+    public class AddPersonDto
+    {
+        public string? Name { get; set; }
+
+        public string? LocationId { get; set; }       
+      
+        public string PlantNo { get; set; } = null!;
+    }
+}

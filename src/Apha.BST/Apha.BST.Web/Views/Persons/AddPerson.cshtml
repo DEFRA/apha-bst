@@ -1,0 +1,70 @@
+﻿@model AddPersonViewModel
+@{
+	ViewData["Title"] = "Add Person";
+}
+
+<form asp-action="AddPerson" method="post">
+	<table class="w-100 h-100 mt-3 mx-2">
+		<tbody class="mx-2">
+			<tr>
+				<td class="fw-bold text-decoration-underline">
+					Add a person
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="w-25 ">
+					<label asp-for="Name">Please type person's name (surname, first name)</label>
+				</td>
+				<td class="w-50">
+					<input class="w-50" asp-for="Name" id="Title" type="text" placeholder=" ">
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</td>
+				@* <td class="w-10"> @*
+
+					<span asp-validation-for="Name" class="text-danger"></span> *@
+			</tr>
+			<tr>
+				<td class="w-25 ">
+					<label asp-for="PlantNo">Please select site</label>
+				</td>
+				<td class="w-50">
+					<select asp-for="PlantNo" asp-items="Model.Sites">
+						<option value="">Select site...</option>
+					</select>
+					<span asp-validation-for="PlantNo" class="text-danger"></span>
+				</td>
+				<td class="w-10"></td>
+				<td class="w-10"></td>
+			</tr>
+			<tr>
+				<td class="w-25 "></td>
+				<td class="w-50">
+					<table class="w-100">
+						<tr>
+							<td class="w-20">
+								<button type="submit" class="btn p-0">
+									<img src="~/Images/tick.gif" alt="Save site" />
+								</button>
+							</td>
+							<td>
+								<a href="@Url.Action("Index", "Home")" class="btn">
+									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
+								</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td>
+					<div class="pt-3 px-5 ErrorText">
+						@if (TempData["PersonMessage"] != null)
+						{
+							@TempData["PersonMessage"]
+						}
+					</div>
+				</td>
+			</tr>
+
+
+	</table>
+</form>

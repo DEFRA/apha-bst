@@ -351,3 +351,46 @@ body {
         width: 100%;
     }
 }
+.help-image-container {
+    display: flex;
+    align-items: center;
+    padding-left: 100px;
+}
+
+.additional-info {   
+    margin-left: 50px;
+}
+
+/* Help */
+.help-header {
+    margin-bottom: 20px;
+}
+
+.help-content {
+    position: relative;
+    width: 100%;
+}
+
+.help-description {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    max-width: 30%;
+}
+
+.help-image {
+    padding-top: 20px;
+    margin-left: 96px;
+}
+
+.help-back-link {
+    text-align: right;
+    padding-right: 50px;
+    margin-top: 10px;
+}
+
+    .help-back-link a {
+        color: #0000C0;
+        font-weight: 900;
+        text-decoration: underline;
+    }
