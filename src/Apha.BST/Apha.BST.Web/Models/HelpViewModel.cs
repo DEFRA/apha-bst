@@ -1,0 +1,10 @@
+﻿namespace Apha.BST.Web.Models
+{
+    public class HelpViewModel
+    {
+       
+        public required List<HelpListViewModel> Sections { get; set; }
+
+        public int ActiveViewIndex {  get; set; }
+    }
+}

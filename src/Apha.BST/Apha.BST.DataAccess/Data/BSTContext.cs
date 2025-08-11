@@ -47,6 +47,10 @@ public partial class BstContext : DbContext
     public DbSet<TrainerHistory> TrainerHistorys { get; set; }
     public DbSet<TrainerTrained> TrainerTraineds { get; set; }
     public DbSet<UserRoleInfo> UserRoleInfos { get; set; }
+    public DbSet<AddPerson> AddPersons { get; set; }
+    public DbSet<PersonSiteLookup> PersonSiteLookups { get; set; }
+    public DbSet<PersonLookup> PersonLookups { get; set; }
+    public DbSet<PersonDetail> PersonDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -299,7 +303,8 @@ public partial class BstContext : DbContext
         modelBuilder.Entity<TrainerTraining>().HasNoKey();
         modelBuilder.Entity<TrainerHistory>().HasNoKey();
         modelBuilder.Entity<TrainerTrained>().HasNoKey();
-       
+        modelBuilder.Entity<PersonDetail>().HasNoKey();
+
     }
     
     public async Task<int> AddSiteAsync(Site site)

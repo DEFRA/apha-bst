@@ -9,6 +9,14 @@ namespace Apha.BST.Application.Interfaces
 {
     public interface IPersonsService
     {
-        Task<IEnumerable<PersonsDto>> GetAllPersonAsync();
+        Task<IEnumerable<PersonDetailDto>> GetAllPersonByNameAsync(int personId);
+        Task<IEnumerable<PersonLookupDto>> GetPersonsForDropdownAsync();
+        Task<string> DeletePersonAsync(int personId);
+        //for binding the dropdown in add persons page
+        Task<IEnumerable<PersonSiteLookupDto>> GetAllSitesAsync(string plantNo);
+        Task<string> AddPersonAsync(AddPersonDto personsDto, string userName);
+        Task<string> UpdatePersonAsync(EditPersonDto dto);
+        Task<string?> GetPersonNameByIdAsync(int personId);
+        Task<string?> GetSiteByIdAsync(int personId);
     }
 }

@@ -1,0 +1,8 @@
+﻿namespace Apha.BST.Web.PresentationService
+{
+    public interface ILogService
+    {
+        void LogGeneralException(Exception ex, string context);
+        void LogSqlException(Exception ex, string context);
+    }
+}

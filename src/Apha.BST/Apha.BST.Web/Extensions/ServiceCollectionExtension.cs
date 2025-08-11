@@ -27,6 +27,7 @@ namespace Apha.BST.Web.Extensions
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IDataEntryService, DataEntryService>();
             services.AddScoped<IUserDataService, UserDataService>();
+            services.AddScoped<ILogService, LogService>();
             return services;
         }
         public static IServiceCollection AddRepositories(this IServiceCollection services)
