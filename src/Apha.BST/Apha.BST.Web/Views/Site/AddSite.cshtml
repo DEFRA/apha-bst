@@ -11,9 +11,10 @@
 	<table class="w-100 h-100 m-3">
 		<tbody class="me-5">
 			<tr>
-				<td class="fw-bold text-decoration-underline">
+				<td style="width: 40%;" class="fw-bold text-decoration-underline">
 					Add a new site with details
 				</td>
+				<td></td>
 				<td></td>
 			</tr>
 
@@ -104,31 +105,24 @@
 				<td class="pt-2">
 					<label for="Ahvla">AHVLA Site</label>
 				</td>
-				<td class="pt-4">
-					<input asp-for="Ahvla" type="checkbox" />AHVLA Site
+				<td class="pt-2">
+					<input asp-for="Ahvla" type="checkbox" /> AHVLA Site
 				</td>
 				<td class="px-5"></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td>
-
-					<table>
-						<tr>
-							<td class="pt-3 px-5">
-								<button type="submit" class="btn">
-									<img src="~/Images/tick.gif" alt="Save site" />
-								</button>
-							</td>
-							<td class="pt-3 px-5">
-								<a href="@Url.Action("Index", "Home")" class="btn">
-									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
-								</a>
-							</td>
-						</tr>
-					</table>
+					<div class="button-container" style="display: flex; gap: 4rem;">
+						<button type="submit" class="btn">
+							<img src="~/Images/tick.gif" alt="Save site" />
+						</button>
+						<a href="@Url.Action("Index", "Home")" class="btn">
+							<img src="~/Images/cancel.jpeg" alt="Cancel action" />
+						</a>
+					</div>
 				</td>
-
+				<td></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -140,6 +134,7 @@
 						}
 					</div>
 				</td>
+				<td></td>
 			</tr>
 			<tr>
 				<td class="pt-5">
@@ -151,17 +146,18 @@
 					<ul class="ErrorText">
 						@foreach (var key in new[] { "PlantNo", "Name" })
 						{
-							if (ViewData.ModelState.ContainsKey(key))
+							if (ViewData.ModelState.TryGetValue(key, out var entry) && entry?.Errors?.Count > 0)
 							{
-								foreach (var error in ViewData.ModelState[key].Errors)
+								foreach (var error in entry.Errors)
 								{
 									<li>@error.ErrorMessage</li>
 								}
 							}
 						}
 					</ul>
-
 				</td>
+				<td></td>
+				<td></td>
 			</tr>
 		</tbody>
 	</table>

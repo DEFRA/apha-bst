@@ -1,3 +1,45 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.header-left {
+    flex: 0 0 20%;
+}
+
+.header-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+}
+
+.title-image {
+    margin-left: 1rem;
+}
+
+.header-right {
+    flex: 0 0 20%;
+    text-align: right;
+    vertical-align: middle;
+}
+
+    .header-right span {
+        display: inline-block;
+        font-weight: bold;
+        width: 100%
+    }
+/*--------------*/
 .applicationTitle {
     text-align: center;
     font-family: Times New Roman;
@@ -29,19 +71,6 @@ body {
     width: 40%;
     height: 100%
 }
-
-.layout-right-content {
-    width: 20%;
-    text-align: right;
-    vertical-align: middle;
-}
-
-    .layout-right-content span {
-        display: inline-block;
-        font-weight: bold;
-        width: 100%
-    }
-
 
 .img-fluid {
     max-width: 90%;

@@ -77,14 +77,12 @@ namespace Apha.BST.Web.Extensions
         /// <returns>A completed task.</returns>
         private static Task HandleRedirectToIdentityProvider(RedirectContext context)
         {
-            Console.WriteLine($"Redirect URL : {context.ProtocolMessage.RedirectUri}");
             // Check if the redirect URI starts with "http://"
             if (context.ProtocolMessage.RedirectUri?.StartsWith("http://", StringComparison.OrdinalIgnoreCase) == true)
             {
                 // Replace "http://" with "https://"
                 context.ProtocolMessage.RedirectUri =
                     string.Concat("https://", context.ProtocolMessage.RedirectUri.AsSpan("http://".Length));
-                Console.WriteLine($"Redirect URL After replace : {context.ProtocolMessage.RedirectUri}");
             }
             return Task.CompletedTask;
         }
