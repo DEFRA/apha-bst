@@ -8,7 +8,7 @@ namespace Apha.BST.Web.Models
         
 
         public string? Name { get; set; }
-        public int PersonId { get; set; }
+        public required int PersonId { get; set; }
 
         [Required(ErrorMessage = "Please enter person name")]
         public string Person { get; set; } = null!;

@@ -12,8 +12,7 @@ namespace Apha.BST.Core.Entities
         public string? Name { get; set; }
 
         public string? LocationId { get; set; }
-
-        //public int? VlalocationId { get; set; }
+      
         [Required(ErrorMessage = "Plant / Site No. is required")]
         [Key]
         public string PlantNo { get; set; } = null!;
