@@ -46,11 +46,12 @@ namespace Apha.BST.Application.Services
         public async Task<string> AddPersonAsync(AddPersonDto personsDto, string userName)
         {
             var person = _mapper.Map<AddPerson>(personsDto);
-            var createdPerson = await _personRepository.AddPersonAsync(person, userName);           
+            await _personRepository.AddPersonAsync(person, userName);           
             return $"{personsDto.Name} saved as a person";
 
         }
-        public async Task<string?> GetPersonNameByIdAsync(int personId)        {
+        public async Task<string?> GetPersonNameByIdAsync(int personId)     
+        {
             
             var person = await _personRepository.GetPersonNameByIdAsync(personId);
             return person;
@@ -63,7 +64,7 @@ namespace Apha.BST.Application.Services
 
             string traineeName = dto.Person;
             
-            var result = await _personRepository.UpdatePersonAsync(editPerson);            
+            await _personRepository.UpdatePersonAsync(editPerson);            
 
             return $"{traineeName} updated with new values";
 
