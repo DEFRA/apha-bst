@@ -2,7 +2,7 @@
 
 namespace Apha.BST.Web.Models
 {
-    public class SiteViewModel
+    public class EditSiteViewModel
     {
         [Required(ErrorMessage = "Plant / Site No. is required")]
         public string PlantNo { get; set; } = null!;
@@ -24,6 +24,7 @@ namespace Apha.BST.Web.Models
 
         public string? Fax { get; set; }
 
-        public string? Ahvla { get; set; }
+        [Display(Name = "AHVLA Site")]
+        public bool IsAhvla { get; set; }
     }
 }

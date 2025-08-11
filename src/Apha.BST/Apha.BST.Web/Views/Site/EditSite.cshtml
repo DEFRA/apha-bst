@@ -1,0 +1,158 @@
+﻿@model Apha.BST.Web.Models.EditSiteViewModel
+@{
+	ViewData["Title"] = "EditSite";
+}
+
+<form asp-action="EditSite" asp-controller="Site" method="post">
+	<table class="w-100 h-100 m-3">
+		<tbody class="me-5">
+			<tr>
+				<td class="fw-bold text-decoration-underline" colspan="2">
+					Edit site with new details
+				</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td>
+					<label class="pt-2" asp-for="PlantNo">Plant / site No.</label>
+				</td>
+				<td>
+					<input asp-for="PlantNo" readonly />
+					<span asp-validation-for="PlantNo" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="Name">Plant name</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="Name" />
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressLine1">Address 1</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressLine1"/>
+					<span asp-validation-for="AddressLine1" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressLine2">Address 2</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressLine2" />
+					<span asp-validation-for="AddressLine2" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressTown">Town</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressTown" />
+					<span asp-validation-for="AddressTown" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressCounty">Country</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressCounty" />
+					<span asp-validation-for="AddressCounty" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="AddressPostCode">Postcode</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="AddressPostCode"  />
+					<span asp-validation-for="AddressPostCode" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="Telephone">Telephone</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="Telephone" />
+					<span asp-validation-for="Telephone" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="Fax">Fax</label>
+				</td>
+				<td class="pt-2">
+					<input asp-for="Fax"/>
+					<span asp-validation-for="Fax" class="text-danger"></span>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td class="pt-2">
+					<label asp-for="IsAhvla">AHVLA Site</label>
+				</td>
+				<td class="pt-4">
+					<div class="form-check">
+						<input asp-for="IsAhvla" type="checkbox" class="form-check-input" />
+						<label asp-for="IsAhvla">AHVLA Site</label>
+					</div>
+				</td>
+				<td class="px-5"></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<table>
+						<tr>
+							<td class="pt-3 px-5">
+								<button type="submit" class="btn" tabindex="10">
+									<img src="~/Images/tick.gif" alt="Save site" />
+								</button>
+							</td>
+							<td class="pt-3 px-5">
+								<a href="@Url.Action("ViewSite", "Site")" class="btn">
+									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
+								</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<div class="pt-3 px-5 ErrorText">
+						@if (TempData["Message"] != null)
+						{
+							@TempData["Message"]
+						}
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
+
+

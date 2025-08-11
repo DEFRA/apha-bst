@@ -21,7 +21,6 @@
 					</select>
 				</form>
 			</span>
-
 		</div>		
 	</div>
 	<div class="w-100 d-flex justify-content-start">
@@ -33,6 +32,7 @@
 					<th>PlantNo</th>
 					<th>Name</th>
 					<th>AHVLA</th>
+                    <th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -42,6 +42,9 @@
 						<td>@site.PlantNo</td>
 						<td>@site.Name</td>
 						<td>@site.Ahvla</td>
+						<td>
+							<a href="@Url.Action("EditSite", "Site", new { plantNo = site.PlantNo })" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover">Edit</a>
+						</td>
 					</tr>
 				}
 			</tbody>

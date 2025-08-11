@@ -1,6 +1,7 @@
 ﻿using Apha.BST.Application.DTOs;
 using Apha.BST.Core.Entities;
 using AutoMapper;
+using System;
 
 namespace Apha.BST.Application.Mappings
 {
@@ -9,15 +10,21 @@ namespace Apha.BST.Application.Mappings
         public EntityMapper()
         {
             CreateMap<Persons, PersonsDto>().ReverseMap();
+            //CreateMap<Persons, PersonDetailsDto>().ReverseMap(); 
             CreateMap<Site, SiteDto>().ReverseMap();
             CreateMap<SiteTrainee, SiteTraineeDto>().ReverseMap();
             CreateMap<TrainerTrainingDto, TrainerTraining>().ReverseMap();
             CreateMap<TraineeTrainer, PersonsDto>().ReverseMap();
             CreateMap<TrainingDto, Training>().ReverseMap();
-            CreateMap<EditTrainingDto, EditTraining>().ReverseMap();           
+            CreateMap<EditTrainingDto, EditTraining>().ReverseMap();
             CreateMap<TrainerHistoryDto, TrainerHistory>().ReverseMap();
             CreateMap<TrainerTrainedDto, TrainerTrained>().ReverseMap();
             CreateMap<NewsDto, News>().ReverseMap();
+            CreateMap<AddPersonDto, AddPerson>().ReverseMap();
+            CreateMap<EditPersonDto, EditPerson>().ReverseMap();
+            CreateMap<PersonSiteLookupDto, PersonSiteLookup>().ReverseMap();
+            CreateMap<PersonLookupDto, PersonLookup>().ReverseMap();
+            CreateMap<PersonDetailsDto, PersonDetails>().ReverseMap();
         }
     }
 }

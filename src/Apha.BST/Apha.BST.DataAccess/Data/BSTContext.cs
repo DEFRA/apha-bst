@@ -47,6 +47,10 @@ public partial class BstContext : DbContext
     public DbSet<TrainerHistory> TrainerHistorys { get; set; }
     public DbSet<TrainerTrained> TrainerTraineds { get; set; }
     public DbSet<UserRoleInfo> UserRoleInfos { get; set; }
+    public DbSet<AddPerson> AddPerson { get; set; }
+    public  DbSet<PersonSiteLookup> SiteLookup { get; set; }
+    public  DbSet<PersonLookup> PersonLookup { get; set; }
+    public DbSet<PersonDetails> PersonDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -100,6 +104,7 @@ public partial class BstContext : DbContext
                 .HasColumnName("LocationID");
             entity.Property(e => e.Person).HasMaxLength(100);
             entity.Property(e => e.VlalocationId).HasColumnName("VLALocationID");
+          
         });
 
         modelBuilder.Entity<Site>(entity =>
@@ -299,7 +304,7 @@ public partial class BstContext : DbContext
         modelBuilder.Entity<TrainerTraining>().HasNoKey();
         modelBuilder.Entity<TrainerHistory>().HasNoKey();
         modelBuilder.Entity<TrainerTrained>().HasNoKey();
-       
+        modelBuilder.Entity<PersonDetails>().HasNoKey();
     }
     
     public async Task<int> AddSiteAsync(Site site)

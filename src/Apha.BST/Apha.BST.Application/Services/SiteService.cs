@@ -75,5 +75,15 @@ namespace Apha.BST.Application.Services
             }
         }
 
+        public async Task<string> UpdateSiteAsync(SiteDto siteDto)
+        {
+            var site = _mapper.Map<Site>(siteDto);
+            var result = await _siteRepository.UpdateSiteAsync(site);
+
+            return result == "UPDATED"
+                ? $"'{site.Name}' updated successfully"
+                : "Failed to update site";
+        }
+
     }
 }

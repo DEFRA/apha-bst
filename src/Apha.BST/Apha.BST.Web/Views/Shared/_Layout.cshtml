@@ -93,9 +93,9 @@
 				</div>
 
 				<div class="dropdown-menu" aria-labelledby="navbarDropdownPerson">
-					<a class="dropdown-item" asp-action="Index" asp-route-part="adte">Add a person</a>
-					<a class="dropdown-item" asp-action="Index" asp-route-part="chte">Edit/Delete a person</a>
-					<a class="dropdown-item" asp-action="Index" asp-route-part="vwte">View people</a>
+					<a class="dropdown-item" asp-controller="Persons" asp-action="AddPerson" asp-route-part="adte">Add a person</a>
+					<a class="dropdown-item" asp-controller="Persons" asp-action="ViewPerson" asp-route-part="chte">Edit/Delete a person</a>
+					<a class="dropdown-item" asp-controller="Persons" asp-action="ViewPerson" asp-route-part="vwte">View people</a>
 				</div>
 			</li>
 			<li class="dropdown">
@@ -159,13 +159,13 @@
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
 				</div>
 				<div class="dropdown-menu" id="navbarDropdownHelp" aria-labelledby="navbarDropdownHelp">
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hphm">Home</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpur">Users</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpnw">News</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpte">Persons</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hptr">Trainer</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hptg">Training</a>
-					<a class="dropdown-item" asp-controller="Help" asp-action="Index" asp-route-part="hpst">Site</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-part="hphm" asp-route-index="7">Home</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-part="hpur" asp-route-index="0">Users</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-part="hpnw" asp-route-index="6">News</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-part="hpte" asp-route-index="2">Persons</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-part="hptr" asp-route-index="3">Trainer</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-part="hptg" asp-route-index="4">Training</a>
+					<a class="dropdown-item" asp-controller="Help" asp-action="Help" asp-route-part="hpst" asp-route-index="1">Site</a>
 				</div>
 			</li>
 			<li class="dropdown">

@@ -1,28 +1,29 @@
-﻿using System.Runtime.CompilerServices;
-using Apha.BST.Application.DTOs;
+﻿using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Interfaces;
-using Apha.BST.Core.Entities;
 using Apha.BST.Web.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static Apha.BST.Web.Models.SiteViewModel;
+using Microsoft.Extensions.Logging;
 
 namespace Apha.BST.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class SiteController : Controller
     {
         private readonly ISiteService _siteService;
         private readonly IMapper _mapper;
+        private readonly ILogger<SiteController> _logger;
         private const string siteAll = "All";       
 
-        public SiteController(ISiteService siteService, IMapper mapper)
+        public SiteController(ISiteService siteService, IMapper mapper, ILogger<SiteController> logger)
         {
             _siteService = siteService;
-            _mapper = mapper;          
+            _mapper = mapper;
+            _logger = logger;
         }
+
         public IActionResult Index()
         {
             return View();
@@ -56,10 +57,61 @@ namespace Apha.BST.Web.Controllers
             return View(model);
         }
 
-        //Final code working for SiteTrainee
+        [HttpGet]
+        public async Task<IActionResult> EditSite(string plantNo)
+        {
+            if (string.IsNullOrEmpty(plantNo))
+            {
+                _logger.LogWarning("EditSite called with null or empty plantNo");
+                return BadRequest("Plant number is required");
+            }
+
+            _logger.LogInformation("Fetching site details for plant number: {PlantNo}", plantNo);
+
+            var siteDtos = await _siteService.GetAllSitesAsync(plantNo);
+            var siteDto = siteDtos.FirstOrDefault();
+            
+            if (siteDto == null)
+            {
+                _logger.LogWarning("No site found for plant number: {PlantNo}", plantNo);
+                return NotFound($"No site found with plant number: {plantNo}");
+            }
+
+            var editSiteViewModel = _mapper.Map<EditSiteViewModel>(siteDto);
+            return View(editSiteViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSite(EditSiteViewModel editSiteViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(editSiteViewModel);
+            }
+
+            try
+            {
+                var siteDto = _mapper.Map<SiteDto>(editSiteViewModel);
+                var message = await _siteService.UpdateSiteAsync(siteDto);
+                TempData["Message"] = message;
+                
+                    if (message.StartsWith("SUCCESS"))
+                {
+                    return RedirectToAction(nameof(ViewSite));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating site with plant number {PlantNo}", editSiteViewModel.PlantNo);
+                TempData["Message"] = "Update failed";
+            }
+
+            return View(editSiteViewModel);
+        }
+
         public async Task<IActionResult> SiteTrainee(string? selectedSite = null)
         {
-            // Get all sites for the dropdown
             var allSitesDto = await _siteService.GetAllSitesAsync(siteAll);
             var allSites = _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto);
 
@@ -74,9 +126,9 @@ namespace Apha.BST.Web.Controllers
 
             var model = new SiteTraineeListViewModel
             {
-
                 AllSites = siteSelectList
             };
+
             if (selectedSite != null)
             {
                 // Get trainees for the selected site (or all if "All" is selected)
@@ -87,13 +139,10 @@ namespace Apha.BST.Web.Controllers
 
                 model.FilteredTrainees = filteredTrainees;
                 model.SelectedSite = selectedSite;
-
             }
 
             return View(model);
         }
-
-
 
         [HttpGet]
         public IActionResult AddSite()

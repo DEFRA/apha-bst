@@ -1,16 +1,18 @@
-﻿using System;
+﻿using Apha.BST.Core;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using Apha.BST.DataAccess;
+using Apha.BST.DataAccess.Data;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Apha.BST.Core.Entities;
-using Apha.BST.Core.Interfaces;
-using Apha.BST.DataAccess.Data;
-using Apha.BST.DataAccess;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Apha.BST.Core;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Apha.BST.DataAccess.Repositories
 {
@@ -45,7 +47,7 @@ namespace Apha.BST.DataAccess.Repositories
         {
             var parameters = new[]
             {
-        new SqlParameter("@PlantNo", site.PlantNo),
+                    new SqlParameter("@PlantNo", site.PlantNo),
         new SqlParameter("@Name", site.Name),
         new SqlParameter("@Add1", site.AddressLine1 ?? (object)DBNull.Value),
         new SqlParameter("@Add2", site.AddressLine2 ?? (object)DBNull.Value),
@@ -55,6 +57,7 @@ namespace Apha.BST.DataAccess.Repositories
         new SqlParameter("@AddTel", site.Telephone ?? (object)DBNull.Value),
         new SqlParameter("@AddFax", site.Fax ?? (object)DBNull.Value),
         new SqlParameter("@AddAHVLA", site.Ahvla),
+        //new SqlParameter("@AddAHVLA", site.Ahvla == "AHVLA" ? 1 : 0),
         new SqlParameter
         {
             ParameterName = "@ReturnCode",
@@ -132,6 +135,37 @@ namespace Apha.BST.DataAccess.Repositories
                 // Log error or handle accordingly
                 return false;
             }            
+        }
+
+        public async Task<string> UpdateSiteAsync(Site site)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Name", site.Name),         
+                new SqlParameter("@PlantNo", site.PlantNo),
+                new SqlParameter("@Add1", (object?)site.AddressLine1 ?? DBNull.Value),        
+                new SqlParameter("@Add2", (object?)site.AddressLine2 ?? DBNull.Value),       
+                new SqlParameter("@AddTown", (object?)site.AddressTown ?? DBNull.Value),      
+                new SqlParameter("@AddCounty", (object?)site.AddressCounty ?? DBNull.Value), 
+                new SqlParameter("@AddPCode", (object?)site.AddressPostCode ?? DBNull.Value), 
+                new SqlParameter("@AddTel", (object?)site.Telephone ?? DBNull.Value),         
+                new SqlParameter("@AddFax", (object?)site.Fax ?? DBNull.Value),              
+                new SqlParameter("@AddAHVLA", site.Ahvla == "AHVLA" ? 1 : 0)               
+            };
+
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    @"EXEC sp_Sites_Update 
+                        @Name, @PlantNo, @Add1, @Add2, @AddTown, @AddCounty, @AddPCode, @AddTel, @AddFax, @AddAHVLA",
+                    parameters);
+                return "UPDATED";
+            }
+            catch (Exception)
+            {
+               
+                return "FAILED";
+            }
         }
     }
 }
