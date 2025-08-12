@@ -1,50 +1,43 @@
-# -------- Base runtime image --------
-# Allow parent image version to be set at build time
-ARG PARENT_VERSION=dotnet8.0
+# -------- Set base image version --------
+ARG PARENT_VERSION=latest
 
+# ================================
+# -------- Development Stage --------
+# ================================
+FROM defradigital/dotnetcore-development:$PARENT_VERSION AS development
 
-FROM defradigital/dotnetcore-development:$PARENT_VERSION AS base
-WORKDIR /app
-EXPOSE 8080
+LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
+
+WORKDIR /home/dotnet/src
+
+# Copy all source code into the image under /home/dotnet/src
+COPY --chown=dotnet:dotnet src/. .
+
+# Restore, build and publish the Web project
+RUN dotnet restore ./Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj
+RUN dotnet publish ./Apha.BST/Apha.BST.Web -c Release -o /home/dotnet/out /p:UseAppHost=false
+
+ARG PORT=8080
+ENV PORT=${PORT}
+EXPOSE ${PORT}
+
+# ================================
+# -------- Production Stage --------
+# ================================
+FROM defradigital/dotnetcore:$PARENT_VERSION AS production
+#FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS production
+
+LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
+
+user 0
+RUN apk update && apk add --no-cache icu-libs
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
+ARG PORT=8080
+EXPOSE ${PORT}
+
 USER app
-
-# -------- Build image with SDK --------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-
-
-# Copy application source files
-COPY src/. .
-
-# Restore dependencies for application
-RUN dotnet restore Apha.BST.sln
-
-
-
-# Build
-RUN dotnet build Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
-    -c "$BUILD_CONFIGURATION" -o /app/build
-
-
-
-# -------- Publish stage --------
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj \
-    -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
-
-# -------- Final runtime image --------
-FROM base AS final
-
-# Redefine work directory 
 WORKDIR /app
+COPY --from=development /home/dotnet/out/ ./
 
-# Copy published output from the publish stage
-COPY --from=publish /app/publish .
-
-# Explicitly specify user again (even though base already has it)
-USER app
-
-# Define entry point
 ENTRYPOINT ["dotnet", "Apha.BST.Web.dll"]
