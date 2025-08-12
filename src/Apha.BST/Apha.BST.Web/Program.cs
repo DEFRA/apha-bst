@@ -54,23 +54,12 @@ builder.Services.AddHttpContextAccessor(); // Required
 builder.Services.AddHealthChecks();
 var app = builder.Build();
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
-app.Use(async (context, next) =>
-{
-    Console.WriteLine($"Request Scheme: {context.Request.Scheme}");
-    Console.WriteLine($"X-Forwarded-Proto Header: {context.Request.Headers["X-Forwarded-Proto"]}");
-    await next();
-});
-
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     Predicate = _ => false // skip expensive checks
 });
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || builder.Environment.IsEnvironment("local"))
 {
     app.UseDeveloperExceptionPage();
 }
@@ -92,7 +81,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Middleware to log request headers
+#if false
+// Middleware to log request headers, Only for debugging purposes
 app.Use(async (context, next) =>
 {
     var logObject = new
@@ -111,6 +101,6 @@ app.Use(async (context, next) =>
     Console.WriteLine(json); // One row in CloudWatch
     await next();
 });
-
+#endif
 
 await app.RunAsync();

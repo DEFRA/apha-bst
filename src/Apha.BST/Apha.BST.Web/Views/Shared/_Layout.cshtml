@@ -19,64 +19,38 @@
 </head>
 <body>
 	<header>
-		<table>
-			<tr>
-				<td class="w-20">
-					<img src="~/Images/logo-small.jpg" alt="AHVLA">
-				</td>
-				<td class="w-60 align-middle text-center">
-					<div class="text-center">
-						<table class="w-100">
-							<tbody>
-								<tr>
-									<td class="w-30 ">
-									</td>
-									<td class="width-40">
-										<table class="w-100 h-100">
-											<tbody>
-												<tr>
-													<td>
-														<span class="large-font">TSE</span>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<span class="large-inline-font">Brainstem Training</span>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<span class="large-font"> Database</span>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</td>
-									<td class="w-80 h-100">
-									</td>
-									<td class="w-20 h-100 text-end">
-										<img src="~/Images/cattlesheep.jpeg" alt="Brainstem training database">
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</td>
-				<td class="layout-right-content">
-					<br>
-					<br>
-					@if (User.Identity?.IsAuthenticated ?? false)
-					{
-						<span>User: @username</span>
-						if (@rolename.Any())
-						{
-							<span>Role: @string.Join(", ", rolename)</span>
-						}
-					}
-				</td>
-			</tr>
+		<div class="header-container">
+			<!-- Left: Logo -->
+			<div class="header-left">
+				<img src="~/Images/logo-small.jpg" alt="AHVLA">
+			</div>
 
-		</table>
+			<!-- Center: Title Block -->
+			<div class="header-center">
+				<div class="title-block">
+					<span class="large-font">TSE</span>
+					<span class="large-inline-font">Brainstem Training</span>
+					<span class="large-font">Database</span>
+				</div>
+				<div class="title-image">
+					<img src="~/Images/cattlesheep.jpeg" alt="Brainstem training database">
+				</div>
+			</div>
+
+			<!-- Right: User Info -->
+			<div class="header-right">
+				@if (User.Identity?.IsAuthenticated ?? false)
+				{
+					<span>User: @username</span>
+				
+					<br />
+					if (rolename?.Any() == true)
+					{
+						<span>Role: @string.Join(", ", rolename)</span>
+					}
+				}
+			</div>
+		</div>
 	</header>
 
 	<nav class="menu-bar mx-1">
@@ -86,7 +60,7 @@
 			</li>
 			<li class="dropdown">
 				<div class="d-flex justify-content-between">
-					<a class="nav-link" href="#" id="navbarDropdownPerson" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link" href="#" id="navbarDropdownPerson" aria-haspopup="true" aria-expanded="false">
 						Person
 					</a>
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
@@ -100,7 +74,7 @@
 			</li>
 			<li class="dropdown">
 				<div class="d-flex justify-content-between">
-					<a class="nav-link " href="#" id="navbarDropdownTraining" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link " href="#" id="navbarDropdownTraining" aria-haspopup="true" aria-expanded="false">
 						Training
 					</a>
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
@@ -114,7 +88,7 @@
 			</li>
 			<li class="dropdown">
 				<div class="d-flex justify-content-between">
-					<a class="nav-link " href="#" id="navbarDropdownSite" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link " href="#" id="navbarDropdownSite" aria-haspopup="true" aria-expanded="false">
 						Site
 					</a>
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
@@ -129,7 +103,7 @@
 
 			<li class="dropdown">
 				<div class="d-flex justify-content-between">
-					<a class="nav-link" href="#" id="navbarDropdownUser" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link" href="#" id="navbarDropdownUser" aria-haspopup="true" aria-expanded="false">
 						User
 					</a>
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
@@ -141,7 +115,7 @@
 			</li>
 			<li class="dropdown">
 				<div class="d-flex justify-content-between">
-					<a class="nav-link " href="#" id="navbarDropdownNews" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link " href="#" id="navbarDropdownNews" aria-haspopup="true" aria-expanded="false">
 						News
 					</a>
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
@@ -153,7 +127,7 @@
 			</li>
 			<li class="dropdown">
 				<div class="d-flex justify-content-between">
-					<a class="nav-link " href="#" role="button" bs-data-target="navbarDropdownHelp" bs-data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link " href="#" bs-data-target="navbarDropdownHelp" bs-data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						Help
 					</a>
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
@@ -170,7 +144,7 @@
 			</li>
 			<li class="dropdown">
 				<div class="d-flex justify-content-between">
-					<a class="nav-link " href="#" id="navbarDropdownReports" role="button" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link " href="#" id="navbarDropdownReports" aria-haspopup="true" aria-expanded="false">
 						Reports
 					</a>
 					<img src="~/Images/dropdown_arrow.gif" alt="Expand Training">
