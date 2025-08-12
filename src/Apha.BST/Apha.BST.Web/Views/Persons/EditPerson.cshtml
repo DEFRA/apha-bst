@@ -2,9 +2,9 @@
 @{
     ViewData["Title"] = "Edit Person";
 }
-
-
-
+@{
+    var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
 <form asp-action="EditPerson" method="post">
     <table class="w-100 h-100 mt-3 mx-2">
         <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
@@ -20,10 +20,10 @@
                     <label for="Person" id="Person">Alter person name (Surname, first)</label>
                 </td>
                 <td class="w-50">
-                    <input class="w-50" id="Person" asp-for="Person" class="form-control" autocomplete="off" />
+                    <input class="w-50" id="Person" asp-for="Person" class="form-control" autocomplete="off" disabled="@isDisabled" />
                     <span asp-validation-for="Person" class="text-danger"></span>
                 </td>
-              
+
             </tr>
 
             <tr>
@@ -31,8 +31,9 @@
                     <label for="Name" id="Name">Alter site</label>
                 </td>
                 <td class="w-50">
-                    <select id="Name" asp-for="Name" asp-items="Model.SiteOptions">
-                    </select>
+                    <select id="Name" asp-for="Name" asp-items="Model.SiteOptions" disabled="@isDisabled">
+                        </select>                  
+                   
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </td>
             </tr>

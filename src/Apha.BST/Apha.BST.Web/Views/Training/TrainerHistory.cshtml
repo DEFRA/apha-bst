@@ -3,7 +3,9 @@
 @{
 	ViewData["Title"] = "Trainer History";
 }
-
+@{
+	var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
 
 <div class="w-100 h-100 p-2">
 	<div class=" d-flex flex-column mb-3">
@@ -21,7 +23,7 @@
 			<div class="w-100 d-flex justify-content-start mb-2">
 				<span class="width-10"><label for="ddlTrainingView">Select trainer</label></span>
 				<span class="w-auto">				
-					<select name="selectedTrainerId" class="search-dropdown" asp-items="Model.AllTrainersList" onchange="this.form.submit()">						
+					<select name="selectedTrainerId" class="search-dropdown" disabled="@isDisabled"  asp-items="Model.AllTrainersList" onchange="this.form.submit()">
 					</select>
 					<span>
 						<p class=" ErrorText text-start">
@@ -35,9 +37,9 @@
 					</span>
 			</div>
 			<div class="w-100 d-flex justify-content-start">
-				<span class="width-10"><label asp-for="SelectedSpecies">Select species (Cattle by default)</label></span>				
+				<span class="width-10"><label for="SelectedSpecies">Select species (Cattle by default)</label></span>				
 				<span class="w-auto">
-					<select asp-for="SelectedSpecies" asp-items="Model.TrainingAnimalList" class="search-dropdown" onchange="this.form.submit()">
+					<select asp-for="SelectedSpecies" asp-items="Model.TrainingAnimalList" class="search-dropdown" onchange="this.form.submit()" disabled="@isDisabled">
 						<option value="">Select species...</option>
 					</select>
 					<span asp-validation-for="SelectedSpecies" class="text-danger"></span>

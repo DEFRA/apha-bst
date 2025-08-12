@@ -64,6 +64,7 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> AddTraining(AddTrainingViewModel viewModel)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            viewModel.CanEdit = canEdit;
             if (!ModelState.IsValid)
             {
                 viewModel.Persons = (await _trainingService.GetTraineesAsync())
@@ -152,6 +153,7 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> EditTraining(EditTrainingViewModel viewModel)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            viewModel.CanEdit = canEdit;
             if (!ModelState.IsValid)
             {
                 var persons = await _trainingService.GetTraineesAsync();
@@ -295,7 +297,7 @@ namespace Apha.BST.Web.Controllers
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(TrainerHistory)); // Redirect if ModelState is invalid
+                return RedirectToAction(nameof(TrainerTrained)); // Redirect if ModelState is invalid
             }
             var allPersons = await _trainingService.GetTraineesAsync();
             var allTrainers = _mapper.Map<List<TrainerTrainedModel>>(allPersons);
