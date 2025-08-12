@@ -1,8 +1,9 @@
 # ================================
 # -------- Development Stage --------
 # ================================
-FROM defradigital/dotnetcore-development:$PARENT_VERSION AS development
 ARG PARENT_VERSION=dotnet8.0
+FROM defradigital/dotnetcore-development:$PARENT_VERSION AS development
+
 LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
 
 WORKDIR /home/dotnet/src
@@ -21,6 +22,7 @@ EXPOSE ${PORT}
 # ================================
 # -------- Production Stage --------
 # ================================
+ARG PARENT_VERSION=dotnet8.0
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production
 #FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS production
 ARG PARENT_VERSION=dotnet8.0
