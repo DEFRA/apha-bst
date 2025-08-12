@@ -15,9 +15,9 @@ COPY --chown=dotnet:dotnet src/. .
 RUN dotnet restore ./Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj
 RUN dotnet publish ./Apha.BST/Apha.BST.Web -c Release -o /home/dotnet/out /p:UseAppHost=false
 
-ARG PORT=8080
-ENV PORT=${PORT}
-EXPOSE ${PORT}
+# ARG PORT=8080
+# ENV PORT=${PORT}
+# EXPOSE ${PORT}
 
 # ================================
 # -------- Production Stage --------
@@ -25,7 +25,6 @@ EXPOSE ${PORT}
 ARG PARENT_VERSION=dotnet8.0
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production
 #FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS production
-ARG PARENT_VERSION=dotnet8.0
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
 
 USER 0
