@@ -2,87 +2,97 @@
 @{
 	ViewData["Title"] = "ViewTraining";	
 }
-
+@{
+	var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
 <div class="w-100 h-100 p-2">
 	<div class=" d-flex flex-column mb-3">
-		@* <form asp-action="SiteTrainee" method="post"> *@
-			<div class="d-flex justify-content-between ">
-				<span class="w-70 fw-bold text-decoration-underline">
-					View all training by trainee
-				</span>
-				<span class="w-30 me-5 px-5">
-					<a href="@Url.Action("Index", "Home")" class="back-button" title="Back to home">
-						<img src="~/Images/cancel.jpeg" size="2px" alt="Back to home" />
-					</a>
-				</span>
-			</div>
-			<div class="w-100 d-flex justify-content-start">
-				<span class="w-30"><label for="traineeSelect">Select trainee:</label></span>
-				<span class="w-70 mx-5">
+
+		<div class="d-flex justify-content-between ">
+			<span class="w-70 fw-bold text-decoration-underline">
+				View all training by trainee
+			</span>
+			<span class="w-30 me-5 px-5">
+				<a href="@Url.Action("Index", "Home")" class="back-button" title="Back to home">
+					<img src="~/Images/cancel.jpeg" size="2px" alt="Back to home" />
+				</a>
+			</span>
+		</div>
+		<div class="w-100 d-flex justify-content-start">
+			<span class="w-30"><label for="traineeSelect">Select trainee:</label></span>
+			<span class="w-70 mx-5">
 				<form method="get" asp-controller="Training" asp-action="ViewTraining" style="display:inline;">
-					<select asp-for="SelectedTraineeId" asp-items="Model.AllTrainees" class="search-dropdown" onchange="this.form.submit()">
+					<select asp-for="SelectedTraineeId" asp-items="Model.AllTrainees" class="search-dropdown" onchange="this.form.submit()" disabled="@isDisabled">
 						<option value="0">Select trainee...</option>
 						<option value="All">All</option>
 					</select>
 				</form>
-				</span>
-				<span>
+			</span>
+			<span>
 				<div class="pt-3 px-5 ErrorText">
 					@if (TempData["Message"] != null)
 					{
 						@TempData["Message"]
 					}
 				</div>
-				</span>
+			</span>
 
-			</div>
-		@* </form> *@
-
+		</div>
+		
 	</div>
 
 	<div class="w-100 d-flex justify-content-start">
 		<p class="w-30 me-5">Details</p>
 		@if (!string.IsNullOrEmpty(Model.SelectedTraineeId))
-	{
-		<table id="siteTable" class="w-60 mx-5 grid-table">
-			<thead>
-				<tr>
-					<th>Trainer</th>
-					<th>Species</th>
-					<th>Site</th>
-					<th>Training Date</th>
-					<th>ID</th>
-					<th>Training type</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				@if (Model.FilteredTrainings != null) {
-				@foreach (var training in Model.FilteredTrainings)
-				{
+		{
+			<table id="siteTable" class="w-60 mx-5 grid-table">
+				<thead>
 					<tr>
-						<td>@training.Person</td>
-						<td>@training.TrainingAnimal</td>
-						<td>@training.Name</td>
-						<td>@training.TrainingDateTime.ToString()</td>
-						<td>@training.PersonID</td>
-						<td>@training.TrainingType</td>
-						<td>						
-							<a asp-action ="EditTraining"
-										 asp-controller="Training"
-										 asp-route-traineeId="@training.TraineeId"
-										 asp-route-trainerId="@training.PersonID"
-										 asp-route-species="@training.TrainingAnimal"
-											asp-route-dateTrained="@training.TrainingDateTime.ToString("yyyy-MM-dd")"
-											 asp-route-trainingType="@training.TrainingType"
-							   class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">
-								Edit</a>
+						<th>Trainer</th>
+						<th>Species</th>
+						<th>Site</th>
+						<th>Training Date</th>
+						<th>ID</th>
+						<th>Training type</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (Model.FilteredTrainings != null) {
+						@foreach (var training in Model.FilteredTrainings)
+						{
+							<tr>
+								<td>@training.Person</td>
+								<td>@training.TrainingAnimal</td>
+								<td>@training.Name</td>
+								<td>@training.TrainingDateTime.ToString()</td>
+								<td>@training.PersonID</td>
+								<td>@training.TrainingType</td>
+								<td>	
+									@if (Model.CanEdit)
+									{
+										<a asp-action="EditTraining"
+										asp-controller="Training"
+										asp-route-traineeId="@training.TraineeId"
+										asp-route-trainerId="@training.PersonID"
+										asp-route-species="@training.TrainingAnimal"
+										asp-route-dateTrained="@training.TrainingDateTime.ToString("yyyy-MM-dd")"
+										asp-route-trainingType="@training.TrainingType"
+										class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">
+											Edit
+										</a>
+									}
+									else
+									{
+										<a  href="#" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">Edit</a>
+									}
+
 							<form asp-action="DeleteTraining" method="post" style="display: inline;">
 								@Html.AntiForgeryToken()
 								<input type="hidden" name="traineeId" value="@training.TraineeId" />
 								<input type="hidden" name="species" value="@training.TrainingAnimal" />
 								<input type="hidden" name="dateTrained" value="@training.TrainingDateTime.ToString()" />
-								<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover">Delete</button>
+								<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" disabled="@isDisabled">Delete</button>
 							</form>
 						</td>
 					</tr>

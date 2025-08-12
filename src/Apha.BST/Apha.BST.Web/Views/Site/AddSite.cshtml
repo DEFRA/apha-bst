@@ -9,6 +9,7 @@
 
 <form asp-action="AddSite" asp-controller="Site" method="post">
 	<table class="w-100 h-100 m-3">
+		<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
 		<tbody class="me-5">
 			<tr>
 				<td style="width: 40%;" class="fw-bold text-decoration-underline">
@@ -33,8 +34,8 @@
 					<label for="Name">Plant name</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="Name" />
-					<span asp-validation-for="Name" class="text-danger" disabled="@isDisabled">**</span>
+					<input asp-for="Name" disabled="@isDisabled" />
+					<span asp-validation-for="Name" class="text-danger">**</span>
 				</td>
 				<td class="px-5"></td>
 			</tr>

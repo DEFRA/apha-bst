@@ -123,6 +123,7 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> AddSite(SiteViewModel siteViewModel)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            siteViewModel.CanEdit = canEdit; 
             if (ModelState.IsValid)
             {
                 try
