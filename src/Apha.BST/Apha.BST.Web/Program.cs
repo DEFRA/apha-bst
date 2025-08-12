@@ -1,25 +1,16 @@
-using Apha.BST.Application.Mappings;
-using Apha.BST.Application.Validation;
-using Apha.BST.DataAccess.Data;
 using Apha.BST.Web.Extensions;
-using Apha.BST.Web.Mappings;
-using Apha.BST.Web.Middleware;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure logging
 if (builder.Environment.IsEnvironment("local"))
 {
     builder.Host.UseSerilog((ctx, lc) =>
     {
         lc.WriteTo.Console();
         string srvpath = ctx.Configuration.GetValue<string>("LogsPath") ?? string.Empty;
-        string logpath = $"{(srvpath)}\\Logsample.log";
+        string logpath = $"{srvpath}\\Logsample.log";
         lc.WriteTo.File(logpath, Serilog.Events.LogEventLevel.Error, rollingInterval: RollingInterval.Day);
     });
 }
@@ -32,54 +23,12 @@ else
     });
 }
 
-builder.Services.AddDbContext<BstContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BSTConnectionString")
-    ?? throw new InvalidOperationException("Database Connection string 'BSTConnectionString' not found.")));
+// Extracted to methods for testability
+builder.ConfigureServices();
 
-
-builder.Services.AddAutoMapper(typeof(EntityMapper).Assembly);
- // Inside builder.Services configuration:
-builder.Services.AddAutoMapper(typeof(ViewModelMapper));
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-// Register Services and Repositories
-builder.Services.AddApplicationServices();
-
-// Register Authentication services
-builder.Services.AddAuthenticationServices(builder.Configuration);
-builder.Services.AddHttpContextAccessor(); // Required
-
-builder.Services.AddHealthChecks();
 var app = builder.Build();
 
-app.MapHealthChecks("/health", new HealthCheckOptions
-{
-    Predicate = _ => false // skip expensive checks
-});
-
-if (app.Environment.IsDevelopment() || builder.Environment.IsEnvironment("local"))
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-}
-app.UseHsts();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.ConfigureMiddleware();
 
 #if false
 // Middleware to log request headers, Only for debugging purposes
@@ -104,3 +53,10 @@ app.Use(async (context, next) =>
 #endif
 
 await app.RunAsync();
+
+// Required for WebApplicationFactory<Program> in tests
+public partial class Program
+{
+    // Prevent direct instantiation but still works with WebApplicationFactory
+    protected Program() { }
+}
