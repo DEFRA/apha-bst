@@ -1,11 +1,8 @@
-# -------- Set base image version --------
-ARG PARENT_VERSION=latest
-
 # ================================
 # -------- Development Stage --------
 # ================================
 FROM defradigital/dotnetcore-development:$PARENT_VERSION AS development
-
+ARG PARENT_VERSION=dotnet8.0
 LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
 
 WORKDIR /home/dotnet/src
@@ -26,10 +23,10 @@ EXPOSE ${PORT}
 # ================================
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production
 #FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS production
-
+ARG PARENT_VERSION=dotnet8.0
 LABEL uk.gov.defra.parent-image=defra-dotnetcore:${PARENT_VERSION}
 
-user 0
+USER 0
 RUN apk update && apk add --no-cache icu-libs
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
