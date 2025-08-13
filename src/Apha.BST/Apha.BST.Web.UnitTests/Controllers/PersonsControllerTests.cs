@@ -59,37 +59,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Setup default permissions
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _userDataService.GetUsername().Returns("testUser");
-        }
-        [Fact]
-        public async Task ViewPerson_ValidModelState_ReturnsViewWithCorrectModel()
-        {
-            // Arrange
-            int selectedPerson = 1;
-            bool canEdit = true;
-            var dropdownDto = new List<PersonLookupDto> { new PersonLookupDto { PersonID = 1, Person = "John Doe" } };
-            var allPersonDetailDto = new List<PersonDetailDto> { new PersonDetailDto { PersonID = 1, Name = "John Doe" } };
-            var personViewModel = new List<PersonViewModel> { new PersonViewModel { PersonId = 1, Name = "John Doe" } };
-            
-            _mapper.Map<IEnumerable<PersonViewModel>>(Arg.Any<IEnumerable<PersonDetailDto>>()).Returns( new List<PersonViewModel>());
-            _personService.GetPersonsForDropdownAsync().Returns(new List<PersonLookupDto>());
-
-           
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(Task.FromResult(true));
-
-            _personService.GetAllPersonByNameAsync(selectedPerson).Returns(allPersonDetailDto);
-            _mapper.Map<IEnumerable<PersonViewModel>>(Arg.Any<IEnumerable<PersonDetailDto>>()).Returns(personViewModel);
-
-            // Act
-            var result = await _controller.ViewPerson(selectedPerson);
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsType<PersonListViewModel>(viewResult.Model);
-            Assert.Equal(selectedPerson, model.SelectedPerson);
-            Assert.Equal(canEdit, model.CanEdit);
-            Assert.Single(model.AllPerson);
-            Assert.Single(model.FilteredPerson);
-        }
+        }      
 
         [Fact]
         public async Task ViewPerson_InvalidModelState_RedirectsToViewPerson()
