@@ -1,4 +1,5 @@
-﻿name: Dev Application Integration Test 
+﻿# dev app test - manual run
+name: Dev Application Integration Test 
 on:
   workflow_dispatch:
 env:
