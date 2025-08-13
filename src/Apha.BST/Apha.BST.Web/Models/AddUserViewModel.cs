@@ -12,7 +12,8 @@ namespace Apha.BST.Web.Models
         [Required(ErrorMessage = "User Name is required")]
         public string UserName { get; set; } = string.Empty;
 
-        public byte UserLevel { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "User Level is required")]
+        public byte UserLevel { get; set; } = 0;
 
         [Required(ErrorMessage = "Please select a user location.")]
         public string UserLoc { get; set; } = string.Empty;

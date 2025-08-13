@@ -43,7 +43,7 @@
                 <td class=" pt-3">
 
                     <select id="UserLevel" asp-for="UserLevel" asp-items="Model.UserLevels" class="search-dropdown" disabled="@isDisabled">
-                           
+                        <option value="0">Add user's level......</option>
                         </select>
                   
                     <span asp-validation-for="UserLevel" class="text-danger"></span>

@@ -50,7 +50,9 @@
                     <label for="UserLevel">User level (1, 2, 3)</label>
                 </td>
                 <td class="pt-3 px-5">
-                    <select asp-for="UserLevel" asp-items="Model.UserLevels" disabled="@isDisabled"></select>
+                    <select asp-for="UserLevel" asp-items="Model.UserLevels" disabled="@isDisabled">
+                        <option value="0">Add user's level......</option>
+                    </select>
                     <span asp-validation-for="UserLevel" class="text-danger"></span>
                 </td>
             </tr>
