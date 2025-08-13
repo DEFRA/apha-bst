@@ -47,7 +47,8 @@ public partial class BstContext : DbContext
     public DbSet<TrainerHistory> TrainerHistorys { get; set; }
     public DbSet<TrainerTrained> TrainerTraineds { get; set; }
     public DbSet<UserRoleInfo> UserRoleInfos { get; set; }
-
+    public virtual DbSet<UserView> UserViews { get; set; }
+    public virtual DbSet<VlaLocView> VlaLocViews { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AuditLog>(entity =>
@@ -299,7 +300,9 @@ public partial class BstContext : DbContext
         modelBuilder.Entity<TrainerTraining>().HasNoKey();
         modelBuilder.Entity<TrainerHistory>().HasNoKey();
         modelBuilder.Entity<TrainerTrained>().HasNoKey();
-       
+        modelBuilder.Entity<VlaLocView>().HasNoKey().ToView("vwVlaLocations");
+        modelBuilder.Entity<UserView>().HasNoKey().ToView("vwUsers");
+
     }
     
     public async Task<int> AddSiteAsync(Site site)

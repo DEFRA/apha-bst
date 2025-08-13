@@ -19,7 +19,12 @@ namespace Apha.BST.Web.Mappings
             CreateMap<EditTrainingDto, EditTrainingViewModel>().ReverseMap();
             CreateMap<TrainerHistoryDto, TrainingHistoryModel>().ReverseMap();
             CreateMap<TrainerTrainedDto, TrainerTrainedViewModel>().ReverseMap();
+            CreateMap<UserDto, AddUserViewModel>().ReverseMap();
+            CreateMap<AddUserViewModel, UserDto>().ReverseMap();
+            CreateMap<EditUserViewModel, UserDto>().ReverseMap();
+            CreateMap<UserViewDto, ViewUserViewModel>().ReverseMap();
             CreateMap<NewsDto, NewsViewModel>().ReverseMap();
+            CreateMap<AddNewsViewModel, NewsDto>().ReverseMap();
         }
     }
 }

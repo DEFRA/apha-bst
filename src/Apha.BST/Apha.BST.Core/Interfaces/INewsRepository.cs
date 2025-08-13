@@ -10,5 +10,8 @@ namespace Apha.BST.Core.Interfaces
     public interface INewsRepository
     {
         Task<IEnumerable<News>> GetLatestNewsAsync();
+        Task AddNewsAsync(News news);
+        Task<List<News>> GetNewsAsync();
+        Task DeleteNewsAsync(string title);
     }
 }

@@ -1,0 +1,22 @@
+﻿namespace Apha.BST.Web.PresentationService
+{
+    public class LogService : ILogService
+    {
+        private readonly ILogger<LogService> _logger;
+
+        public LogService(ILogger<LogService> logger)
+        {
+            _logger = logger;
+        }
+
+        public void LogGeneralException(Exception ex, string context)
+        {
+            _logger.LogError(ex, "[GENERAL_EXCEPTION] Error in [{Context}]: {Message}", context, ex.Message);
+        }
+
+        public void LogSqlException(Exception ex, string context)
+        {
+            _logger.LogError(ex, "[SQLException] Error in [{Context}]: {Message}", context, ex.Message);
+        }
+    }
+}

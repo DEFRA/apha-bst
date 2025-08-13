@@ -1,0 +1,82 @@
+﻿@model EditUserViewModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<form asp-action="EditUser" method="post">
+    <table class="w-80 h-100">
+        <tbody class="me-5">
+            <tr>
+                <td class="fw-bold text-decoration-underline">Change user details</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class="pt-2">
+                    <label asp-for="UserId">User M number</label>
+                </td>
+                <td class="px-5">
+                    <input asp-for="UserId" readonly />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label asp-for="UserLoc">User location</label>
+                </td>
+                <td class="pt-3 px-5">
+                    <select asp-for="UserLoc" asp-items="Model.Locations">
+                        <option value="">Select location...</option>
+                    </select>
+                    <span asp-validation-for="UserLoc" class="text-danger"></span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="pt-2">
+                    <label asp-for="UserName">User name (surname, first)</label>
+                </td>
+                <td class="px-5">
+                    <input asp-for="UserName" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="pt-3">
+                    <label asp-for="UserLevel">User level (1, 2, 3)</label>
+                </td>
+                <td class="pt-3 px-5">
+                    <select asp-for="UserLevel" asp-items="Model.UserLevels"></select>      
+                    <span asp-validation-for="UserLevel" class="text-danger"></span>
+                </td>
+            </tr>
+
+            <tr class="mt-2">
+                <td></td>
+                <td class="pt-4 px-5">
+                    <table>
+                        <tr>
+                            <td>
+                                <button type="submit" class="btn">
+                                    <img src="~/Images/tick.gif" alt="Save user" />
+                                </button>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("ViewUser")" class="btn">
+                                    <img src="~/Images/cancel.jpeg" alt="Cancel action" />
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="pt-3 ErrorText text-danger">
+                        @if (TempData["UserMessage"] != null)
+                        {
+                            @TempData["UserMessage"]
+                        }
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
