@@ -46,6 +46,14 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
+      - name: Read version from VERSION file
+          id: versioning
+          shell: pwsh
+          run: |
+            $version = Get-Content VERSION -Raw
+            $version = $version.Trim()
+            "version=v$version" >> $env:GITHUB_OUTPUT
+      
       # 1️⃣ Compose image tag
       - name: Compose image tag
         id: imgtag
