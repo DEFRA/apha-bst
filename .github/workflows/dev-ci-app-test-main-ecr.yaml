@@ -107,7 +107,7 @@ jobs:
           $GIT_DESCRIPTION = $meta.labels.'org.opencontainers.image.description'
           $GIT_LICENSE = $meta.labels.'org.opencontainers.image.licenses'
 
-          Write-Host "Building Docker image $IMAGE_NAME:$IMAGE_TAG"
+          Write-Host "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
 
           docker build `
             --file ./Dockerfile `
