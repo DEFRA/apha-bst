@@ -122,7 +122,7 @@ jobs:
             --tag "$IMAGE_NAME:$IMAGE_TAG" .
 
           Write-Host "Pushing Docker image..."
-          docker push "$IMAGE_NAME:$IMAGE_TAG"
+          docker push "${IMAGE_NAME}:${IMAGE_TAG}"
 
       # 6️⃣ Run container locally and test
       - name: Run container locally
