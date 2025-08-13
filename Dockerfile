@@ -15,10 +15,6 @@ COPY --chown=dotnet:dotnet src/. .
 RUN dotnet restore ./Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj
 RUN dotnet publish ./Apha.BST/Apha.BST.Web -c Release -o /home/dotnet/out /p:UseAppHost=false
 
-# ARG PORT=8080
-# ENV PORT=${PORT}
-# EXPOSE ${PORT}
-
 # ================================
 # -------- Production Stage --------
 # ================================
