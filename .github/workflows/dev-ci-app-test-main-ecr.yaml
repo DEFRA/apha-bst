@@ -119,7 +119,7 @@ jobs:
             --label org.opencontainers.image.created="$GIT_CREATED" `
             --label org.opencontainers.image.description="$GIT_DESCRIPTION" `
             --label org.opencontainers.image.licenses="$GIT_LICENSE" `
-            --tag "$IMAGE_NAME:$IMAGE_TAG" .
+            --tag "${IMAGE_NAME}:${IMAGE_TAG}" .
 
           Write-Host "Pushing Docker image..."
           docker push "${IMAGE_NAME}:${IMAGE_TAG}"
