@@ -23,6 +23,10 @@ namespace Apha.BST.Application.Mappings
             CreateMap<PersonSiteLookupDto, PersonSiteLookup>().ReverseMap();
             CreateMap<PersonLookupDto, PersonLookup>().ReverseMap();
             CreateMap<PersonDetailDto, PersonDetail>().ReverseMap();
+            CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<UserView, UserViewDto>().ReverseMap();
+            CreateMap<VlaLocDto, VlaLoc>().ReverseMap();
+            CreateMap<VlaLocView, VlaLocDto>().ReverseMap();
         }
     }
 }

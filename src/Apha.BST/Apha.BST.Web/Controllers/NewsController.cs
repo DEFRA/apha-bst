@@ -1,0 +1,208 @@
+﻿using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Interfaces;
+using Apha.BST.Web.Models;
+using Apha.BST.Web.PresentationService;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
+
+namespace Apha.BST.Web.Controllers
+{
+    [Authorize]
+    public class NewsController : Controller
+    {
+        private readonly INewsService _newsService;
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        private readonly IUserDataService _userDataService;
+        private readonly ILogService _logService;
+
+        public NewsController(INewsService newsService, IUserService userService, IMapper mapper, IUserDataService userDataService,ILogService logService)
+        {
+            _newsService = newsService;
+            _userService = userService;
+            _mapper = mapper;
+            _userDataService = userDataService;
+            _logService = logService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddNews()
+        {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            var viewModel = new AddNewsViewModel
+            {
+                DatePublished = DateTime.Now,
+                Users = (await _userService.GetUsersAsync("All users"))
+                    .Select(u => new SelectListItem { Value = u.UserId, Text = u.UserName })
+                    .ToList(),
+                CanEdit = canEdit
+            };
+
+            // Add a default selection prompt
+            var usersList = viewModel.Users.ToList();
+            usersList.Insert(0, new SelectListItem { Value = "", Text = "Please select user", Selected = true });
+            viewModel.Users = usersList;
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNews(AddNewsViewModel viewModel)
+        {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            if (viewModel.UseCurrentDateTime)
+            {
+                viewModel.DatePublished = DateTime.Now;
+                ModelState.Clear();
+                TryValidateModel(viewModel);
+            }
+            if (viewModel.DatePublished.Hour == 0 && viewModel.DatePublished.Minute == 0 && viewModel.DatePublished.Second == 0)
+            {               
+                viewModel.DatePublished = new DateTime(
+                    viewModel.DatePublished.Year,
+                    viewModel.DatePublished.Month,
+                    viewModel.DatePublished.Day,
+                    0, 0, 0, DateTimeKind.Local);                
+                ModelState.Remove("DatePublished");
+                TryValidateModel(viewModel);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                viewModel.Users = (await _userService.GetUsersAsync("All users"))
+                    .Select(u => new SelectListItem { Value = u.UserId, Text = u.UserName })
+                    .ToList();
+
+                // Add a default selection prompt
+                var usersList = viewModel.Users.ToList();
+                usersList.Insert(0, new SelectListItem { Value = "", Text = "Please select user", Selected = true });
+                viewModel.Users = usersList;
+                viewModel.CanEdit = canEdit;
+
+                return View(viewModel);
+            }
+
+            try
+            {
+                if (canEdit)
+                { 
+                    var dto = _mapper.Map<NewsDto>(viewModel);
+                    TempData["NewsMessage"] = await _newsService.AddNewsAsync(dto);
+                }
+                else
+                {
+                    TempData["NewsMessage"] = "You do not have permission to perform this action.";
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                TempData["NewsMessage"] = "Save failed";
+            }
+            catch (Exception ex)
+            {
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData["NewsMessage"] = "Save failed";
+            }
+            return RedirectToAction(nameof(AddNews));
+        }
+        [HttpGet]
+        public async Task<IActionResult> ViewNews()
+        {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            var viewModel = new ViewNewsViewModel
+            {
+                CanEdit = canEdit
+            };
+
+            try
+            {
+                viewModel.NewsList = await _newsService.GetNewsAsync();
+
+                if (TempData["NewsMessage"] != null)
+                {
+                    viewModel.Message = TempData["NewsMessage"]?.ToString();
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                viewModel.Message = "Error loading news";
+            }
+            catch (Exception ex)
+            {
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                viewModel.Message = "Error loading news";
+            }
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteNews(string title)
+        {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            try
+            {
+                if (canEdit)
+                {
+                    var message = await _newsService.DeleteNewsAsync(title);
+                    TempData["NewsMessage"] = message;
+                }
+                else
+                {
+                    TempData["NewsMessage"] = "You do not have permission to perform this action.";
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                TempData["NewsMessage"] = "Delete failed";
+            }
+            catch (Exception ex)
+            {
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData["NewsMessage"] = "Delete failed";
+            }
+            return RedirectToAction(nameof(ViewNews));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OldNews()
+        {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+
+            var viewModel = new OldNewsViewModel
+            {
+                CanEdit = canEdit
+            };
+
+            try
+            {
+                viewModel.NewsList = await _newsService.GetNewsAsync();
+
+                if (TempData["NewsMessage"] != null)
+                {
+                    viewModel.Message = TempData["NewsMessage"]?.ToString();
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                _logService.LogSqlException(sqlEx, "OldNews");
+                viewModel.Message = "Error loading news";
+            }
+            catch (Exception ex)
+            {
+                _logService.LogGeneralException(ex, "OldNews");
+                viewModel.Message = "Error loading news";
+            }
+            return View(viewModel);
+        }
+
+
+    }
+}

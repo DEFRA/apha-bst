@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Apha.BST.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Apha.BST.Application.Services
 {
@@ -21,6 +22,12 @@ namespace Apha.BST.Application.Services
             return await Task.FromResult(roleName);
             
         }
-       
+        public List<SelectListItem> GetUserLevels() => new List<SelectListItem>
+        {
+            new SelectListItem { Value = "0", Text = "Add user's level..." },
+            new SelectListItem { Value = "1", Text = "Level 1 - Superuser" },
+            new SelectListItem { Value = "2", Text = "Level 2 - Data entry" },
+            new SelectListItem { Value = "3", Text = "Level 3 - Read only" }
+        };
     }
 }

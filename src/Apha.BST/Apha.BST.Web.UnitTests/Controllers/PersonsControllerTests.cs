@@ -70,8 +70,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var allPersonDetailDto = new List<PersonDetailDto> { new PersonDetailDto { PersonID = 1, Name = "John Doe" } };
             var personViewModel = new List<PersonViewModel> { new PersonViewModel { PersonId = 1, Name = "John Doe" } };
             
-            _mapper.Map<IEnumerable<PersonViewModel>>(Arg.Any<IEnumerable<PersonDetailDto>>()).Returns(personViewModel ?? new List<PersonViewModel>());
-            _personService.GetPersonsForDropdownAsync().Returns(dropdownDto ?? new List<PersonLookupDto>());
+            _mapper.Map<IEnumerable<PersonViewModel>>(Arg.Any<IEnumerable<PersonDetailDto>>()).Returns( new List<PersonViewModel>());
+            _personService.GetPersonsForDropdownAsync().Returns(new List<PersonLookupDto>());
 
            
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(Task.FromResult(true));

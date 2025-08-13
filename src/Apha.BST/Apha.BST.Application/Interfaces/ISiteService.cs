@@ -15,6 +15,7 @@ namespace Apha.BST.Application.Interfaces
         Task<List<SiteTraineeDto>> GetSiteTraineesAsync(string plantNo);
         Task<string> DeleteTraineeAsync(int personId);
         Task<string> AddSiteAsync(SiteDto siteDto, string userName);
+        Task<string> UpdateSiteAsync(SiteDto siteDto);
 
     }
 }
