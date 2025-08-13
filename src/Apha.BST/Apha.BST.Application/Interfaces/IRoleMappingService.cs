@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Apha.BST.Application.Interfaces
 {
@@ -10,7 +11,7 @@ namespace Apha.BST.Application.Interfaces
     {
 
         public  Task<string> GetRoleName(byte roleId);
-       
 
+        List<SelectListItem> GetUserLevels();
     }
 }

@@ -16,7 +16,8 @@ namespace Apha.BST.Core.Interfaces
 
         // For deleting trainee by person ID
         // For getting person name by ID
-        Task<string?> GetPersonNameByIdAsync(int personId);        
+        Task<string?> GetPersonNameByIdAsync(int personId);
+        Task<string> UpdateSiteAsync(Site site);
 
     }
 }

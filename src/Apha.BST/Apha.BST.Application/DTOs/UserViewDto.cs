@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Application.DTOs
+{
+    public class UserViewDto
+    {
+        public string UserId { get; set; } = null!;
+        public string? UserName { get; set; }
+        public string? UserLoc { get; set; }
+        public string? VlaLocation { get; set; }
+        public byte? UserLevel { get; set; }
+        public string? UserLevelName { get; set; }
+    }
+}

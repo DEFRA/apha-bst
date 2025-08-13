@@ -27,5 +27,23 @@ namespace Apha.BST.Application.Services
             var latestNews = await _newsRepository.GetLatestNewsAsync();
             return _mapper.Map<IEnumerable<NewsDto>>(latestNews);
         }
+        public async Task<string> AddNewsAsync(NewsDto dto)
+        {
+            var news = _mapper.Map<News>(dto);
+            await _newsRepository.AddNewsAsync(news);
+            return $"This news: {dto.Title} has been added to the list";
+        }
+
+        public async Task<List<NewsDto>> GetNewsAsync()
+        {
+            var news = await _newsRepository.GetNewsAsync();
+            return _mapper.Map<List<NewsDto>>(news);
+        }
+
+        public async Task<string> DeleteNewsAsync(string title)
+        {
+            await _newsRepository.DeleteNewsAsync(title);
+            return $"The news entitled: {title} has been deleted";
+        }
     }
 }

@@ -1,0 +1,364 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Services;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using AutoMapper;
+using NSubstitute;
+
+namespace Apha.BST.Application.UnitTests.UserServiceTest
+{
+    public class UserServiceTests : AbstractUserServiceTest
+    {
+        [Fact]
+        public async Task GetUsersAsync_WithValidUserIdReturningMultipleUsers_ShouldReturnMultipleUsers()
+        {
+            // Arrange
+            var userId = "testUser";
+            var userViews = new List<UserView>
+            {
+                new UserView { UserId = "user1", UserName = "User 1", UserLoc = "LOC1", VlaLocation = "Location 1", UserLevel = 1, UserLevelName = "Level 1" },
+                new UserView { UserId = "user2", UserName = "User 2", UserLoc = "LOC2", VlaLocation = "Location 2", UserLevel = 2, UserLevelName = "Level 2" }
+            };
+            var userViewDtos = new List<UserViewDto>
+            {
+                new UserViewDto { UserId = "user1", UserName = "User 1", UserLoc = "LOC1", VlaLocation = "Location 1", UserLevel = 1, UserLevelName = "Level 1" },
+                new UserViewDto { UserId = "user2", UserName = "User 2", UserLoc = "LOC2", VlaLocation = "Location 2", UserLevel = 2, UserLevelName = "Level 2" }
+            };
+
+            MockGetUsersAsync(userId, userViews, userViewDtos);
+
+            // Act
+            var result = await _userService!.GetUsersAsync(userId);
+
+            // Assert
+            Assert.Equal(2, result.Count);
+            Assert.Equal("user1", result[0].UserId);
+            Assert.Equal("User 1", result[0].UserName);
+            Assert.Equal("Location 1", result[0].VlaLocation);
+            Assert.Equal("Level 1", result[0].UserLevelName);
+            Assert.Equal("user2", result[1].UserId);
+            Assert.Equal("User 2", result[1].UserName);
+            Assert.Equal("Location 2", result[1].VlaLocation);
+            Assert.Equal("Level 2", result[1].UserLevelName);
+        }
+
+        [Fact]
+        public async Task GetUsersAsync_WithValidUserIdReturningSingleUser_ShouldReturnSingleUser()
+        {
+            // Arrange
+            var userId = "testUser";
+            var userViews = new List<UserView>
+            {
+                new UserView { UserId = "user1", UserName = "User 1", UserLoc = "LOC1", VlaLocation = "Location 1", UserLevel = 1, UserLevelName = "Level 1" }
+            };
+            var userViewDtos = new List<UserViewDto>
+            {
+                new UserViewDto { UserId = "user1", UserName = "User 1", UserLoc = "LOC1", VlaLocation = "Location 1", UserLevel = 1, UserLevelName = "Level 1" }
+            };
+
+            MockGetUsersAsync(userId, userViews, userViewDtos);
+
+            // Act
+            var result = await _userService!.GetUsersAsync(userId);
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal("user1", result[0].UserId);
+            Assert.Equal("User 1", result[0].UserName);
+            Assert.Equal("Location 1", result[0].VlaLocation);
+            Assert.Equal("Level 1", result[0].UserLevelName);
+        }
+
+        [Fact]
+        public async Task GetUsersAsync_WithUserIdReturningNoUsers_ShouldReturnEmptyList()
+        {
+            // Arrange
+            var userId = "nonExistentUser";
+            var userViews = new List<UserView>();
+            var userViewDtos = new List<UserViewDto>();
+
+            MockGetUsersAsync(userId, userViews, userViewDtos);
+
+            // Act
+            var result = await _userService!.GetUsersAsync(userId);
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task GetUserByIdAsync_WithValidUserId_ShouldReturnUser()
+        {
+            // Arrange
+            var userId = "testUser";
+            var userView = new UserView { UserId = userId, UserName = "Test User", UserLoc = "LOC1", UserLevel = 1 };
+            var userDto = new UserDto { UserId = userId, UserName = "Test User", UserLoc = "LOC1", UserLevel = 1 };
+
+            MockGetUserByIdAsync(userId, new List<UserView> { userView }, userDto);
+
+            // Act
+            var result = await _userService!.GetUserByIdAsync(userId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(userId, result.UserId);
+            Assert.Equal("Test User", result.UserName);
+        }
+
+        [Fact]
+        public async Task GetUserByIdAsync_WithNonExistentUserId_ShouldReturnNull()
+        {
+            // Arrange
+            var userId = "nonExistentUser";
+            MockGetUserByIdAsync(userId, new List<UserView>(), null);
+
+            // Act
+            var result = await _userService!.GetUserByIdAsync(userId);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public async Task GetUserByIdAsync_WithNullOrEmptyUserId_ShouldReturnNull(string userId)
+        {
+            // Arrange
+            MockGetUserByIdAsync(userId, new List<UserView>(), null);
+
+            // Act
+            var result = await _userService!.GetUserByIdAsync(userId);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task AddUserAsync_ValidUser_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var userDto = new UserDto { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 2 };
+            var user = new User { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 2 };
+            var vlaLocViews = new List<VlaLocView> { new VlaLocView { LocId = "LOC1", VlaLocation = "New York" } };
+            var vlaLocDtos = new List<VlaLocDto> { new VlaLocDto { LocId = "LOC1", VlaLocation = "New York" } };
+
+            MockAddUserAsync(userDto, user, vlaLocViews, vlaLocDtos, "dto");
+
+            // Act
+            var result = await _userService!.AddUserAsync(userDto);
+
+            // Assert
+            Assert.Equal("John Doe: 123 from New York has been added as a level 2 user", result);
+        }
+
+        [Fact]
+        public async Task AddUserAsync_InvalidUserData_ThrowsArgumentException()
+        {
+            // Arrange
+            var userDto = new UserDto(); // Empty DTO with no ID or Name
+            var user = new User();
+            var vlaLocViews = new List<VlaLocView>();
+            var vlaLocDtos = new List<VlaLocDto>();
+
+            MockAddUserAsync(userDto, user, vlaLocViews, vlaLocDtos, "dto");
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(() => _userService!.AddUserAsync(userDto));
+        }
+
+        [Fact]
+        public async Task AddUserAsync_UnknownLocation_ReturnsMessageWithUnknownLocation()
+        {
+            // Arrange
+            var userDto = new UserDto { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 2 };
+            var user = new User { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 2 };
+            var vlaLocViews = new List<VlaLocView>(); // Empty locations list
+            var vlaLocDtos = new List<VlaLocDto>();
+
+            MockAddUserAsync(userDto, user, vlaLocViews, vlaLocDtos, "dto");
+
+            // Act
+            var result = await _userService!.AddUserAsync(userDto);
+
+            // Assert
+            Assert.Equal("John Doe: 123 from Unknown has been added as a level 2 user", result);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_WithValidUserId_ShouldReturnSuccessMessage()
+        {
+            // Arrange
+            var userId = "userToDelete";
+            var userView = new UserView { UserId = userId, UserName = "Delete Me" };
+
+            var mockRepo = Substitute.For<IUserRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+
+            mockRepo.GetUsersAsync(userId).Returns(new List<UserView> { userView });
+            mockRepo.DeleteUserAsync(userId).Returns(Task.CompletedTask);
+
+            _userService = new UserService(mockRepo, mockMapper);
+            _userRepository = mockRepo;
+
+            // Act
+            var result = await _userService.DeleteUserAsync(userId);
+
+            // Assert
+            Assert.Contains($"{userId} - {userView.UserName} has been deleted", result);
+            await mockRepo.Received(1).DeleteUserAsync(userId);
+        }
+
+        [Fact]
+        public async Task UpdateUserAsync_SuccessfulUpdate_ReturnsCorrectMessage()
+        {
+            // Arrange
+            var userDto = new UserDto { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 2 };
+            var user = new User { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 2 };
+            var userViews = new List<UserView>
+            {
+                new UserView { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", VlaLocation = "New York", UserLevel = 2, UserLevelName = "Manager" }
+            };
+            var userViewDtos = new List<UserViewDto>
+            {
+                new UserViewDto { UserId = "123", UserName = "John Doe", UserLoc = "LOC1", VlaLocation = "New York", UserLevel = 2, UserLevelName = "Manager" }
+            };
+
+            MockUpdateUserAsync(userDto, user, userViews, userViewDtos);
+
+            // Act
+            var result = await _userService!.UpdateUserAsync(userDto);
+
+            // Assert
+            await _userRepository!.Received(1).UpdateUserAsync(Arg.Any<User>());
+            Assert.Equal("123 details have changed: John Doe; New York; Manager", result);
+        }
+
+        [Fact]
+        public async Task UpdateUserAsync_NonExistentUser_ThrowsException()
+        {
+            // Arrange
+            var userDto = new UserDto { UserId = "999", UserName = "Non Existent" };
+            var user = new User { UserId = "999", UserName = "Non Existent" };
+            var userViews = new List<UserView>();
+            var userViewDtos = new List<UserViewDto>();
+
+            MockUpdateUserAsync(userDto, user, userViews, userViewDtos);
+
+            _userRepository!.UpdateUserAsync(Arg.Any<User>()).Returns(Task.FromException(new Exception("User not found")));
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<Exception>(async () => await _userService!.UpdateUserAsync(userDto));
+            Assert.Equal("User not found", ex.Message);
+        }
+
+        [Fact]
+        public async Task UpdateUserAsync_InvalidUserData_ThrowsException()
+        {
+            // Arrange
+            var userDto = new UserDto { UserId = "123", UserName = "" }; // Invalid: empty username
+            var user = new User { UserId = "123", UserName = "" };
+            var userViews = new List<UserView>();
+            var userViewDtos = new List<UserViewDto>();
+
+            MockUpdateUserAsync(userDto, user, userViews, userViewDtos);
+
+            _userRepository!.UpdateUserAsync(Arg.Any<User>()).Returns(Task.FromException(new ArgumentException("Invalid user data")));
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await _userService!.UpdateUserAsync(userDto));
+            Assert.Equal("Invalid user data", ex.Message);
+        }
+
+        [Fact]
+        public async Task UpdateUserAsync_EmptyUserId_ReturnsAppropriateMessage()
+        {
+            // Arrange
+            var userDto = new UserDto { UserId = "", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 1 };
+            var user = new User { UserId = "", UserName = "John Doe", UserLoc = "LOC1", UserLevel = 1 };
+            var userViews = new List<UserView>
+            {
+                new UserView { UserId = "", UserName = "John Doe", UserLoc = "LOC1", VlaLocation = "New York", UserLevel = 1, UserLevelName = "Employee" }
+            };
+            var userViewDtos = new List<UserViewDto>
+            {
+                new UserViewDto { UserId = "", UserName = "John Doe", UserLoc = "LOC1", VlaLocation = "New York", UserLevel = 1, UserLevelName = "Employee" }
+            };
+
+            MockUpdateUserAsync(userDto, user, userViews, userViewDtos);
+
+            // Act
+            var result = await _userService!.UpdateUserAsync(userDto);
+
+            // Assert
+            await _userRepository!.Received(1).UpdateUserAsync(Arg.Any<User>());
+            Assert.Equal(" details have changed: John Doe; New York; Employee", result);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_ExistingUser_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var userId = "123";
+            var userViews = new List<UserView>
+            {
+                new UserView { UserId = userId, UserName = "John Doe" }
+            };
+
+            MockDeleteUserAsync(userId, userViews);
+
+            // Act
+            var result = await _userService!.DeleteUserAsync(userId);
+
+            // Assert
+            await _userRepository!.Received(1).DeleteUserAsync(userId);
+            Assert.Equal($"{userId} - John Doe has been deleted from the database", result);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_NonExistentUser_ReturnsNotFoundMessage()
+        {
+            // Arrange
+            var userId = "456";
+            var userViews = new List<UserView>(); // Empty list to simulate user not found
+
+            MockDeleteUserAsync(userId, userViews);
+
+            // Act
+            var result = await _userService!.DeleteUserAsync(userId);
+
+            // Assert
+            await _userRepository!.DidNotReceive().DeleteUserAsync(Arg.Any<string>());
+            Assert.Equal($"User with ID {userId} not found.", result);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_ExceptionOccurs_ThrowsException()
+        {
+            // Arrange
+            var userId = "789";
+            var userViews = new List<UserView>
+            {
+                new UserView { UserId = userId, UserName = "Jane Doe" }
+            };
+
+            var mockRepo = Substitute.For<IUserRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+
+            mockRepo.GetUsersAsync(userId).Returns(userViews);
+            mockRepo.DeleteUserAsync(userId).Returns(Task.FromException(new Exception("Deletion failed")));
+
+            _userService = new UserService(mockRepo, mockMapper);
+            _userRepository = mockRepo;
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => _userService.DeleteUserAsync(userId));
+            await _userRepository.Received(1).DeleteUserAsync(userId);
+        }
+    }
+}

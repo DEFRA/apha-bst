@@ -187,6 +187,60 @@ namespace Apha.BST.Web.Controllers
 
             return RedirectToAction("SiteTrainee", new { selectedSite });
         }
-       
+        [HttpGet]
+        public async Task<IActionResult> EditSite(string plantNo)
+        {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            if (string.IsNullOrEmpty(plantNo))
+            {
+                return RedirectToAction(nameof(ViewSite));
+            }                       
+
+            var siteDtos = await _siteService.GetAllSitesAsync(plantNo);
+            var siteDto = siteDtos.FirstOrDefault();
+
+            if (siteDto == null)
+            {
+                return RedirectToAction(nameof(ViewSite));
+            }
+
+            var editSiteViewModel = _mapper.Map<EditSiteViewModel>(siteDto);
+            editSiteViewModel.CanEdit = canEdit;
+            return View(editSiteViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSite(EditSiteViewModel editSiteViewModel)
+        {
+            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            editSiteViewModel.CanEdit = canEdit;
+            if (!ModelState.IsValid)
+            {
+                editSiteViewModel.CanEdit = canEdit;
+                return View(editSiteViewModel);
+            }
+
+            try
+            {
+                var siteDto = _mapper.Map<SiteDto>(editSiteViewModel);
+                var message = await _siteService.UpdateSiteAsync(siteDto);
+                TempData["SiteMessage"] = message;
+               
+            }
+            catch (SqlException sqlEx)
+            {
+                // Log SQL Exception with identifier (CloudWatch will receive this)
+                _logger.LogError(sqlEx, "[BST.SQLException] Error in [EditSite]: {Message}", sqlEx.Message);
+                TempData["SiteMessage"] = "Update failed";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [EditSite]: {Message}", ex.Message);
+                TempData["SiteMessage"] = "Update failed";
+            }
+
+            return View(editSiteViewModel);
+        }
     }
 }

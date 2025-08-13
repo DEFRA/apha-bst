@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Apha.BST.Application.DTOs
+namespace Apha.BST.Web.Models
 {
-    public class SiteDto
+    public class EditSiteViewModel:BaseViewModel
     {
         [Required(ErrorMessage = "Plant / Site No. is required")]
         public string PlantNo { get; set; } = null!;
@@ -29,6 +24,7 @@ namespace Apha.BST.Application.DTOs
 
         public string? Fax { get; set; }
 
-        public string? Ahvla { get; set; }       
+        [Display(Name = "AHVLA Site")]
+        public required bool IsAhvla { get; set; }
     }
 }
