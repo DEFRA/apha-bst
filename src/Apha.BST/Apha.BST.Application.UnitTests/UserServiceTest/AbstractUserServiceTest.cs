@@ -39,7 +39,7 @@ namespace Apha.BST.Application.UnitTests.UserServiceTest
 
             mockRepo.GetUsersAsync(userId).Returns(userViews);
 
-            if (userViews.Any())
+            if (userViews.Count>0)
             {
                 mockMapper.Map<UserDto>(userViews[0]).Returns(userDto);
             }

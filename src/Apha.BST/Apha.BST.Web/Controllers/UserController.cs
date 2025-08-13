@@ -19,6 +19,7 @@ namespace Apha.BST.Web.Controllers
         private readonly IMapper _mapper;
         private readonly IUserDataService _userDataService;
         private readonly ILogService _logService;
+        private const string userMessage = "UserMessage";
 
         public UserController(IUserService userService, IRoleMappingService roleMappingService, IMapper mapper, IUserDataService userDataService, ILogService logService)
         {
@@ -41,6 +42,7 @@ namespace Apha.BST.Web.Controllers
                     .Select(l => new SelectListItem { Value = l.LocId, Text = l.VlaLocation })
                     .ToList(),
                 UserLevels = _roleMappingService.GetUserLevels(),
+                UserLevel = 0, // Default to "0" for User Level
                 CanEdit = canEdit
             };
             return View(viewModel);
@@ -67,22 +69,22 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 {                   
                     var dto = _mapper.Map<UserDto>(viewModel);
-                    TempData["UserMessage"] = await _userService.AddUserAsync(dto);
+                    TempData[userMessage] = await _userService.AddUserAsync(dto);
                 }
                 else
                 {
-                    TempData["UserMessage"] = "You do not have permission to perform this action.";
+                    TempData[userMessage] = "You do not have permission to perform this action.";
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData["UserMessage"] = "Save failed";
+                TempData[userMessage] = "Save failed";
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData["UserMessage"] = "Save failed";
+                TempData[userMessage] = "Save failed";
             }
             return RedirectToAction(nameof(AddUser));
         }
@@ -113,7 +115,7 @@ namespace Apha.BST.Web.Controllers
             var dto = await _userService.GetUserByIdAsync(userId);
             if (dto == null)
             {
-                TempData["UserMessage"] = "Invalid user.";
+                TempData[userMessage] = "Invalid user.";
                 return RedirectToAction(nameof(ViewUser));
             }
 
@@ -141,22 +143,22 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 {
                     var dto = _mapper.Map<UserDto>(viewModel);
-                    TempData["UserMessage"] = await _userService.UpdateUserAsync(dto);
+                    TempData[userMessage] = await _userService.UpdateUserAsync(dto);
                 }
                 else
                 {
-                    TempData["UserMessage"] = "You do not have permission to perform this action.";
+                    TempData[userMessage] = "You do not have permission to perform this action.";
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData["UserMessage"] = "Update failed";
+                TempData[userMessage] = "Update failed";
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData["UserMessage"] = "Update failed";
+                TempData[userMessage] = "Update failed";
             }
             return RedirectToAction(nameof(ViewUser));
         }
@@ -171,18 +173,18 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 {
                     var message = await _userService.DeleteUserAsync(userId);
-                    TempData["UserMessage"] = message;
+                    TempData[userMessage] = message;
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData["UserMessage"] = "Delete failed";
+                TempData[userMessage] = "Delete failed";
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData["UserMessage"] = "Delete failed";
+                TempData[userMessage] = "Delete failed";
             }
             return RedirectToAction(nameof(ViewUser));
         }

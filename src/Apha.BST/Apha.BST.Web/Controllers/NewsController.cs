@@ -18,6 +18,8 @@ namespace Apha.BST.Web.Controllers
         private readonly IMapper _mapper;
         private readonly IUserDataService _userDataService;
         private readonly ILogService _logService;
+        private const string newsMessage = "NewsMessage";
+        private const string newsLoadingMessage = "Error loading news";
 
         public NewsController(INewsService newsService, IUserService userService, IMapper mapper, IUserDataService userDataService,ILogService logService)
         {
@@ -91,22 +93,22 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 { 
                     var dto = _mapper.Map<NewsDto>(viewModel);
-                    TempData["NewsMessage"] = await _newsService.AddNewsAsync(dto);
+                    TempData[newsMessage] = await _newsService.AddNewsAsync(dto);
                 }
                 else
                 {
-                    TempData["NewsMessage"] = "You do not have permission to perform this action.";
+                    TempData[newsMessage] = "You do not have permission to perform this action.";
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData["NewsMessage"] = "Save failed";
+                TempData[newsMessage] = "Save failed";
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData["NewsMessage"] = "Save failed";
+                TempData[newsMessage] = "Save failed";
             }
             return RedirectToAction(nameof(AddNews));
         }
@@ -123,20 +125,20 @@ namespace Apha.BST.Web.Controllers
             {
                 viewModel.NewsList = await _newsService.GetNewsAsync();
 
-                if (TempData["NewsMessage"] != null)
+                if (TempData[newsMessage] != null)
                 {
-                    viewModel.Message = TempData["NewsMessage"]?.ToString();
+                    viewModel.Message = TempData[newsMessage]?.ToString();
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                viewModel.Message = "Error loading news";
+                viewModel.Message = newsLoadingMessage;
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                viewModel.Message = "Error loading news";
+                viewModel.Message = newsLoadingMessage;
             }
             return View(viewModel);
         }
@@ -151,22 +153,22 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 {
                     var message = await _newsService.DeleteNewsAsync(title);
-                    TempData["NewsMessage"] = message;
+                    TempData[newsMessage] = message;
                 }
                 else
                 {
-                    TempData["NewsMessage"] = "You do not have permission to perform this action.";
+                    TempData[newsMessage] = "You do not have permission to perform this action.";
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData["NewsMessage"] = "Delete failed";
+                TempData[newsMessage] = "Delete failed";
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData["NewsMessage"] = "Delete failed";
+                TempData[newsMessage] = "Delete failed";
             }
             return RedirectToAction(nameof(ViewNews));
         }
@@ -185,21 +187,21 @@ namespace Apha.BST.Web.Controllers
             {
                 viewModel.NewsList = await _newsService.GetNewsAsync();
 
-                if (TempData["NewsMessage"] != null)
+                if (TempData[newsMessage] != null)
                 {
-                    viewModel.Message = TempData["NewsMessage"]?.ToString();
+                    viewModel.Message = TempData[newsMessage]?.ToString();
                 }
             }
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, "OldNews");
-                viewModel.Message = "Error loading news";
+                viewModel.Message = newsLoadingMessage;
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, "OldNews");
-                viewModel.Message = "Error loading news";
-            }
+                viewModel.Message = newsLoadingMessage;
+            }   
             return View(viewModel);
         }
 

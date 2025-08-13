@@ -25,6 +25,6 @@ namespace Apha.BST.Web.Models
         public string? Fax { get; set; }
 
         [Display(Name = "AHVLA Site")]
-        public bool IsAhvla { get; set; }
+        public required bool IsAhvla { get; set; }
     }
 }
