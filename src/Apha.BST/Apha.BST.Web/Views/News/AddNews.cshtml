@@ -1,0 +1,101 @@
+﻿@model AddNewsViewModel
+@{
+    ViewData["Title"] = "Add News";
+}
+@{
+    var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
+
+<form asp-action="AddNews" method="post">
+
+    <table class="w-80 h-100">
+        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+        <tbody class="me-5">
+            <tr>
+                <td class="fw-bold text-decoration-underline">Add news item</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="w-25 ">
+                    <label for="Title" id="Title">News title</label>
+                </td>
+                <td class="w-50">
+                    <input id="Title" asp-for="Title" class="w-100" disabled="@isDisabled" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="w-25 ">
+                    <label for="NewsContent" id="NewsContent">News content</label>
+                </td>
+                <td class="w-50">
+                    <textarea id="NewsContent" asp-for="NewsContent" rows="4" cols="50" class="w-100" disabled="@isDisabled"></textarea>
+                    <span asp-validation-for="NewsContent" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="news-date-published" id="DatePublished">News date and time</label>
+                </td>
+                <td class="pt-3">
+                    <input asp-for="DatePublished" id="news-date-published" type="text" value="" placeholder=" " class="w-100" disabled="@isDisabled" />
+                    <input type="hidden" asp-for="UseCurrentDateTime" id="UseCurrentDateTime" />
+                    <div class="form-check mt-2">
+                        @if (Model.CanEdit)
+                        {
+                            <input class="form-check-input" type="checkbox" id="news-date-checkbox" />
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" id="news-date-checkbox" disabled />
+                        }
+                        <label class="form-check-label" for="UseCurrentDateTime">Use current date and time</label>
+                    </div>
+                    <span asp-validation-for="DatePublished" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="Author" id="Author">News person</label>
+                </td>
+                <td class="pt-3">
+                    @if (Model.CanEdit)
+                    {
+                        <select id="Author" asp-for="Author" asp-items="Model.Users" class="search-dropdown w-80"></select>
+                    }
+                    else
+                    {
+                        <select id="Author" asp-for="Author" asp-items="Model.Users" class="search-dropdown w-80" disabled></select>
+                    }
+                    <span asp-for="Author" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="pt-4 px-5">
+                    <table>
+                        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+                        <tr>
+                            <td>
+                                <button type="submit" class="btn">
+                                    <img src="~/Images/tick.gif" alt="Save news" />
+                                </button>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Index", "Home")" class="btn">
+                                    <img src="~/Images/cancel.jpeg" alt="Cancel action" />
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="pt-3 ErrorText text-danger">
+                        @if (TempData["NewsMessage"] != null)
+                        {
+                            @TempData["NewsMessage"]
+                        }
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

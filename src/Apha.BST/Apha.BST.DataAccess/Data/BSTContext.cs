@@ -51,6 +51,8 @@ public partial class BstContext : DbContext
     public DbSet<PersonSiteLookup> PersonSiteLookups { get; set; }
     public DbSet<PersonLookup> PersonLookups { get; set; }
     public DbSet<PersonDetail> PersonDetails { get; set; }
+    public virtual DbSet<UserView> UserViews { get; set; }
+    public virtual DbSet<VlaLocView> VlaLocViews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -304,12 +306,9 @@ public partial class BstContext : DbContext
         modelBuilder.Entity<TrainerHistory>().HasNoKey();
         modelBuilder.Entity<TrainerTrained>().HasNoKey();
         modelBuilder.Entity<PersonDetail>().HasNoKey();
+        modelBuilder.Entity<VlaLocView>().HasNoKey().ToView("vwVlaLocations");
+        modelBuilder.Entity<UserView>().HasNoKey().ToView("vwUsers");
 
     }
-    
-    public async Task<int> AddSiteAsync(Site site)
-    {
-        await Sites.AddAsync(site);
-        return await SaveChangesAsync();
-    }
+  
 }

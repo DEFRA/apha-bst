@@ -22,7 +22,18 @@ namespace Apha.BST.Web.Mappings
             CreateMap<NewsDto, NewsViewModel>().ReverseMap();           
             CreateMap<PersonDetailDto, PersonViewModel>().ReverseMap();
             CreateMap<AddPersonDto, AddPersonViewModel>().ReverseMap();
-            CreateMap<EditPersonDto, EditPersonViewModel>().ReverseMap();           
+            CreateMap<EditPersonDto, EditPersonViewModel>().ReverseMap();
+            CreateMap<UserDto, AddUserViewModel>().ReverseMap();
+            CreateMap<AddUserViewModel, UserDto>().ReverseMap();
+            CreateMap<EditUserViewModel, UserDto>().ReverseMap();
+            CreateMap<UserViewDto, ViewUserViewModel>().ReverseMap();           
+            CreateMap<AddNewsViewModel, NewsDto>().ReverseMap();
+
+            // EditSite-specific mappings
+            CreateMap<SiteDto, EditSiteViewModel>()
+                .ForMember(dest => dest.IsAhvla, opt => opt.MapFrom(src => src.Ahvla == "AHVLA"));
+            CreateMap<EditSiteViewModel, SiteDto>()
+                .ForMember(dest => dest.Ahvla, opt => opt.MapFrom(src => src.IsAhvla ? "AHVLA" : "Non-AHVLA"));
         }
     }
 }

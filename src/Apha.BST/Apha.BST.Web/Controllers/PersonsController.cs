@@ -69,6 +69,7 @@ namespace Apha.BST.Web.Controllers
             {
                 return RedirectToAction(nameof(ViewPerson)); // Redirect if ModelState is invalid
             }
+           
             try
             {               
                 if (canEdit) 
@@ -79,12 +80,12 @@ namespace Apha.BST.Web.Controllers
             }
             catch (SqlException sqlEx)
             {
-                _logService.LogSqlException(sqlEx, "DeletePerson");
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
                 TempData[personMessage] = failmessage;
             }
             catch (Exception ex)
             {
-                _logService.LogGeneralException(ex, "DeletePerson");
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
                 TempData[personMessage] = failmessage;
             }
 
@@ -129,12 +130,12 @@ namespace Apha.BST.Web.Controllers
             }
             catch (SqlException sqlEx)
             {
-                _logService.LogSqlException(sqlEx, "AddPerson");               
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);               
                 TempData[personMessage] = "Save failed";
             }
             catch (Exception ex)
             {
-                _logService.LogGeneralException(ex, "AddPerson");               
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);               
                 TempData[personMessage] = "Save failed";
             }
            
@@ -197,12 +198,12 @@ namespace Apha.BST.Web.Controllers
             }
             catch (SqlException sqlEx)
             {
-                _logService.LogSqlException(sqlEx, "EditPerson");
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
                 TempData[personMessage] = "Update failed";
             }
             catch (Exception ex)
             {
-                _logService.LogGeneralException(ex, "EditPerson");
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
                 TempData[personMessage] = "Update failed";
             }
 
