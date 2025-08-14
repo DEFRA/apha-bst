@@ -57,8 +57,9 @@ jobs:
         id: imgtag
         shell: pwsh
         run: >
-          $imageTag = "${{ steps.versioning.outputs.version }}-dev-g${{
-          steps.shortsha.outputs.shortsha }}"
+          $runId = "${{ github.run_id }}" 
+          $last8 = $runId.Substring($runId.Length - 8)
+          $imageTag = "${{ steps.versioning.outputs.version }}-dev-$last8"
 
           "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
 
