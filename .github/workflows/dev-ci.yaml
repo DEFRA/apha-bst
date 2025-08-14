@@ -1,6 +1,5 @@
 ﻿name: Dev Build and Sonar Analysis
 on:
-  workflow_dispatch:
   push:
     branches:
       - 'feature/*'

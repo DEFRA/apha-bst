@@ -1,5 +1,4 @@
-﻿# dev app test - manual run
-name: Dev Application Integration Test 
+﻿name: Dev Build and Sonar Analysis
 on:
   workflow_dispatch:
 env:
@@ -39,25 +38,107 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
+
       - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-
+  
       - name: Read version from VERSION file
         id: versioning
         shell: pwsh
         run: |
           $version = Get-Content VERSION -Raw
           $version = $version.Trim()
-          "version=v$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-      
-push-image:
+          "version=v$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append  
+
+      - name: Compose image tag
+        id: imgtag
+        shell: pwsh
+        run: >
+          # Get the last 8 characters of run_id
+          $runId = "${{ github.run_id }}"
+          $last8 = $runId.Substring($runId.Length - 8)
+          $imageTag = "${{ steps.versioning.outputs.version }}-dev-$last8"
+
+          "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
+
+      - name: Print Docker image tag
+        shell: pwsh
+        run: |
+          echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"
+
+      - name: Check last commit message for 'ecrpush'
+        id: check_commit
+        shell: bash
+        run: |
+          COMMIT_MSG="$(git log -1 --pretty=%B)"
+          echo "Last commit message: $COMMIT_MSG"
+          if [[ "$COMMIT_MSG" == *"ecrpush"* ]]; then
+            echo "should_push=true"
+            echo "should_push=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_push=false"
+            echo "should_push=false" >> $GITHUB_OUTPUT
+          fi
+    
+      - name: Start Sonar Analysis
+        shell: pwsh
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+            /k:"DEFRA_apha-bst" `
+            /o:"defra" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /v:"${{ steps.imgtag.outputs.image_tag }}" `
+            /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
+            /d:sonar.cs.vstest.reportsPaths="src/TestResults/*.test_results.trx" `
+            /d:sonar.branch.name="${{ github.ref_name }}" `
+            /d:sonar.verbose=true `
+            /d:sonar.exclusions="**/wwwroot/**" `
+            /d:sonar.coverage.exclusions="**/wwwroot/**,**/*.cshtml"
+      - name: Restore NuGet packages
+        shell: pwsh
+        run: dotnet restore src/Apha.BST.sln
+      - name: Build Solution
+        shell: pwsh
+        run: dotnet build src/Apha.BST.sln --configuration Release
+      - name: Run Unit Tests with Coverage
+        shell: pwsh
+        run: >
+          dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj `
+            --no-build --configuration Release /p:CollectCoverage=true `
+            /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Application.coverage.opencover.xml" `
+            /p:CoverletOutputFormat=opencover `
+            /p:Deterministic=true `
+            /p:DebugType=full /p:DebugSymbols=true `
+            --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Application.test_results.trx"
+
+          dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj `
+            --no-build --configuration Release /p:CollectCoverage=true `
+            /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Web.coverage.opencover.xml" `
+            /p:CoverletOutputFormat=opencover `
+            /p:Deterministic=true `
+            /p:DebugType=full /p:DebugSymbols=true `
+            --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Web.test_results.trx"
+      - name: List coverage files
+        shell: pwsh
+        run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"; Get-ChildItem -Recurse -Filter "*.test_results.trx"
+      - name: End Sonar Analysis
+        shell: pwsh
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{
+          secrets.SONAR_TOKEN }}"
+  push-image:
     name: Push Docker Image
     needs: build-and-analyze
     runs-on: ubuntu-latest
+    if: ${{ needs.build-and-analyze.outputs.should_push == 'true' }}
     permissions:
       id-token: write
       contents: read
@@ -169,4 +250,3 @@ push-image:
         if: always()
         run: |
           docker rm -f test-container
-      
