@@ -11,7 +11,7 @@ all: post-deploy
 # Run post-deployment scripts
 post-deploy:
     @echo "Running post-deploy scripts..."
-    @$(SQLCMD) -d $(DB_NAME) -i postdeploy/modify-tables-post-restore.sql || exit 1
+    @$(SQLCMD) -d $(DB_NAME) -i postdeploy/tables/modify-tables-post-restore.sql || exit 1
     @echo "Post-deploy scripts completed."
 
 # Help
