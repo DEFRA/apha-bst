@@ -56,7 +56,7 @@ jobs:
       - name: Compose image tag
         id: imgtag
         shell: pwsh
-        run: >
+        run: |
           $runId = "${{ github.run_id }}" 
           $last8 = $runId.Substring($runId.Length - 8)
           $imageTag = "${{ steps.versioning.outputs.version }}-dev-$last8"
