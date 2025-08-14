@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     permissions:
       id-token: write
-      contents: read
+      contents: write
     outputs:
       image_tag: ${{ steps.imgtag.outputs.image_tag }}
     steps:
