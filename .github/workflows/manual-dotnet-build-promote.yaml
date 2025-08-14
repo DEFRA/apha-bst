@@ -65,6 +65,8 @@ jobs:
 
       - name: commit application release version in VERSION file
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! grep -Fxq "${{ github.event.inputs.RELEASEVERSION }}" VERSION; then
             git config user.name "github-actions[bot]"
@@ -76,6 +78,7 @@ jobs:
           else
             echo "VERSION file already contains ${{ github.event.inputs.RELEASEVERSION }} — skipping commit"
           fi
+
 
 
       - name: Start Sonar Analysis
