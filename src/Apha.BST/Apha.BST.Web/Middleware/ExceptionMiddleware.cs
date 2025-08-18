@@ -1,4 +1,5 @@
 ﻿using Apha.BST.Application.Validation;
+using Microsoft.Data.SqlClient;
 
 namespace Apha.BST.Web.Middleware
 {
@@ -21,29 +22,33 @@ namespace Apha.BST.Web.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled exception occurred");
+                string errorCode;
+                string ErrorType = "BST.GENERAL_EXCEPTION";
 
-                context.Response.ContentType = "application/json";
 
-                switch (ex)
-                {
-                    case BusinessValidationErrorException validationEx:
-                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                        await context.Response.WriteAsJsonAsync(validationEx.Errors);
-                        break;
-
-                    // Handle more custom exception types here as needed
-
-                    default:
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        await context.Response.WriteAsJsonAsync(new
-                        {
-                            Status = "error",
-                            Message = "An unexpected error occurred.",
-                            Details = ex.Message
-                        });
-                        break;
+                if (ex is UnauthorizedAccessException)
+                { 
+                    errorCode = "403 - Forbidden";
+                    _logger.LogError(ex, "[{ErrorType}] Error type [{ErrorCode}]: {Message}", ErrorType, errorCode, ex.Message);
+                    context.Response.Redirect("/Error/AccessDenied");
+                    return;
                 }
+
+                else if (ex is SqlException)
+                {
+                    ErrorType = "BST.SQLException";
+                    errorCode = "500 - SQL Server Error";
+                }
+                else
+                {
+                    errorCode = "500 - Internal Server Error";
+                }
+                _logger.LogError(ex, "[{ErrorType}] Error type [{ErrorCode}]: {Message}", ErrorType, errorCode, ex.Message);
+
+
+                // Redirect to generic error page (no code in query string)
+                context.Response.Redirect("/Home/Error");
+
             }
         }
     }
