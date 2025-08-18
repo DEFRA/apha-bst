@@ -1,28 +1,30 @@
-name: test-image-push
-
+name: Promote DEV Release
 on:
   workflow_dispatch:
     inputs:
-      DEFRA_SHARED_ACCOUNT_REGION:
-        description: "defra shared account region"
+      RELEASEVERSION:
+        description: 'DEV Application Release Version'
         type: string
         required: true
-        default: 'eu-west-2'
+
+      environment:
+        description: "Select environment"
+        required: true
+        type: choice
+        options:
+          - test
+          - pre-prod
+          - prod          
+
 env:
   REPOSITORY: apha/bst
-  
 jobs:
   push-image:
+    name: Retag & Push Docker Image
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # required to fetch tags and full commit history
+    environment: ${{ github.event.inputs.environment }}
 
+    steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -32,61 +34,38 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
- 
-      - name: Configure git version sorting
+
+      - name: Compose image tags
+        id: imgtag
         run: |
-          git config --global --unset-all versionsort.suffix || echo "No existing versionsort.suffix found in git configuration."
-          git config --global --add versionsort.suffix -beta.
-          git config --global --add versionsort.suffix -rc.
-      
-      - name: Generate raw tag
-        id: raw-tag
+          DEV_TAG="v${{ github.event.inputs.RELEASEVERSION }}-dev"
+
+          case "${{ github.event.inputs.environment }}" in
+            test)
+              FINAL_TAG="v${{ github.event.inputs.RELEASEVERSION }}-tst"
+              ;;
+            preprod)
+              FINAL_TAG="v${{ github.event.inputs.RELEASEVERSION }}-pre"
+              ;;
+            prod)
+              FINAL_TAG="v${{ github.event.inputs.RELEASEVERSION }}"
+              ;;
+          esac
+
+          echo "dev_tag=$DEV_TAG" >> $GITHUB_OUTPUT
+          echo "final_tag=$FINAL_TAG" >> $GITHUB_OUTPUT
+
+      - name: Retag & Push Docker Image
         run: |
-          git tag --list
-          echo "raw_tag=$(git tag --list --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)"
-          echo "raw_tag=$(git tag --list --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)" >> $GITHUB_OUTPUT
-      
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          flavor: |
-            latest=false
-          images: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}
-          tags: |
-            type=semver,priority=900,pattern={{raw}}
-            type=raw,priority=800,value=${{ steps.raw-tag.outputs.raw_tag }}
-          labels: |
-            org.opencontainers.image.licenses=OGL-UK-3.0
-      # Build and push Docker image with Buildx
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          target: base
-          build-args: |
-            GIT_COMMIT=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
-          push: true
-          labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.meta.outputs.tags }}
-      # Generate a summary that will be displayed against the Job when selected in the Actions tab.
-      # We do this to quickly see details for the image generated instead of digging into the build output.
-      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary
-      - name: Generate job summary
-        id: summary
-        run: |
-          {
-            echo "### Docker Image details"
-            echo "The tag is **${{ steps.raw-tag.outputs.raw_tag }}**"
-            echo "| Label      | Value |"
-            echo "| ---------- | ----- |"
-            echo "| created    | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }} |"
-            echo "| description| ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.description'] }} |"
-            echo "| licenses   | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.licenses'] }} |"
-            echo "| revision   | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }} |"
-            echo "| source     | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.source'] }} |"
-            echo "| title      | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.title'] }} |"
-            echo "| url        | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.url'] }} |"
-            echo "| version    | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }} |"
-          } >> $GITHUB_STEP_SUMMARY
+          IMAGE_NAME="${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}"
+          DEV_TAG="${{ steps.imgtag.outputs.dev_tag }}"
+          FINAL_TAG="${{ steps.imgtag.outputs.final_tag }}"
+
+          echo "Pulling source image: $IMAGE_NAME:$DEV_TAG"
+          docker pull "$IMAGE_NAME:$DEV_TAG"
+
+          echo "Tagging as: $IMAGE_NAME:$FINAL_TAG"
+          docker tag "$IMAGE_NAME:$DEV_TAG" "$IMAGE_NAME:$FINAL_TAG"
+
+          echo "Pushing Docker image..."
+          docker push "$IMAGE_NAME:$FINAL_TAG"
