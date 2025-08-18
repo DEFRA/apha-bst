@@ -19,23 +19,26 @@ namespace Apha.BST.Web.Controllers
     {
         private readonly ISiteService _siteService;
         private readonly IUserDataService _userDataService;
-        private readonly ILogger<SiteController> _logger;
-        private readonly IMapper _mapper;
-        private const string siteAll = "All";       
+        private readonly ILogService _logService;
 
-        public SiteController(ILogger<SiteController> logger,ISiteService siteService, IMapper mapper,IUserDataService userDataService)
+        private readonly IMapper _mapper;
+        private const string siteAll = "All";
+        private const string status = "Save failed";
+        private const string siteMessage = "SiteMessage";
+        public SiteController(ISiteService siteService, IMapper mapper, IUserDataService userDataService, ILogService logService)
         {
             _siteService = siteService;
             _mapper = mapper;
             _userDataService = userDataService;
-            _logger = logger;
-        }       
+            _logService = logService;
+
+        }
 
         [HttpGet]
         public async Task<IActionResult> ViewSite(string selectedSite = siteAll)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
-           
+
 
             var allSitesDto = await _siteService.GetAllSitesAsync("All");
             var allSites = _mapper.Map<IEnumerable<SiteViewModel>>(allSitesDto);
@@ -44,9 +47,9 @@ namespace Apha.BST.Web.Controllers
                 .Select(site => new SelectListItem
                 {
                     Value = site.PlantNo,
-                    Text = site.Name,                   
+                    Text = site.Name,
                 })
-                .ToList();           
+                .ToList();
 
             IEnumerable<SiteViewModel> filteredSites = selectedSite == "All"
                 ? allSites
@@ -96,7 +99,7 @@ namespace Apha.BST.Web.Controllers
 
                 model.FilteredTrainees = filteredTrainees;
                 model.SelectedSite = selectedSite;
-               
+
 
             }
 
@@ -117,13 +120,13 @@ namespace Apha.BST.Web.Controllers
             };
             return View(model);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSite(SiteViewModel siteViewModel)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
-            siteViewModel.CanEdit = canEdit; 
+            siteViewModel.CanEdit = canEdit;
             if (ModelState.IsValid)
             {
                 try
@@ -132,23 +135,22 @@ namespace Apha.BST.Web.Controllers
                     if (canEdit)
                     {
                         var site = _mapper.Map<SiteDto>(siteViewModel);
-                        var message = await _siteService.AddSiteAsync(site,userName);
+                        var message = await _siteService.AddSiteAsync(site, userName);
 
-                        TempData["SiteMessage"] = message;
+                        TempData[siteMessage] = message;
                     }
                 }
                 catch (SqlException sqlEx)
                 {
-                    // Log SQL Exception with identifier (CloudWatch will receive this)
-                    _logger.LogError(sqlEx, "[BST.SQLException] Error in [AddSite]: {Message}", sqlEx.Message);
-                    TempData["SiteMessage"] = "Save failed";
+                    _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                    TempData[siteMessage] = status;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [AddSite]: {Message}", ex.Message);
-                    TempData["SiteMessage"] = "Save failed";
+                    _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                    TempData[siteMessage] = status;
                 }
-               
+
 
                 return RedirectToAction(nameof(AddSite));
             }
@@ -162,7 +164,7 @@ namespace Apha.BST.Web.Controllers
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             if (!ModelState.IsValid)
             {
-                TempData["SiteMessage"] = "Invalid request";
+                TempData[siteMessage] = "Invalid request";
                 return RedirectToAction("SiteTrainee", new { selectedSite });
             }
             try
@@ -170,19 +172,18 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 {
                     var message = await _siteService.DeleteTraineeAsync(personId);
-                    TempData["SiteMessage"] = message;
+                    TempData[siteMessage] = message;
                 }
             }
             catch (SqlException sqlEx)
             {
-                // Log SQL Exception with identifier (CloudWatch will receive this)
-                _logger.LogError(sqlEx, "[BST.SQLException] Error in [DeleteTrainne]: {Message}", sqlEx.Message);
-                TempData["SiteMessage"] = "Save failed";
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                TempData[siteMessage] = status;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [DeleteTrainee]: {Message}", ex.Message);
-                TempData["SiteMessage"] = "Save failed";
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData[siteMessage] = status;
             }
 
             return RedirectToAction("SiteTrainee", new { selectedSite });
@@ -194,19 +195,36 @@ namespace Apha.BST.Web.Controllers
             if (string.IsNullOrEmpty(plantNo))
             {
                 return RedirectToAction(nameof(ViewSite));
-            }                       
+            }
 
             var siteDtos = await _siteService.GetAllSitesAsync(plantNo);
             var siteDto = siteDtos.FirstOrDefault();
 
             if (siteDto == null)
             {
+                TempData[siteMessage] = "Invalid data provided for editing.";
                 return RedirectToAction(nameof(ViewSite));
             }
 
-            var editSiteViewModel = _mapper.Map<EditSiteViewModel>(siteDto);
-            editSiteViewModel.CanEdit = canEdit;
-            return View(editSiteViewModel);
+            var viewModel = new EditSiteViewModel
+            {
+                CanEdit = canEdit,
+                PlantNo = siteDto.PlantNo,
+                Name = siteDto.Name,
+                AddressLine1 = siteDto.AddressLine1,
+                AddressLine2 = siteDto.AddressLine2,
+                AddressTown = siteDto.AddressTown,
+                AddressCounty = siteDto.AddressCounty,
+                AddressPostCode = siteDto.AddressPostCode,
+                Telephone = siteDto.Telephone,
+                Fax = siteDto.Fax,
+                IsAhvla = siteDto.Ahvla?.Trim().Equals("AHVLA") ?? false,
+
+            };
+
+
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -223,21 +241,20 @@ namespace Apha.BST.Web.Controllers
 
             try
             {
-                var siteDto = _mapper.Map<SiteDto>(editSiteViewModel);
-                var message = await _siteService.UpdateSiteAsync(siteDto);
-                TempData["SiteMessage"] = message;
-               
+                var siteInputDto = _mapper.Map<SiteInputDto>(editSiteViewModel);
+                var message = await _siteService.UpdateSiteAsync(siteInputDto);
+                TempData[siteMessage] = message;
+
             }
             catch (SqlException sqlEx)
             {
-                // Log SQL Exception with identifier (CloudWatch will receive this)
-                _logger.LogError(sqlEx, "[BST.SQLException] Error in [EditSite]: {Message}", sqlEx.Message);
-                TempData["SiteMessage"] = "Update failed";
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                TempData[siteMessage] = status;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [EditSite]: {Message}", ex.Message);
-                TempData["SiteMessage"] = "Update failed";
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData[siteMessage] = status;
             }
 
             return View(editSiteViewModel);

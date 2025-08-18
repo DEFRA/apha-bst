@@ -18,19 +18,20 @@ namespace Apha.BST.Web.Controllers
     public class TrainingController : Controller
     {
         private readonly ITrainingService _trainingService;
-        private readonly ILogger<TrainingController> _logger;
+        private readonly ILogService _logService;
         private readonly IUserDataService _userDataService;
         private readonly IMapper _mapper;
-        private readonly IStaticDropdownService _staticDropdownService;         
+        private readonly IStaticDropdownService _staticDropdownService;
         private const string traineeAll = "All";
+        private const string trainingMessage = "Message";
 
-        public TrainingController(ILogger<TrainingController> logger,ITrainingService trainingService, IMapper mapper,IStaticDropdownService staticDropdownService, IUserDataService userDataService)
+        public TrainingController(ILogService logService, ITrainingService trainingService, IMapper mapper, IStaticDropdownService staticDropdownService, IUserDataService userDataService)
         {
             _trainingService = trainingService;
             _mapper = mapper;
             _staticDropdownService = staticDropdownService;
             _userDataService = userDataService;
-            _logger = logger;
+            _logService = logService;
         }
         public IActionResult Index()
         {
@@ -81,24 +82,25 @@ namespace Apha.BST.Web.Controllers
                 return View(viewModel);
             }
             try
-            {   if (canEdit)
+            {
+                if (canEdit)
                 {
                     var dto = _mapper.Map<TrainingDto>(viewModel);
                     var message = await _trainingService.AddTrainingAsync(dto);
-                    TempData["Message"] = message;
+                    TempData[trainingMessage] = message;
                 }
             }
             catch (SqlException sqlEx)
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
-                _logger.LogError(sqlEx, "[BST.SQLException] Error in [AddTraining]: {Message}", sqlEx.Message);
-                TempData["Message"] = "Save failed";
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                TempData[trainingMessage] = "Save failed";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [AddTraining]: {Message}", ex.Message);
-                TempData["Message"] = "Save failed";
-            }          
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData[trainingMessage] = "Save failed";
+            }
 
             return RedirectToAction(nameof(AddTraining));
         }
@@ -111,10 +113,10 @@ namespace Apha.BST.Web.Controllers
             {
                 return RedirectToAction(nameof(ViewTraining));
             }
-            var dto = await _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);            
+            var dto = await _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
             if (dto == null)
             {
-                TempData["Message"] = "Invalid data provided for deletion.";
+                TempData[trainingMessage] = "Invalid data provided for deletion.";
                 return RedirectToAction(nameof(ViewTraining));
             }
             var persons = await _trainingService.GetTraineesAsync();
@@ -174,30 +176,30 @@ namespace Apha.BST.Web.Controllers
                 viewModel.TrainingDateTime = viewModel.TrainingDateTimeOld;
                 return View(viewModel);
             }
-            
+
             var editTraining = _mapper.Map<EditTrainingDto>(viewModel);
 
-            try 
+            try
             {
                 if (canEdit)
                 {
                     var message = await _trainingService.UpdateTrainingAsync(editTraining);
-                    TempData["Message"] = message;
+                    TempData[trainingMessage] = message;
                 }
             }
             catch (SqlException sqlEx)
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
-                _logger.LogError(sqlEx, "[BST.SQLException] Error in [UpdateTraining]: {Message}", sqlEx.Message);
-                TempData["Message"] = "Error updating training";
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                TempData[trainingMessage] = "Error updating training";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [UpdateTraining]: {Message}", ex.Message);
-                TempData["Message"] = "Error updating training";
-            }           
-            
-            return RedirectToAction("ViewTraining", new { selectedTraineeId = viewModel.TraineeIdOld });            
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData[trainingMessage] = "Error updating training";
+            }
+
+            return RedirectToAction("ViewTraining", new { selectedTraineeId = viewModel.TraineeIdOld });
         }
 
         [HttpGet]
@@ -242,11 +244,11 @@ namespace Apha.BST.Web.Controllers
             return View(model);
         }
 
-        
+
         // For TrainerHistory
         [HttpGet]
         public async Task<IActionResult> TrainerHistory(int selectedTrainerId = 0, string selectedSpecies = "Cattle")
-        {            
+        {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             if (!ModelState.IsValid)
             {
@@ -283,10 +285,10 @@ namespace Apha.BST.Web.Controllers
             trainerSelectList.Insert(0, new SelectListItem
             {
                 Value = "0",
-                Text = "All people",               
+                Text = "All people",
             });
 
-            model.AllTrainersList = trainerSelectList;           
+            model.AllTrainersList = trainerSelectList;
             return View(model);
         }
 
@@ -329,7 +331,7 @@ namespace Apha.BST.Web.Controllers
                 Selected = selectedTrainerId == 0
             });
 
-            model.TrainerSelectList = trainerList;          
+            model.TrainerSelectList = trainerList;
 
             return View(model);
         }
@@ -339,9 +341,9 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> DeleteTraining(int traineeId, string species, DateTime dateTrained)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
-                TempData["Message"] = "Invalid data provided for deletion.";
+                TempData[trainingMessage] = "Invalid data provided for deletion.";
                 return RedirectToAction(nameof(ViewTraining), new { selectedTraineeId = traineeId });
             }
             try
@@ -349,23 +351,23 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 {
                     var message = await _trainingService.DeleteTrainingAsync(traineeId, species, dateTrained);
-                    TempData["Message"] = message;
+                    TempData[trainingMessage] = message;
                 }
             }
             catch (SqlException sqlEx)
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
-                _logger.LogError(sqlEx, "[BST.SQLException] Error in [DeleteTraining]: {Message}", sqlEx.Message);
-                TempData["Message"] = "Delete failed";
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName); ;
+                TempData[trainingMessage] = "Delete failed";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [DeleteTraining]: {Message}", ex.Message);
-                TempData["Message"] = "Delete failed";
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData[trainingMessage] = "Delete failed";
             }
-           
+
             return RedirectToAction(nameof(ViewTraining), new { selectedTraineeId = traineeId });
-        }      
+        }
 
     }
 }

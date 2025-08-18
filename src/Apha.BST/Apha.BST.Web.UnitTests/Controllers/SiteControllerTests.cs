@@ -1,4 +1,3 @@
-using System.Reflection;
 using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Interfaces;
 using Apha.BST.Core.Entities;
@@ -17,6 +16,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Apha.BST.Web.UnitTests.Controllers
 {
@@ -25,34 +27,14 @@ namespace Apha.BST.Web.UnitTests.Controllers
         private readonly ISiteService _siteService;
         private readonly IMapper _mapper;
         private readonly IUserDataService _userDataService;
-        private readonly ILogger<SiteController> _logger;
+        private const string status = "Save failed";
+        private readonly ILogService _logService;
         private readonly SiteController _controller;
+
         private static SqlException CreateSqlExceptionForInner()
         {
-            // Try to find any non-public constructor and pass dummy values
-            var ctors = typeof(SqlException).GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var ctor in ctors)
-            {
-                var parameters = ctor.GetParameters();
-               
-                object?[] args = new object?[parameters.Length];
-
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    args[i] = parameters[i].ParameterType.IsValueType
-                        ? Activator.CreateInstance(parameters[i].ParameterType)
-                        : null;
-                }
-                try
-                {
-                    return (SqlException)ctor.Invoke(args);
-                }
-                catch
-                {
-                    // Ignore and try next
-                }
-            }
-            throw new InvalidOperationException("Could not create SqlException for testing.");
+            // This creates an uninitialized SqlException instance for testing purposes.
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(typeof(SqlException));
         }
 
         public SiteControllerTests()
@@ -60,8 +42,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _siteService = Substitute.For<ISiteService>();
             _mapper = Substitute.For<IMapper>();
             _userDataService = Substitute.For<IUserDataService>();
-            _logger = Substitute.For<ILogger<SiteController>>();
-            _controller = new SiteController(_logger, _siteService, _mapper, _userDataService);
+            _logService = Substitute.For<ILogService>();
+            _controller = new SiteController(_siteService, _mapper, _userDataService, _logService);
 
             // Setup TempData for the controller
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Substitute.For<ITempDataProvider>());
@@ -219,7 +201,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _mapper.Map<SiteDto>(siteViewModel).Returns(siteDto);
             var userName = "testUser";
             _userDataService.GetUsername().Returns(userName);
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);            
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _siteService.AddSiteAsync(Arg.Any<SiteDto>(), userName).Throws(new Exception("Test exception"));
 
             // Act
@@ -228,7 +210,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddSite", redirectResult.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["SiteMessage"]);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
         }
 
         [Fact]
@@ -337,8 +319,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Create a dummy SqlException for the inner exception
             var sqlException = CreateSqlExceptionForInner();
-            var wrapperException = new Exception("Wrapper", sqlException);
-            _siteService.AddSiteAsync(Arg.Any<SiteDto>(), userName).Throws(wrapperException);
+            _siteService.AddSiteAsync(Arg.Any<SiteDto>(), userName).Throws(sqlException);
 
             // Act
             var result = await _controller.AddSite(siteViewModel);
@@ -346,8 +327,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddSite", redirectResult.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["SiteMessage"]);
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
         [Fact]
         public async Task AddSite_WhenGeneralExceptionThrown_LogsGeneralErrorAndSetsTempData()
@@ -370,8 +351,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddSite", redirectResult.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["SiteMessage"]);
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
         [Fact]
         public async Task SiteTrainee_WithNullSelectedSite_ReturnsViewModelWithAllSites()
@@ -608,7 +589,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.NotNull(redirectResult.RouteValues);
             Assert.True(redirectResult.RouteValues.ContainsKey("selectedSite"));
             Assert.Equal(selectedSite, redirectResult.RouteValues["selectedSite"]);
-            Assert.Equal("Save failed", _controller.TempData["SiteMessage"]);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
         }
 
 
@@ -643,8 +624,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
 
             var sqlException = CreateSqlExceptionForInner();
-            var wrapperException = new Exception("Wrapper", sqlException);
-            _siteService.DeleteTraineeAsync(personId).Throws(wrapperException);
+
+            _siteService.DeleteTraineeAsync(personId).Throws(sqlException);
 
             // Act
             var result = await _controller.DeleteTrainee(personId, selectedSite);
@@ -652,8 +633,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("SiteTrainee", redirectResult.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["SiteMessage"]);
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
         }
         [Fact]
@@ -674,10 +655,286 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("SiteTrainee", redirectResult.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["SiteMessage"]);
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
         }
+        [Fact]
+        public async Task EditSite_ValidInput_SuccessfulUpdate()
+        {
+            // Arrange
+            var editSiteViewModel = new EditSiteViewModel { PlantNo = "123", Name = "Test Site", AddressLine1 = "a", AddressCounty = "a", IsAhvla = true };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _mapper.Map<SiteInputDto>(Arg.Any<EditSiteViewModel>()).Returns(new SiteInputDto
+            {
+                PlantNo = "123",
+                Name = "Test Site",
+                IsAhvla = true,
+            });
+            _siteService.UpdateSiteAsync(Arg.Any<SiteInputDto>()).Returns("Site updated successfully");
+
+            // Act
+            var result = await _controller.EditSite(editSiteViewModel) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(editSiteViewModel, result.Model);
+            Assert.Equal("Site updated successfully", _controller.TempData["SiteMessage"]);
+        }
+
+        [Fact]
+        public async Task EditSite_InvalidModelState_ReturnsViewWithModel()
+        {
+            // Arrange
+            var editSiteViewModel = new EditSiteViewModel
+            {
+                PlantNo = "123",
+                Name = "Test Site",
+                AddressLine1 = "a",
+                AddressCounty = "a",
+                IsAhvla = true
+            };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _controller.ModelState.AddModelError("Name", "Name is required");
+
+            // Act
+            var result = await _controller.EditSite(editSiteViewModel) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Model);
+            Assert.IsType<EditSiteViewModel>(result.Model);
+
+            var model = result.Model as EditSiteViewModel;
+            Assert.NotNull(model);
+            Assert.Equal(editSiteViewModel.PlantNo, model.PlantNo);
+            Assert.Equal(editSiteViewModel.Name, model.Name);
+            Assert.Equal(editSiteViewModel.AddressLine1, model.AddressLine1);
+            Assert.Equal(editSiteViewModel.AddressCounty, model.AddressCounty);
+            Assert.Equal(editSiteViewModel.IsAhvla, model.IsAhvla);
+            Assert.True(model.CanEdit);
+        }
+
+        [Fact]
+        public async Task EditSite_SqlException_LogsErrorAndReturnsView()
+        {
+            // Arrange
+            var editSiteViewModel = new EditSiteViewModel
+            {
+                PlantNo = "123",
+                Name = "Test Site",
+                AddressLine1 = "a",
+                AddressCounty = "a",
+                IsAhvla = true
+            };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _mapper.Map<SiteInputDto>(Arg.Any<EditSiteViewModel>()).Returns(new SiteInputDto
+            {
+                PlantNo = "123",
+                Name = "Test Site",
+                IsAhvla = true,
+            });
+            var sqlException = CreateSqlExceptionForInner();
+            _siteService.UpdateSiteAsync(Arg.Any<SiteInputDto>()).Throws(sqlException);
+
+            // Act
+            var result = await _controller.EditSite(editSiteViewModel) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(editSiteViewModel, result.Model);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+        }
+        [Fact]
+        public async Task EditSite_GeneralException_LogsErrorAndReturnsView()
+        {
+            // Arrange
+            var editSiteViewModel = new EditSiteViewModel
+            {
+                PlantNo = "123",
+                Name = "Test Site",
+                AddressLine1 = "a",
+                AddressCounty = "a",
+                IsAhvla = true
+            };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _mapper.Map<SiteInputDto>(Arg.Any<EditSiteViewModel>()).Returns(new SiteInputDto
+            {
+                PlantNo = "123",
+                Name = "Test Site",
+                IsAhvla = true,
+            });
+            var exception = new Exception("General error");
+            _siteService.UpdateSiteAsync(Arg.Any<SiteInputDto>()).Throws(exception);
+
+            // Act
+            var result = await _controller.EditSite(editSiteViewModel) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(editSiteViewModel, result.Model);
+            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+
+        }
+        [Fact]
+        public async Task EditSite_ValidPlantNo_ReturnsViewWithCorrectModel()
+        {
+            // Arrange
+            string plantNo = "123";
+            bool canEdit = true;
+            var siteDto = new SiteDto { PlantNo = plantNo, Name = "Test Site" };
+            var siteDtos = new List<SiteDto> { siteDto };
+
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+            _siteService.GetAllSitesAsync(plantNo).Returns(siteDtos);
+
+            // Act
+            var result = await _controller.EditSite(plantNo);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<EditSiteViewModel>(viewResult.Model);
+            Assert.Equal(plantNo, model.PlantNo);
+            Assert.Equal("Test Site", model.Name);
+            Assert.Equal(canEdit, model.CanEdit);
+        }
+
+        [Fact]
+        public async Task EditSite_NullOrEmptyPlantNo_RedirectsToViewSite()
+        {
+            // Act
+            var plantNo = "123";
+            var result = await _controller.EditSite(plantNo);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("ViewSite", redirectResult.ActionName);
+        }
+
+        [Fact]
+        public async Task EditSite_InvalidPlantNo_RedirectsToViewSiteWithMessage()
+        {
+            // Arrange
+            string plantNo = "invalid";
+            _siteService.GetAllSitesAsync(plantNo).Returns(new List<SiteDto>());
+
+            // Act
+            var result = await _controller.EditSite(plantNo);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("ViewSite", redirectResult.ActionName);
+            Assert.Equal("Invalid data provided for editing.", _controller.TempData["SiteMessage"]);
+        }
+
+        [Fact]
+        public async Task EditSite_ValidPlantNo_SetsIsAhvlaCorrectly()
+        {
+            // Arrange
+            string plantNo = "123";
+            var siteDto = new SiteDto { PlantNo = plantNo, Name = "name", Ahvla = "AHVLA" };
+            var siteDtos = new List<SiteDto> { siteDto };
+
+            _siteService.GetAllSitesAsync(plantNo).Returns(siteDtos);
+
+            // Act
+            var result = await _controller.EditSite(plantNo);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<EditSiteViewModel>(viewResult.Model);
+            Assert.True(model.IsAhvla);
+        }
+
+        [Fact]
+        public async Task EditSite_ValidPlantNo_SetsIsAhvlaFalseForNonAhvla()
+        {
+            // Arrange
+            string plantNo = "123";
+
+            var siteDto = new SiteDto
+            {
+                PlantNo = plantNo,
+                Name = "Test Site",
+                AddressLine1 = "Address 1",
+                AddressLine2 = "Address 2",
+                AddressTown = "Town",
+                AddressCounty = "County",
+                AddressPostCode = "12345",
+                Telephone = "123-456-7890",
+                Fax = "098-765-4321",
+                Ahvla = "Non-AHVLA"
+            };
+            var siteDtos = new List<SiteDto> { siteDto };
+
+            _siteService.GetAllSitesAsync(plantNo).Returns(siteDtos);
+
+            // Act
+            var result = await _controller.EditSite(plantNo);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<EditSiteViewModel>(viewResult.Model);
+            Assert.False(model.IsAhvla);
+        }
+
+        [Fact]
+        public async Task EditSite_ValidPlantNo_CallsDependenciesWithCorrectParameters()
+        {
+            // Arrange
+            string plantNo = "123";
+
+            // Act
+            await _controller.EditSite(plantNo);
+
+            // Assert
+            await _userDataService.Received(1).CanEditPage(Arg.Any<string>());
+            await _siteService.Received(1).GetAllSitesAsync(plantNo);
+        }
+
+        [Fact]
+        public async Task EditSite_ValidPlantNo_SetsAllPropertiesCorrectly()
+        {
+            // Arrange
+            string plantNo = "123";
+            var siteDto = new SiteDto
+            {
+                PlantNo = plantNo,
+                Name = "Test Site",
+                AddressLine1 = "Address 1",
+                AddressLine2 = "Address 2",
+                AddressTown = "Town",
+                AddressCounty = "County",
+                AddressPostCode = "12345",
+                Telephone = "123-456-7890",
+                Fax = "098-765-4321",
+                Ahvla = "AHVLA"
+            };
+            var siteDtos = new List<SiteDto> { siteDto };
+
+            _siteService.GetAllSitesAsync(plantNo).Returns(siteDtos);
+
+            // Act
+            var result = await _controller.EditSite(plantNo);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<EditSiteViewModel>(viewResult.Model);
+            Assert.Equal(plantNo, model.PlantNo);
+            Assert.Equal("Test Site", model.Name);
+            Assert.Equal("Address 1", model.AddressLine1);
+            Assert.Equal("Address 2", model.AddressLine2);
+            Assert.Equal("Town", model.AddressTown);
+            Assert.Equal("County", model.AddressCounty);
+            Assert.Equal("12345", model.AddressPostCode);
+            Assert.Equal("123-456-7890", model.Telephone);
+            Assert.Equal("098-765-4321", model.Fax);
+            Assert.True(model.IsAhvla);
+        }
+
 
     }
 }

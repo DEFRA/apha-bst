@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Apha.BST.Application.DTOs;
+﻿using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Services;
 using Apha.BST.Core.Entities;
 using Apha.BST.Core.Interfaces;
@@ -150,6 +145,56 @@ namespace Apha.BST.Application.UnitTests.Services
 
             // Assert
             result.Should().Be($"Trainee '{personName}' has training records. Delete them first if you wish to remove the person.");
+        }
+        [Fact]
+        public async Task UpdateSiteAsync_ValidInput_ReturnsExpectedResult()
+        {
+            // Arrange
+            var inputDto = new SiteInputDto
+            {
+                PlantNo = "123",
+                Name = "Test Site",
+                AddressLine1 = "xyz",
+                AddressLine2 = "abc",
+                AddressTown = "town",
+                AddressCounty = "",
+                AddressPostCode = "",
+                Telephone = "",
+                Fax = "",
+                IsAhvla = true,
+            };
+            var expectedReturnValue = "Test Site  updated successfully";
+            MockForUpdateSiteAsync(expectedReturnValue, inputDto);
+
+            // Act
+            var result = await _siteService.UpdateSiteAsync(inputDto);
+
+            // Assert
+            Assert.Equal(expectedReturnValue, result);
+        }
+
+
+
+        [Fact]
+        public async Task UpdateSiteAsync_MappingFailure_ThrowsAutoMapperMappingException()
+        {
+            // Arrange
+            var siteDto = new SiteInputDto { Name = "Test Site" };
+            MockForUpdateSiteAsyncWithMappingException(siteDto);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<AutoMapperMappingException>(() => _siteService.UpdateSiteAsync(siteDto));
+        }
+
+        [Fact]
+        public async Task UpdateSiteAsync_RepositoryException_ThrowsException()
+        {
+            // Arrange
+            var siteDto = new SiteInputDto { Name = "Test Site" };
+            MockForUpdateSiteAsyncWithException(siteDto, new Exception("Repository error"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => _siteService.UpdateSiteAsync(siteDto));
         }
     }
 }

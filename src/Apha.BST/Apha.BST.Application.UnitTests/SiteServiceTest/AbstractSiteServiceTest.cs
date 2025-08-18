@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Apha.BST.Application.DTOs;
+﻿using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Interfaces;
 using Apha.BST.Application.Services;
 using Apha.BST.Core;
@@ -13,6 +8,8 @@ using Apha.BST.DataAccess.Data;
 using Apha.BST.DataAccess.Repositories;
 using AutoMapper;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+
 
 namespace Apha.BST.Application.UnitTests.Services
 {
@@ -107,5 +104,57 @@ namespace Apha.BST.Application.UnitTests.Services
             _mapper = config.CreateMapper();
             _siteService = new SiteService(mockRepo, _mapper);
         }
+        public void MockForUpdateSiteAsync(string returnValue, SiteInputDto inputDto)
+        {
+            var mockRepo = Substitute.For<ISiteRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+
+            var siteInput = new SiteInput
+            {
+                PlantNo = inputDto.PlantNo,
+                Name = inputDto.Name,
+                AddressLine1 = inputDto.AddressLine1,
+                AddressLine2 = inputDto.AddressLine2,
+                AddressTown = inputDto.AddressTown,
+                AddressCounty = inputDto.AddressCounty,
+                AddressPostCode = inputDto.AddressPostCode,
+                Telephone = inputDto.Telephone,
+                Fax = inputDto.Fax,
+                IsAhvla = inputDto.IsAhvla // Both are boolean now
+            };
+
+            mockMapper.Map<SiteInput>(inputDto).Returns(siteInput);
+            mockRepo.UpdateSiteAsync(siteInput).Returns(Task.FromResult(returnValue));
+
+            _mapper = mockMapper;
+            _siteService = new SiteService(mockRepo, _mapper);
+        }
+
+        public void MockForUpdateSiteAsyncWithException(SiteInputDto siteDto, Exception exception)
+        {
+            var mockRepo = Substitute.For<ISiteRepository>();
+            mockRepo.UpdateSiteAsync(Arg.Any<SiteInput>()).Throws(exception);
+
+            var mockMapper = Substitute.For<IMapper>();
+            mockMapper.Map<SiteInput>(Arg.Is<SiteInputDto>(dto => dto == siteDto)).Returns(new SiteInput
+            {
+                Name = siteDto.Name,
+                IsAhvla = siteDto.IsAhvla // Both are boolean now
+            });
+
+            _siteService = new SiteService(mockRepo, mockMapper);
+        }
+
+        public void MockForUpdateSiteAsyncWithMappingException(SiteInputDto siteDto)
+        {
+            var mockRepo = Substitute.For<ISiteRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+
+            mockMapper.Map<SiteInput>(Arg.Any<SiteInputDto>())
+                .Throws(new AutoMapperMappingException("Mapping failed"));
+
+            _siteService = new SiteService(mockRepo, mockMapper);
+        }
+
     }
 }

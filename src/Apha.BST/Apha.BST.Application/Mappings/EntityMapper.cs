@@ -27,6 +27,7 @@ namespace Apha.BST.Application.Mappings
             CreateMap<UserView, UserViewDto>().ReverseMap();
             CreateMap<VlaLocDto, VlaLoc>().ReverseMap();
             CreateMap<VlaLocView, VlaLocDto>().ReverseMap();
+            CreateMap<SiteInput, SiteInputDto>().ReverseMap();
         }
     }
 }
