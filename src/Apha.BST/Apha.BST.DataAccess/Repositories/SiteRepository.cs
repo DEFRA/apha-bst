@@ -14,12 +14,13 @@ using Apha.BST.Core;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class SiteRepository:ISiteRepository
+    public class SiteRepository : ISiteRepository
     {
         private readonly BstContext _context;
         private readonly IAuditLogRepository _auditLogRepository;
         public const string Success = "SUCCESS";
         public const string Exists = "EXISTS";
+        public const string PlantNoParameter = "@PlantNo";
         public SiteRepository(BstContext context, IAuditLogRepository auditLogRepository)
         {
             _context = context;
@@ -28,24 +29,24 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<IEnumerable<Site>> GetAllSitesAsync(string plantNo)
         {
-            var param = new SqlParameter("@PlantNo", plantNo);
+            var param = new SqlParameter(PlantNoParameter, plantNo);
             return await _context.Sites
                 .FromSqlRaw("EXEC sp_Sites_Select @PlantNo", param)
                 .ToListAsync();
         }
         public async Task<List<SiteTrainee>> GetSiteTraineesAsync(string plantNo)
         {
-            var param = new SqlParameter("@PlantNo", plantNo);
+            var param = new SqlParameter(PlantNoParameter, plantNo);
             return await _context.SiteTrainees
                 .FromSqlRaw("EXEC sp_Site_Trainee_Get @PlantNo", param)
                 .ToListAsync();
         }
-        
+
         public async Task<string> AddSiteAsync(Site site, string userName)
         {
             var parameters = new[]
             {
-        new SqlParameter("@PlantNo", site.PlantNo),
+        new SqlParameter(PlantNoParameter, site.PlantNo),
         new SqlParameter("@Name", site.Name),
         new SqlParameter("@Add1", site.AddressLine1 ?? (object)DBNull.Value),
         new SqlParameter("@Add2", site.AddressLine2 ?? (object)DBNull.Value),
@@ -88,7 +89,7 @@ namespace Apha.BST.DataAccess.Repositories
                     );
                 }
             }
-            var returnCode = (byte)parameters[10].Value;          
+            var returnCode = (byte)parameters[10].Value;
             if (returnCode == 1)
                 return Exists; // Code 1 = Site already exists
 
@@ -106,8 +107,8 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<bool> DeleteTraineeAsync(int personId)
         {
-           var parameters = new[]
-                    {
+            var parameters = new[]
+                     {
                 new SqlParameter("@PersonID", personId),
                 new SqlParameter
                 {
@@ -116,44 +117,41 @@ namespace Apha.BST.DataAccess.Repositories
                     Direction = ParameterDirection.Output,
                     Value = 0
                 }
-            };           
-            try
-            {
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
+            };
 
-                var personTraining = (byte)parameters[1].Value;
 
-                // If person has training records, return false (can't delete)
-                return personTraining == 0;
-            }
-            catch
-            {
-                throw;
-            }            
+            await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
+
+            var personTraining = (byte)parameters[1].Value;
+
+            // If person has training records, return false (can't delete)
+            return personTraining == 0;
+
+
         }
-        public async Task<string> UpdateSiteAsync(Site site)
+        public async Task<string> UpdateSiteAsync(SiteInput siteInput)
         {
             var parameters = new[]
             {
-                new SqlParameter("@Name", site.Name),
-                new SqlParameter("@PlantNo", site.PlantNo),
-                new SqlParameter("@Add1", (object?)site.AddressLine1 ?? DBNull.Value),
-                new SqlParameter("@Add2", (object?)site.AddressLine2 ?? DBNull.Value),
-                new SqlParameter("@AddTown", (object?)site.AddressTown ?? DBNull.Value),
-                new SqlParameter("@AddCounty", (object?)site.AddressCounty ?? DBNull.Value),
-                new SqlParameter("@AddPCode", (object?)site.AddressPostCode ?? DBNull.Value),
-                new SqlParameter("@AddTel", (object?)site.Telephone ?? DBNull.Value),
-                new SqlParameter("@AddFax", (object?)site.Fax ?? DBNull.Value),
-                new SqlParameter("@AddAHVLA", site.Ahvla == "AHVLA" ? 1 : 0)
+                new SqlParameter("@Name", siteInput.Name),
+                new SqlParameter(PlantNoParameter, siteInput.PlantNo),
+                new SqlParameter("@Add1", (object?)siteInput.AddressLine1 ?? DBNull.Value),
+                new SqlParameter("@Add2", (object?)siteInput.AddressLine2 ?? DBNull.Value),
+                new SqlParameter("@AddTown", (object?)siteInput.AddressTown ?? DBNull.Value),
+                new SqlParameter("@AddCounty", (object?)siteInput.AddressCounty ?? DBNull.Value),
+                new SqlParameter("@AddPCode", (object?)siteInput.AddressPostCode ?? DBNull.Value),
+                new SqlParameter("@AddTel", (object?)siteInput.Telephone ?? DBNull.Value),
+                new SqlParameter("@AddFax", (object?)siteInput.Fax ?? DBNull.Value),
+                new SqlParameter("@AddAHVLA", siteInput.IsAhvla ? 1 : 0)
             };
 
-           
-                await _context.Database.ExecuteSqlRawAsync(
-                    @"EXEC sp_Sites_Update 
+
+            await _context.Database.ExecuteSqlRawAsync(
+                @"EXEC sp_Sites_Update 
                         @Name, @PlantNo, @Add1, @Add2, @AddTown, @AddCounty, @AddPCode, @AddTel, @AddFax, @AddAHVLA",
-                    parameters);
-                return "UPDATED";
-           
+                parameters);
+            return "UPDATED";
+
         }
     }
 }

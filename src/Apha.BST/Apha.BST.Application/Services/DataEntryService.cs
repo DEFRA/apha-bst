@@ -20,9 +20,8 @@ namespace Apha.BST.Application.Services
         }
         public async Task<bool> CanEditPage(string action)
         {
-            var sites = await _dataEntryRepository.CanEditPage(action);
-            return true;
-
+            var canEdit = await _dataEntryRepository.CanEditPage(action);
+            return canEdit;
         }
     }
 }

@@ -74,12 +74,12 @@ namespace Apha.BST.Application.Services
                 return $"Trainee '{personName}' has training records. Delete them first if you wish to remove the person.";
             }
         }
-        public async Task<string> UpdateSiteAsync(SiteDto siteDto)
+        public async Task<string> UpdateSiteAsync(SiteInputDto siteInputDto)
         {
-            var site = _mapper.Map<Site>(siteDto);
-             await _siteRepository.UpdateSiteAsync(site);
-            return $"{site.Name}  updated successfully";
-            
+            var siteInput = _mapper.Map<SiteInput>(siteInputDto);
+            await _siteRepository.UpdateSiteAsync(siteInput);
+            return $"{siteInput.Name}  updated successfully";
+
         }
     }
 }
