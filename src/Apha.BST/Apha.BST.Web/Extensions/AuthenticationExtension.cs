@@ -31,7 +31,7 @@ namespace Apha.BST.Web.Extensions
             var identity = context.Principal?.Identity as ClaimsIdentity;
             if (identity == null)
             {
-                throw new UnauthorizedAccessException("Invalid identity");
+                throw new UnauthorizedAccessException("Unauthorized Access");
             }
             var email = identity.FindFirst(ClaimTypes.Email)?.Value
                       ?? identity.FindFirst("preferred_username")?.Value;
@@ -52,13 +52,13 @@ namespace Apha.BST.Web.Extensions
                 }
                 else
                 {
-                    throw new UnauthorizedAccessException("User Role Missing");
+                    throw new UnauthorizedAccessException($"User role missing for User: {email}");                   
                 }
 
             }
             else
             {
-                throw new UnauthorizedAccessException("Missing email");
+                throw new UnauthorizedAccessException("User Identifier not received from IDP");
             }
         }
 
