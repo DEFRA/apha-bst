@@ -31,7 +31,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         private readonly ITrainingService _trainingService;
         private readonly IMapper _mapper;
         private readonly IStaticDropdownService _staticDropdownService;
-        private readonly ILogger<TrainingController> _logger;
+        private readonly ILogService _logService;
         private readonly IUserDataService _userDataService;
         private static SqlException CreateSqlException()
         {
@@ -45,11 +45,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _trainingService = Substitute.For<ITrainingService>();
             _mapper = Substitute.For<IMapper>();
             _staticDropdownService = Substitute.For<IStaticDropdownService>();
-            _logger = Substitute.For<ILogger<TrainingController>>();
+            _logService = Substitute.For<ILogService>();
             _userDataService = Substitute.For<IUserDataService>();
 
             // Initialize the controller with the mocked dependencies
-            _controller = new TrainingController(_logger, _trainingService, _mapper, _staticDropdownService, _userDataService);
+            _controller = new TrainingController(_logService, _trainingService, _mapper, _staticDropdownService, _userDataService);
 
             // Setup ControllerContext with ControllerActionDescriptor (not just ActionDescriptor)
             var controllerActionDescriptor = new ControllerActionDescriptor
@@ -201,7 +201,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             await _controller.AddTraining(viewModel);
 
             // Assert
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);            
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
             Assert.Equal("Save failed", _controller.TempData["Message"]);
         }
         [Fact]
@@ -228,7 +228,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             await _controller.AddTraining(viewModel);
 
             // Assert
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
             Assert.Equal("Save failed", _controller.TempData["Message"]);
         }
 
@@ -736,7 +736,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             await _controller.EditTraining(viewModel);
 
             // Assert
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
             Assert.Equal("Error updating training", _controller.TempData["Message"]);
         }
         [Fact]
@@ -781,7 +781,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             await _controller.EditTraining(viewModel);
 
             // Assert
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+
             Assert.Equal("Error updating training", _controller.TempData["Message"]);
         }
 
@@ -1159,7 +1160,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             await _controller.DeleteTraining(traineeId, species, dateTrained);
 
             // Assert            
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+
             Assert.Equal("Delete failed", _controller.TempData["Message"]);
         }
         [Fact]
@@ -1182,7 +1184,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             await _controller.DeleteTraining(traineeId, species, dateTrained);
 
             // Assert
-            _logger.ReceivedWithAnyArgs().LogError(default!, default!, default!, default!);
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+
             Assert.Equal("Delete failed", _controller.TempData["Message"]);
         }
 

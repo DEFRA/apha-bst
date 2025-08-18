@@ -10,6 +10,7 @@ namespace Apha.BST.Application.Mappings
         {
             CreateMap<Persons, PersonsDto>().ReverseMap();
             CreateMap<Site, SiteDto>().ReverseMap();
+            CreateMap<SiteInput, SiteInputDto>().ReverseMap();
             CreateMap<SiteTrainee, SiteTraineeDto>().ReverseMap();
             CreateMap<TrainerTrainingDto, TrainerTraining>().ReverseMap();
             CreateMap<TraineeTrainer, PersonsDto>().ReverseMap();

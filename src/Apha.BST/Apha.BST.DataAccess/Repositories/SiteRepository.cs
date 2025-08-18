@@ -20,6 +20,7 @@ namespace Apha.BST.DataAccess.Repositories
         private readonly IAuditLogRepository _auditLogRepository;
         public const string Success = "SUCCESS";
         public const string Exists = "EXISTS";
+        public const string PlantNoParameter = "@PlantNo";
         public SiteRepository(BstContext context, IAuditLogRepository auditLogRepository)
         {
             _context = context;
@@ -28,14 +29,14 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<IEnumerable<Site>> GetAllSitesAsync(string plantNo)
         {
-            var param = new SqlParameter("@PlantNo", plantNo);
+            var param = new SqlParameter(PlantNoParameter, plantNo);
             return await _context.Sites
                 .FromSqlRaw("EXEC sp_Sites_Select @PlantNo", param)
                 .ToListAsync();
         }
         public async Task<List<SiteTrainee>> GetSiteTraineesAsync(string plantNo)
         {
-            var param = new SqlParameter("@PlantNo", plantNo);
+            var param = new SqlParameter(PlantNoParameter, plantNo);
             return await _context.SiteTrainees
                 .FromSqlRaw("EXEC sp_Site_Trainee_Get @PlantNo", param)
                 .ToListAsync();
@@ -45,7 +46,7 @@ namespace Apha.BST.DataAccess.Repositories
         {
             var parameters = new[]
             {
-        new SqlParameter("@PlantNo", site.PlantNo),
+        new SqlParameter(PlantNoParameter, site.PlantNo),
         new SqlParameter("@Name", site.Name),
         new SqlParameter("@Add1", site.AddressLine1 ?? (object)DBNull.Value),
         new SqlParameter("@Add2", site.AddressLine2 ?? (object)DBNull.Value),
@@ -116,35 +117,32 @@ namespace Apha.BST.DataAccess.Repositories
                     Direction = ParameterDirection.Output,
                     Value = 0
                 }
-            };           
-            try
-            {
+            };
+           
+            
                 await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
 
                 var personTraining = (byte)parameters[1].Value;
 
                 // If person has training records, return false (can't delete)
-                return personTraining == 0;
-            }
-            catch
-            {
-                throw;
-            }            
+               return personTraining == 0;
+            
+           
         }
-        public async Task<string> UpdateSiteAsync(Site site)
+        public async Task<string> UpdateSiteAsync(SiteInput siteInput)
         {
             var parameters = new[]
             {
-                new SqlParameter("@Name", site.Name),
-                new SqlParameter("@PlantNo", site.PlantNo),
-                new SqlParameter("@Add1", (object?)site.AddressLine1 ?? DBNull.Value),
-                new SqlParameter("@Add2", (object?)site.AddressLine2 ?? DBNull.Value),
-                new SqlParameter("@AddTown", (object?)site.AddressTown ?? DBNull.Value),
-                new SqlParameter("@AddCounty", (object?)site.AddressCounty ?? DBNull.Value),
-                new SqlParameter("@AddPCode", (object?)site.AddressPostCode ?? DBNull.Value),
-                new SqlParameter("@AddTel", (object?)site.Telephone ?? DBNull.Value),
-                new SqlParameter("@AddFax", (object?)site.Fax ?? DBNull.Value),
-                new SqlParameter("@AddAHVLA", site.Ahvla == "AHVLA" ? 1 : 0)
+                new SqlParameter("@Name", siteInput.Name),
+                new SqlParameter(PlantNoParameter, siteInput.PlantNo),
+                new SqlParameter("@Add1", (object?)siteInput.AddressLine1 ?? DBNull.Value),
+                new SqlParameter("@Add2", (object?)siteInput.AddressLine2 ?? DBNull.Value),
+                new SqlParameter("@AddTown", (object?)siteInput.AddressTown ?? DBNull.Value),
+                new SqlParameter("@AddCounty", (object?)siteInput.AddressCounty ?? DBNull.Value),
+                new SqlParameter("@AddPCode", (object?)siteInput.AddressPostCode ?? DBNull.Value),
+                new SqlParameter("@AddTel", (object?)siteInput.Telephone ?? DBNull.Value),
+                new SqlParameter("@AddFax", (object?)siteInput.Fax ?? DBNull.Value),
+                new SqlParameter("@AddAHVLA", siteInput.IsAhvla ? 1 : 0)
             };
 
            
