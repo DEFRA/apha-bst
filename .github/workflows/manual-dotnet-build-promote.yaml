@@ -55,7 +55,7 @@ jobs:
         id: imgtag
         shell: pwsh
         run: |
-          $imageTag = "v${{ github.event.inputs.ECRPUSH }}-dev"
+          $imageTag = "v${{ github.event.inputs.RELEASEVERSION }}-dev"
           "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
 
       - name: Print Docker image tag
