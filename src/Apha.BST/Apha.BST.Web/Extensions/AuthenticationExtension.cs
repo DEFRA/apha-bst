@@ -31,8 +31,7 @@ namespace Apha.BST.Web.Extensions
             var identity = context.Principal?.Identity as ClaimsIdentity;
             if (identity == null)
             {
-                context.Fail("Invalid identity");
-                return;
+                throw new UnauthorizedAccessException("Invalid identity");
             }
             var email = identity.FindFirst(ClaimTypes.Email)?.Value
                       ?? identity.FindFirst("preferred_username")?.Value;
@@ -53,16 +52,13 @@ namespace Apha.BST.Web.Extensions
                 }
                 else
                 {
-                    context.Fail("User Role Missing");
-                    return;
-
+                    throw new UnauthorizedAccessException("User Role Missing");
                 }
 
             }
             else
             {
-                context.Fail("Missing email");
-                return;
+                throw new UnauthorizedAccessException("Missing email");
             }
         }
 
@@ -89,12 +85,12 @@ namespace Apha.BST.Web.Extensions
 
         private static Task HandleRemoteFailure(RemoteFailureContext context)
         {
-            var errorMessage = context.Failure?.Message ?? "Unknown authentication error.";
-            var errorUrl = $"/Error/AccessDenied?error={Uri.EscapeDataString(errorMessage)}";
+            if (context.Failure?.InnerException is UnauthorizedAccessException unauthorizedEx)
+            {
+                throw unauthorizedEx;
+            }
 
-            context.Response.Redirect(errorUrl);
-            context.HandleResponse(); // Prevents default handling
-            return Task.CompletedTask;
+            throw context.Failure ?? new Exception("Unknown authentication error.");
         }
     }
 }

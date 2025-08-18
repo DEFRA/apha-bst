@@ -65,10 +65,12 @@ namespace Apha.BST.Web.Extensions
 
             app.UseRouting();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseMiddleware<ExceptionMiddleware>();
+           
 
             // Default route
             app.MapControllerRoute(

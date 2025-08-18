@@ -4,9 +4,9 @@ namespace Apha.BST.Web.Controllers
 {
     public class ErrorController : Controller
     {
-        public IActionResult AccessDenied(string error)
+        public IActionResult AccessDenied()
         {
-            ViewBag.ErrorMessage = error ?? "Access Denied";
+           
             return View();
         }
     }
