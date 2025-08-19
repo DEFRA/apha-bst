@@ -1,0 +1,71 @@
+name: Promote DEV Release
+on:
+  workflow_dispatch:
+    inputs:
+      RELEASEVERSION:
+        description: 'DEV Application Release Version'
+        type: string
+        required: true
+
+      environment:
+        description: "Select environment"
+        required: true
+        type: choice
+        options:
+          - test
+          - pre-prod
+          - prod          
+
+env:
+  REPOSITORY: apha/bst
+jobs:
+  push-image:
+    name: Retag & Push Docker Image
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_ENV_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ENV_ACCOUNT }}:role/${{ secrets.AWS_ENV_ROLE }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Compose image tags
+        id: imgtag
+        run: |
+          DEV_TAG="v${{ github.event.inputs.RELEASEVERSION }}-dev"
+
+          case "${{ github.event.inputs.environment }}" in
+            test)
+              FINAL_TAG="v${{ github.event.inputs.RELEASEVERSION }}-tst"
+              ;;
+            preprod)
+              FINAL_TAG="v${{ github.event.inputs.RELEASEVERSION }}-pre"
+              ;;
+            prod)
+              FINAL_TAG="v${{ github.event.inputs.RELEASEVERSION }}"
+              ;;
+          esac
+
+          echo "dev_tag=$DEV_TAG" >> $GITHUB_OUTPUT
+          echo "final_tag=$FINAL_TAG" >> $GITHUB_OUTPUT
+
+      - name: Retag & Push Docker Image
+        run: |
+          IMAGE_NAME="${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}"
+          DEV_TAG="${{ steps.imgtag.outputs.dev_tag }}"
+          FINAL_TAG="${{ steps.imgtag.outputs.final_tag }}"
+
+          echo "Pulling source image: $IMAGE_NAME:$DEV_TAG"
+          docker pull "$IMAGE_NAME:$DEV_TAG"
+
+          echo "Tagging as: $IMAGE_NAME:$FINAL_TAG"
+          docker tag "$IMAGE_NAME:$DEV_TAG" "$IMAGE_NAME:$FINAL_TAG"
+
+          echo "Pushing Docker image..."
+          docker push "$IMAGE_NAME:$FINAL_TAG"
