@@ -12,7 +12,7 @@ namespace Apha.BST.Application.Mappings
             CreateMap<Site, SiteDto>().ReverseMap();
             CreateMap<SiteTrainee, SiteTraineeDto>().ReverseMap();
             CreateMap<TrainerTrainingDto, TrainerTraining>().ReverseMap();
-            CreateMap<TraineeTrainer, PersonsDto>().ReverseMap();
+            CreateMap<TraineeTrainer, TraineeDto>().ReverseMap();
             CreateMap<TrainingDto, Training>().ReverseMap();
             CreateMap<EditTrainingDto, EditTraining>().ReverseMap();           
             CreateMap<TrainerHistoryDto, TrainerHistory>().ReverseMap();
@@ -28,6 +28,14 @@ namespace Apha.BST.Application.Mappings
             CreateMap<VlaLocDto, VlaLoc>().ReverseMap();
             CreateMap<VlaLocView, VlaLocDto>().ReverseMap();
             CreateMap<SiteInput, SiteInputDto>().ReverseMap();
+            CreateMap<SiteReport, SiteReportDto>().ReverseMap();
+            CreateMap<TrainerReport, TrainerReportDto>().ReverseMap();
+            // Example using AutoMapper
+            CreateMap<PeopleReport, PeopleReportDto>()
+                .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.Name)); // or src.Location, depending on your entity
+
+            CreateMap<TrainingReport, TrainingReportDto>().ReverseMap();
+            CreateMap<AphaReport, AphaReportDto>().ReverseMap();
         }
     }
 }

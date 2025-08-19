@@ -53,6 +53,11 @@ public partial class BstContext : DbContext
     public DbSet<PersonDetail> PersonDetails { get; set; }
     public virtual DbSet<UserView> UserViews { get; set; }
     public virtual DbSet<VlaLocView> VlaLocViews { get; set; }
+    public DbSet<SiteReport> SiteReports { get; set; } = default!;
+    public DbSet<TrainerReport> TrainerReports { get; set; } = default!;
+    public DbSet<PeopleReport> PeopleReports { get; set; } = default!;
+    public DbSet<TrainingReport> TrainingReports { get; set; } = default!;
+    public DbSet<AphaReport> AphaReports { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -308,7 +313,11 @@ public partial class BstContext : DbContext
         modelBuilder.Entity<PersonDetail>().HasNoKey();
         modelBuilder.Entity<VlaLocView>().HasNoKey().ToView("vwVlaLocations");
         modelBuilder.Entity<UserView>().HasNoKey().ToView("vwUsers");
-
+        modelBuilder.Entity<SiteReport>().HasNoKey();
+        modelBuilder.Entity<TrainerReport>().HasNoKey();
+        modelBuilder.Entity<PeopleReport>().HasNoKey();
+        modelBuilder.Entity<TrainingReport>().HasNoKey();
+        modelBuilder.Entity<AphaReport>().HasNoKey();
     }
   
 }

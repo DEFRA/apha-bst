@@ -66,8 +66,8 @@ namespace Apha.BST.Application.UnitTests.Services
             // Sample data for trainees
             var trainees = new List<SiteTrainee>
         {
-            new SiteTrainee { PersonId = 1, Person = "John Doe", Cattle = true, SheepAndGoat = false },
-            new SiteTrainee { PersonId = 2, Person = "Jane Smith", Cattle = false, SheepAndGoat = true }
+            new SiteTrainee { PersonId = 1, Person = "John Doe"},
+            new SiteTrainee { PersonId = 2, Person = "Jane Smith"}
         };
 
             // Mock repository
@@ -79,9 +79,7 @@ namespace Apha.BST.Application.UnitTests.Services
             {
                 cfg.CreateMap<SiteTrainee, SiteTraineeDto>()
                     .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
-                    .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person))
-                    .ForMember(dest => dest.Cattle, opt => opt.MapFrom(src => src.Cattle))
-                    .ForMember(dest => dest.SheepAndGoat, opt => opt.MapFrom(src => src.SheepAndGoat));
+                    .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person));
             });
 
             _mapper = config.CreateMapper();

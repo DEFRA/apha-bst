@@ -7,16 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Apha.BST.Web.Controllers
 {
-    
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly INewsService _newsServicee;
         private readonly IMapper _mapper;
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger, INewsService newsServicee, IMapper mapper)
+       
+        public HomeController(INewsService newsServicee, IMapper mapper)
         {
-            _logger = logger;
+           
             _newsServicee = newsServicee;
             _mapper = mapper;
         }
@@ -31,7 +30,6 @@ namespace Apha.BST.Web.Controllers
 
         public IActionResult Privacy()
         {
-            _logger.LogError("test for log error");
             return View();
         }
 

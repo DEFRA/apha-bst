@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
+namespace Apha.BST.Core.Entities
+{
+    public class TrainerReport
+    {
+        public int ID { get; set; }
+        public string Trainer { get; set; } = null!;
+        public int Trained { get; set; }
+        public int RunTot { get; set; }
+        public int Excel { get; set; }
+    }
+}

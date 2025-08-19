@@ -97,13 +97,13 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             _trainingService = new TrainingService(mockRepo, mockMapper);
         }
 
-        public void MockForGetTraineesAsync(List<TraineeTrainer> trainees, List<PersonsDto> mappedDtos)
+        public void MockForGetTraineesAsync(List<TraineeTrainer> trainees, List<TraineeDto> mappedDtos)
         {
             var mockRepo = Substitute.For<ITrainingRepository>();
             mockRepo.GetAllTraineesAsync().Returns(trainees);
 
             var mockMapper = Substitute.For<IMapper>();
-            mockMapper.Map<List<PersonsDto>>(trainees).Returns(mappedDtos);
+            mockMapper.Map<List<TraineeDto>>(trainees).Returns(mappedDtos);
 
             _trainingService = new TrainingService(mockRepo, mockMapper);
         }
@@ -111,7 +111,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 
 
 
-        public void MockForGetTraineesAsync(IEnumerable<TraineeTrainer> trainees, IEnumerable<PersonsDto> mappedPersons)
+        public void MockForGetTraineesAsync(IEnumerable<TraineeTrainer> trainees, IEnumerable<TraineeDto> mappedPersons)
         {
             var mockRepo = Substitute.For<ITrainingRepository>();
             var mockMapper = Substitute.For<IMapper>();
@@ -120,7 +120,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             mockRepo.GetAllTraineesAsync().Returns(Task.FromResult(trainees.ToList()));
 
             // Mock the mapper to return the corresponding DTOs
-            mockMapper.Map<List<PersonsDto>>(trainees).Returns(mappedPersons);
+            mockMapper.Map<List<TraineeDto>>(trainees).Returns(mappedPersons);
 
             _trainingService = new TrainingService(mockRepo, mockMapper);
         }
