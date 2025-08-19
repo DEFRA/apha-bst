@@ -11,12 +11,12 @@
 
         public void LogGeneralException(Exception ex, string context)
         {
-            _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [{Context:l}]: {Message:l}", context, ex.Message);
+            _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [{Context:l}]: {Message}", context, ex.Message);
         }
 
         public void LogSqlException(Exception ex, string context)
         {
-            _logger.LogError(ex, "[BST.SQLException] Error in [{Context:l}]: {Message:l}", context, ex.Message);
+            _logger.LogError(ex, "[BST.SQLException] Error in [{Context:l}]: {Message}", context, ex.Message);
         }
     }
 }
