@@ -29,7 +29,7 @@ namespace Apha.BST.Web.Middleware
                 if (ex is UnauthorizedAccessException)
                 { 
                     errorCode = "403 - Forbidden";
-                    _logger.LogError(ex, "[{ErrorType}] Error type [{ErrorCode}]: {Message}", ErrorType, errorCode, ex.Message);
+                    _logger.LogError(ex, "[{ErrorType:l}] Error type [{ErrorCode:l}]: {Message:l}", ErrorType, errorCode, ex.Message);                    
                     context.Response.Redirect("/Error/AccessDenied");
                     return;
                 }
@@ -43,7 +43,7 @@ namespace Apha.BST.Web.Middleware
                 {
                     errorCode = "500 - Internal Server Error";
                 }
-                _logger.LogError(ex, "[{ErrorType}] Error type [{ErrorCode}]: {Message}", ErrorType, errorCode, ex.Message);
+                _logger.LogError(ex, "[{ErrorType:l}] Error type [{ErrorCode:l}]: {Message:l}", ErrorType, errorCode, ex.Message);
 
 
                 // Redirect to generic error page (no code in query string)

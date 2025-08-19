@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Apha.BST.Web.Controllers
 {
-    
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly INewsService _newsServicee;
@@ -31,7 +31,6 @@ namespace Apha.BST.Web.Controllers
 
         public IActionResult Privacy()
         {
-            _logger.LogError("test for log error");
             return View();
         }
 
