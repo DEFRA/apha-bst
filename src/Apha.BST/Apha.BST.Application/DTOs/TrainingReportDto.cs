@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Application.DTOs
+{
+    public class TrainingReportDto
+    {
+        public string Trainer { get; set; } = null!;
+        public string Trainee { get; set; } = null!;
+        public string TrainedOn { get; set; } = null!;
+        public string TrainingAnimal { get; set; } = null!;
+        public string VLA { get; set; } = null!;
+    }
+}

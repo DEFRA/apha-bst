@@ -39,9 +39,7 @@ namespace Apha.BST.Application.Services
             return trainees.Select(t => new SiteTraineeDto
             {
                 PersonId = t.PersonId,
-                Person = t.Person,
-                Cattle = t.Cattle,
-                SheepAndGoat = t.SheepAndGoat
+                Person = t.Person
             }).ToList();
         }
 

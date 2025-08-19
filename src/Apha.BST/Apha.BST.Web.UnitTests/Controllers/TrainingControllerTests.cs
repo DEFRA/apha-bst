@@ -75,7 +75,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             bool canEdit = true;
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
-            var persons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var persons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             _trainingService.GetTraineesAsync().Returns(persons);
 
             var trainingTypes = new List<SelectListItem> { new SelectListItem { Value = "Basic", Text = "Basic" } };
@@ -261,11 +261,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType)
                 .Returns(dto);
 
-            var persons = new List<PersonsDto> { new PersonsDto { PersonId = traineeId, Person = "John" } };
+            var persons = new List<TraineeDto> { new TraineeDto { PersonId = traineeId, Person = "John" } };
             _trainingService.GetTraineesAsync().Returns(Task.FromResult(persons));
 
             _staticDropdownService.GetTrainingTypes().Returns(new List<SelectListItem> { new SelectListItem { Value = "Basic", Text = "Basic" } });
-            _staticDropdownService.GetTrainingAnimal().Returns(new List<SelectListItem> { new SelectListItem { Value = "Dog", Text = "Dog" } });
+            _staticDropdownService.GetTrainingAnimal().Returns(new List<SelectListItem> { new SelectListItem { Value = "Cattle", Text = "Cattle" } });
 
             // Act
             var result = await _controller.EditTraining(traineeId, trainerId, species, dateTrained, trainingType);
@@ -435,7 +435,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             _controller.ModelState.AddModelError("TraineeId", "Required");
 
-            var persons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var persons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             _trainingService.GetTraineesAsync().Returns(Task.FromResult(persons));
 
             _staticDropdownService.GetTrainingTypes().Returns(new List<SelectListItem> {
@@ -488,10 +488,10 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType)
                 .Returns(dto);
 
-            var persons = new List<PersonsDto>
+            var persons = new List<TraineeDto>
             {
-                new PersonsDto { PersonId = 1, Person = "John" },
-                new PersonsDto { PersonId = 2, Person = "Jane" }
+                new TraineeDto { PersonId = 1, Person = "John" },
+                new TraineeDto { PersonId = 2, Person = "Jane" }
             };
             _trainingService.GetTraineesAsync().Returns(Task.FromResult(persons));
 
@@ -505,7 +505,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var animals = new List<SelectListItem>
             {
                 new SelectListItem { Value = "Cattle", Text = "Cattle" },
-                new SelectListItem { Value = "Sheep&Goat", Text = "Sheep&Goat" }
+                new SelectListItem { Value = "Sheep and Goat", Text = "Sheep and Goat" }
             };
             _staticDropdownService.GetTrainingAnimal().Returns(animals);
 
@@ -623,7 +623,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             _controller.ModelState.AddModelError("error", "some error");
 
-            var persons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var persons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             _trainingService.GetTraineesAsync().Returns(Task.FromResult(persons));
 
             _staticDropdownService.GetTrainingTypes().Returns(new List<SelectListItem> {
@@ -796,7 +796,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             bool canEdit = true;
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
-            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var allPersons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             var allTrainee = new List<TraineeTrainerViewModel> { new TraineeTrainerViewModel { PersonID = 1, Person = "John Doe" } };
 
             _trainingService.GetTraineesAsync().Returns(allPersons);
@@ -821,7 +821,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             bool canEdit = true;
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
-            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var allPersons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             var allTrainee = new List<TraineeTrainerViewModel> { new TraineeTrainerViewModel { PersonID = 1, Person = "John Doe" } };
             var allTrainings = new List<TrainerTrainingDto> { new TrainerTrainingDto { PersonID = 1, TrainingType = "Type1" } };
             var mappedTrainings = new List<TrainingViewModel> { new TrainingViewModel { TraineeId = 1, TrainingType = "Type1" } };
@@ -856,7 +856,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             bool canEdit = true;
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
-            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var allPersons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             var historyDto = new List<TrainerHistoryDto> { new TrainerHistoryDto { TrainerID = 1, TrainingAnimal = "Cattle" } };
             var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel { TrainerID = 1, TrainingAnimal = "Cattle" } };
             var trainingAnimalList = new List<SelectListItem> { new SelectListItem { Value = "Cattle", Text = "Cattle" } };
@@ -897,10 +897,10 @@ namespace Apha.BST.Web.UnitTests.Controllers
             int selectedTrainerId = 1;
             string selectedSpecies = "Sheep";
 
-            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
-            var historyDto = new List<TrainerHistoryDto> { new TrainerHistoryDto { TrainerID = 1, TrainingAnimal = "Sheep" } };
-            var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel { TrainerID = 1, TrainingAnimal = "Sheep" } };
-            var trainingAnimalList = new List<SelectListItem> { new SelectListItem { Value = "Sheep", Text = "Sheep" } };
+            var allPersons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
+            var historyDto = new List<TrainerHistoryDto> { new TrainerHistoryDto { TrainerID = 1, TrainingAnimal = "Sheep and Goat" } };
+            var historyModel = new List<TrainingHistoryModel> { new TrainingHistoryModel { TrainerID = 1, TrainingAnimal = "Sheep and Goat" } };
+            var trainingAnimalList = new List<SelectListItem> { new SelectListItem { Value = "Sheep and Goat", Text = "Sheep and Goat" } };
 
             _trainingService.GetTraineesAsync().Returns(allPersons);
             _trainingService.GetTrainerHistoryAsync(selectedTrainerId, selectedSpecies).Returns(historyDto);
@@ -935,7 +935,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             bool canEdit = true;
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
-            var allPersons = new List<PersonsDto>();
+            var allPersons = new List<TraineeDto>();
             var historyDto = new List<TrainerHistoryDto>();
             var historyModel = new List<TrainingHistoryModel>();
             var trainingAnimalList = new List<SelectListItem>();
@@ -971,7 +971,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             bool canEdit = true;
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
-            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var allPersons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             var allTrainers = new List<TrainerTrainedModel> { new TrainerTrainedModel { PersonID = 1, Person = "John Doe" } };
 
             _trainingService.GetTraineesAsync().Returns(allPersons);
@@ -1002,7 +1002,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
             int selectedTrainerId = 1;
-            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var allPersons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
             var allTrainers = new List<TrainerTrainedModel> { new TrainerTrainedModel { PersonID = 1, Person = "John Doe" } };
             var trainedList = new List<TrainerTrainedDto> { new TrainerTrainedDto { TraineeNo = 2, Trainee = "Jane Doe" } };
 
@@ -1050,7 +1050,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
 
             int selectedTrainerId = 1;
-            var allPersons = new List<PersonsDto> { new PersonsDto { PersonId = 1, Person = "John" } };
+            var allPersons = new List<TraineeDto> { new TraineeDto { PersonId = 1, Person = "John" } };
 
             _trainingService.GetTraineesAsync().Returns(allPersons);
             _trainingService.GetTrainerTrainedAsync(selectedTrainerId).Throws(new Exception("Database error"));

@@ -29,7 +29,7 @@ namespace Apha.BST.Web.Extensions
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IUserService, UserService>();
-           
+            services.AddScoped<IReportService, ReportService>();
             return services;
         }
         public static IServiceCollection AddRepositories(this IServiceCollection services)
@@ -43,7 +43,7 @@ namespace Apha.BST.Web.Extensions
             services.AddScoped<INewsRepository, NewsRepository>();
             services.AddScoped<IDataEntryRepository, DataEntryRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-
+            services.AddScoped<IReportRepository, ReportRepository>();
             return services;
         }
     }

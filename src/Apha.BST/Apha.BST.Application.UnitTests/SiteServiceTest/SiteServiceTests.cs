@@ -115,8 +115,6 @@ namespace Apha.BST.Application.UnitTests.Services
             result.Count.Should().Be(2);  // Expecting 2 trainees
             result[0].Person.Should().Be("John Doe");
             result[1].Person.Should().Be("Jane Smith");
-            result[0].Cattle.Should().BeTrue();
-            result[1].SheepAndGoat.Should().BeTrue();
         }
 
         [Fact]

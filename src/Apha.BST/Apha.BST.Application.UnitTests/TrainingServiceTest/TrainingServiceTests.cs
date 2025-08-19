@@ -245,10 +245,10 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         new TraineeTrainer { PersonId = 1, Person = "John Doe" },
         new TraineeTrainer { PersonId = 2, Person = "Jane Smith" }
     };
-            var mappedDtos = new List<PersonsDto>
+            var mappedDtos = new List<TraineeDto>
     {
-        new PersonsDto { PersonId = 1, Person = "John Doe" },
-        new PersonsDto { PersonId = 2, Person = "Jane Smith" }
+        new TraineeDto { PersonId = 1, Person = "John Doe" },
+        new TraineeDto { PersonId = 2, Person = "Jane Smith" }
     };
 
             MockForGetTraineesAsync(trainees, mappedDtos);
@@ -264,7 +264,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         public async Task GetTraineesAsync_ShouldReturnEmptyList_WhenNoTraineesExist()
         {
             var trainees = new List<TraineeTrainer>();
-            var mappedDtos = new List<PersonsDto>();
+            var mappedDtos = new List<TraineeDto>();
 
             MockForGetTraineesAsync(trainees, mappedDtos);
 

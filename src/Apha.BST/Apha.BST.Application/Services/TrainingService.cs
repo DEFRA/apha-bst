@@ -23,10 +23,10 @@ namespace Apha.BST.Application.Services
             _trainingRepository = trainingRepository;
             _mapper = mapper;            
         }
-        public async Task<List<PersonsDto>> GetTraineesAsync()
+        public async Task<List<TraineeDto>> GetTraineesAsync()
         {
             var persons = await _trainingRepository.GetAllTraineesAsync();
-            return _mapper.Map<List<PersonsDto>>(persons);
+            return _mapper.Map<List<TraineeDto>>(persons);
         }
 
         public async Task<IEnumerable<TrainerTrainingDto>> GetTrainingByTraineeAsync(string traineeId)
