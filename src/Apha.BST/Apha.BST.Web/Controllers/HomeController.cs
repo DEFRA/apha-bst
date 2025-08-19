@@ -12,11 +12,10 @@ namespace Apha.BST.Web.Controllers
     {
         private readonly INewsService _newsServicee;
         private readonly IMapper _mapper;
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger, INewsService newsServicee, IMapper mapper)
+       
+        public HomeController(INewsService newsServicee, IMapper mapper)
         {
-            _logger = logger;
+           
             _newsServicee = newsServicee;
             _mapper = mapper;
         }
