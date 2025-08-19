@@ -14,17 +14,6 @@ $major = [int]$parts[0]
 $minor = [int]$parts[1]
 $patch = [int]$parts[2]
 
-if ($CommitMsg -match 'BREAKING CHANGE' -or $CommitMsg -match '^feat!?:') {
-  $major++
-  $minor = 0
-  $patch = 0
-} elseif ($CommitMsg -match '^feat:') {
-  $minor++
-  $patch = 0
-} elseif ($CommitMsg -match '^fix:') {
-  $patch++
-}
-
 $bumpedVersion = "$major.$minor.$patch"
 
 # Set output
