@@ -9,8 +9,8 @@ namespace Apha.BST.Application.DTOs
     public class ReportDto
     {
         public int ReportId { get; set; }
-        public string ReportName { get; set; } = null!;
+        public string? ReportName { get; set; }
         public DateTime GeneratedDate { get; set; }
-        public string GeneratedBy { get; set; } = null!;
+        public string? GeneratedBy { get; set; }
     }
 }
