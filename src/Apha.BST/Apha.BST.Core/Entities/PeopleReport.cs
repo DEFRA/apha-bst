@@ -10,11 +10,11 @@ namespace Apha.BST.Core.Entities
     public class PeopleReport
     {
         public int PersonID { get; set; }
-        public string Person { get; set; } = null!;
-        public string Name { get; set; } = null!;
-        public string VLA { get; set; } = null!;
-        public string Trainer { get; set; } = null!;
-        public string Trainee { get; set; } = null!;
-        public string Trained { get; set; } = null!;
+        public string? Person { get; set; }
+        public string? Name { get; set; }
+        public string? VLA { get; set; }
+        public string? Trainer { get; set; }
+        public string? Trainee { get; set; }
+        public string? Trained { get; set; }
     }
 }

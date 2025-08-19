@@ -8,8 +8,8 @@ namespace Apha.BST.Application.DTOs
 {
     public class AphaReportDto
     {
-        public string ID { get; set; } = null!;
-        public string Location { get; set; } = null!;
-        public string APHA { get; set; } = null!;
+        public string? ID { get; set; }
+        public string? Location { get; set; }
+        public string? APHA { get; set; }
     }
 }

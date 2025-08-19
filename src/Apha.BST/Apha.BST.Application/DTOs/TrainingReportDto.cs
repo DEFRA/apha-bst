@@ -8,10 +8,10 @@ namespace Apha.BST.Application.DTOs
 {
     public class TrainingReportDto
     {
-        public string Trainer { get; set; } = null!;
-        public string Trainee { get; set; } = null!;
-        public string TrainedOn { get; set; } = null!;
-        public string TrainingAnimal { get; set; } = null!;
-        public string VLA { get; set; } = null!;
+        public string? Trainer { get; set; }
+        public string? Trainee { get; set; }
+        public string? TrainedOn { get; set; }
+        public string? TrainingAnimal { get; set; }
+        public string? VLA { get; set; }
     }
 }
