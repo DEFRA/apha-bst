@@ -12,7 +12,7 @@ namespace Apha.BST.Application.DTOs
         public int PersonID {  get; set; }
 		public string? Person {  get; set; }
        
-        public string PlantNo { get; set; } = null!;
+        public string? PlantNo { get; set; }
        
         public string? Name { get; set; }
     }

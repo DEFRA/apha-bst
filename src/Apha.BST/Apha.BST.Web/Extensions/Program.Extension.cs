@@ -56,7 +56,7 @@ namespace Apha.BST.Web.Extensions
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
             }
 
             app.UseHsts();

@@ -21,7 +21,7 @@ namespace Apha.BST.Core.Entities
        
         public string? Person { get; set; }
       
-        public string PlantNo { get; set; } = null!;
+        public string? PlantNo { get; set; }
        
         public string? Name { get; set; }
     }

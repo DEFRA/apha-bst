@@ -58,6 +58,7 @@ public partial class BstContext : DbContext
     public DbSet<PeopleReport> PeopleReports { get; set; } = default!;
     public DbSet<TrainingReport> TrainingReports { get; set; } = default!;
     public DbSet<AphaReport> AphaReports { get; set; } = default!;
+    public virtual DbSet<StoredProcedureList> StoredProcedureLists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -318,6 +319,7 @@ public partial class BstContext : DbContext
         modelBuilder.Entity<PeopleReport>().HasNoKey();
         modelBuilder.Entity<TrainingReport>().HasNoKey();
         modelBuilder.Entity<AphaReport>().HasNoKey();
+        modelBuilder.Entity<StoredProcedureList>().HasNoKey();
     }
   
 }

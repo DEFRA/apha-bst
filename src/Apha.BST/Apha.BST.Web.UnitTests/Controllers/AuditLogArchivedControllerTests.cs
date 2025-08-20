@@ -1,0 +1,197 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Interfaces;
+using Apha.BST.Application.Pagination;
+using Apha.BST.Web.Controllers;
+using Apha.BST.Web.Models;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using NSubstitute;
+
+namespace Apha.BST.Web.UnitTests.Controllers
+{
+    public class AuditLogArchivedControllerTests
+    {
+        private readonly IAuditlogArchivedService _mockAuditLogArchiveService;
+        private readonly IMapper _mockMapper;
+        private readonly AuditLogArchivedController _controller;
+
+        public AuditLogArchivedControllerTests()
+        {
+            _mockAuditLogArchiveService = Substitute.For<IAuditlogArchivedService>();
+            _mockMapper = Substitute.For<IMapper>();
+            _controller = new AuditLogArchivedController(_mockAuditLogArchiveService, _mockMapper);
+        }
+        private static List<AuditLogArchivedDto> SampleAuditLogs = new List<AuditLogArchivedDto>
+        {
+            new AuditLogArchivedDto { Procedure = "Proc1", Parameters = "Param1", User = "User1", Date = DateTime.Now, TransactionType = "Type1" },
+            new AuditLogArchivedDto { Procedure = "Proc2", Parameters = "Param2", User = "User2", Date = DateTime.Now.AddDays(-1), TransactionType = "Type2" }
+        };
+        [Fact]
+        public async Task Index_ValidInput_ReturnsViewWithAuditLogData()
+        {
+            // Arrange
+            var queryParameters = new QueryParameters
+            {
+                Search = "%",
+                Page = 1,
+                PageSize = 30,
+                SortBy = "",
+                Descending = false
+            };
+
+            var pagedResult = new PaginatedResult<AuditLogArchivedDto>
+            {
+                data = SampleAuditLogs,
+                TotalCount = SampleAuditLogs.Count
+            };
+
+            _mockAuditLogArchiveService.GetArchiveAuditLogsAsync(Arg.Any<QueryParameters>(), Arg.Any<string>())
+            .Returns(pagedResult);
+
+            var mappedLogs = SampleAuditLogs.Select(log => new AuditLogsArchivedViewModel()).ToList();
+            _mockMapper.Map<IEnumerable<AuditLogsArchivedViewModel>>(Arg.Any<IEnumerable<AuditLogArchivedDto>>())
+            .Returns(mappedLogs);
+
+            var storedProcedureNames = new List<string> { "Proc1", "Proc2" };
+            _mockAuditLogArchiveService.GetStoredProcedureNamesAsync().Returns(storedProcedureNames);
+
+            // Act
+            var result = await _controller.Index();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<AuditLogArchivedListViewModel>(viewResult.Model);
+            Assert.Equal(mappedLogs, model.AuditLogsResults);
+            Assert.Equal(2, model.StoredProcedures.Count());
+            Assert.Equal("%", model.StoredProcedure);
+            Assert.Equal(1, model.Pagination?.PageNumber);
+            Assert.Equal(30, model.Pagination?.PageSize);
+        }
+
+
+        [Fact]
+        public async Task Index_ValidInput_ReturnsViewWithCorrectModel()
+        {
+            // Arrange
+            var queryParameters = new QueryParameters
+            {
+                Search = "%",
+                Page = 1,
+                PageSize = 30,
+                SortBy = "",
+                Descending = false
+            };
+
+            var auditLogsDto = new PaginatedResult<AuditLogArchivedDto>
+            {
+                data = new List<AuditLogArchivedDto>(),
+                TotalCount = 100
+            };
+
+            var mappedAuditLogs = new List<AuditLogsArchivedViewModel>();
+            var storedProcedureNames = new List<string> { "Procedure1", "Procedure2" };
+
+            _mockAuditLogArchiveService.GetArchiveAuditLogsAsync(Arg.Any<QueryParameters>(), Arg.Any<string>())
+            .Returns(auditLogsDto);
+            _mockAuditLogArchiveService.GetStoredProcedureNamesAsync().Returns(storedProcedureNames);
+            _mockMapper.Map<IEnumerable<AuditLogsArchivedViewModel>>(Arg.Any<IEnumerable<AuditLogArchivedDto>>())
+            .Returns(mappedAuditLogs);
+
+            // Act
+            var result = await _controller.Index();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<AuditLogArchivedListViewModel>(viewResult.Model);
+            Assert.Equal(mappedAuditLogs, model.AuditLogsResults);
+            Assert.Equal(2, model.StoredProcedures.Count());
+            Assert.Equal("%", model.StoredProcedure);
+            Assert.Equal(100, model.Pagination?.TotalCount);
+            Assert.Equal(1, model.Pagination?.PageNumber);
+            Assert.Equal(30, model.Pagination?.PageSize);
+        }
+
+        [Fact]
+        public async Task Index_InvalidModelState_ReturnsBadRequest()
+        {
+            // Arrange
+            _controller.ModelState.AddModelError("error", "Some error");
+
+            // Act
+            var result = await _controller.Index();
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+        [Fact]
+        public async Task Index_StoredProcedureParameter_PassedToService()
+        {
+            // Arrange
+            SetupMockServices();
+
+            // Act
+            await _controller.Index(storedProcedure: "TestProcedure");
+
+            // Assert
+            await _mockAuditLogArchiveService.Received().GetArchiveAuditLogsAsync(
+            Arg.Any<QueryParameters>(),
+            Arg.Is<string>(s => s == "TestProcedure")
+            );
+        }
+        [Fact]
+        public async Task Index_ValidSortingParameters_PassedToService()
+        {
+            // Arrange
+            SetupMockServices();
+
+            // Act
+            await _controller.Index(column: "TestColumn", sortOrder: true);
+
+            // Assert
+            await _mockAuditLogArchiveService.Received().GetArchiveAuditLogsAsync(
+            Arg.Is<QueryParameters>(q => q.SortBy == "TestColumn" && q.Descending == true),
+            Arg.Any<string>()
+            );
+        }
+        private void SetupMockServices()
+        {
+            _mockAuditLogArchiveService.GetArchiveAuditLogsAsync(Arg.Any<QueryParameters>(), Arg.Any<string>())
+            .Returns(new PaginatedResult<AuditLogArchivedDto>
+            {
+                data = new List<AuditLogArchivedDto>(),
+                TotalCount = 0
+            });
+
+            _mockAuditLogArchiveService.GetStoredProcedureNamesAsync()
+            .Returns(new List<string>());
+
+            _mockMapper.Map<IEnumerable<AuditLogsArchivedViewModel>>(Arg.Any<IEnumerable<AuditLogArchivedDto>>())
+            .Returns(new List<AuditLogsArchivedViewModel>());
+        }
+        [Fact]
+        public void CurrentAuditLog_ReturnsRedirectToActionResult()
+        {
+            // Act
+            var result = _controller.CurrentAuditLog();
+
+            // Assert
+            Assert.IsType<RedirectToActionResult>(result);
+        }
+        [Fact]
+        public void CurrentAuditLog_RedirectsToAuditLogIndex()
+        {
+            // Act
+            var result = _controller.CurrentAuditLog() as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Index", result.ActionName);
+            Assert.Equal("AuditLog", result.ControllerName);
+        }
+    }
+}

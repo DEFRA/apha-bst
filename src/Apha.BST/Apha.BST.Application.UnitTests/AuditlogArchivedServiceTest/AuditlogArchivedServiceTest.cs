@@ -1,0 +1,166 @@
+﻿using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Pagination;
+using Apha.BST.Application.UnitTests.Audit;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Pagination;
+using AutoMapper;
+using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Application.UnitTests.AuditlogServiceTest
+{
+    public class AuditlogArchivedServiceTests : AbstractAuditlogArchivedServiceTest
+    {
+        public AuditlogArchivedServiceTests() : base() { }
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_WithValidInput_ReturnsExpectedResult()
+        {
+            // Arrange
+            var filter = new QueryParameters { Page = 1, PageSize = 10 };
+            var storedProcedure = "TestStoredProcedure";
+            var paginationParameters = new PaginationParameters();
+
+            // Create a sample list of AuditlogArchived items
+            var auditLogs = new List<AuditlogArchived>
+    {
+        new AuditlogArchived
+        {
+            Procedure = "ProcedureA",
+            Parameters = "ParamA=1,ParamB=2",
+            User = "UserA",
+            Date = DateTime.Now.AddDays(-1),
+            TransactionType = "TypeA"
+        },
+        new AuditlogArchived
+        {
+            Procedure = "ProcedureB",
+            Parameters = "ParamX=3,ParamY=4",
+            User = "UserB",
+            Date = DateTime.Now,
+            TransactionType = "TypeB"
+        }
+    };
+
+            // Create the PagedData<AuditlogArchived> with the sample items and a total count
+            var repositoryResult = new PagedData<AuditlogArchived>(auditLogs, auditLogs.Count);
+
+            // Create the expected result
+            var expectedDtos = auditLogs.Select(a => new AuditLogArchivedDto
+            {
+                Procedure = a.Procedure,
+                Parameters = a.Parameters,
+                User = a.User,
+                Date = a.Date,
+                TransactionType = a.TransactionType
+            }).ToList();
+
+            var expectedResult = new PaginatedResult<AuditLogArchivedDto>
+            {
+                data = expectedDtos,
+                TotalCount = auditLogs.Count
+            };
+
+            SetupMockMapper(filter, paginationParameters);
+            SetupMockRepository(paginationParameters, storedProcedure, repositoryResult);
+            SetupMockMapperForResult(repositoryResult, expectedResult);
+
+            // Act
+            var result = await Service.GetArchiveAuditLogsAsync(filter, storedProcedure);
+
+            // Assert
+            Assert.Same(expectedResult, result);
+            Assert.Equal(expectedResult.TotalCount, result.TotalCount);
+            Assert.Equal(expectedResult.data.Count(), result.data.Count());
+            
+        }
+
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_WhenRepositoryReturnsEmptyResult_ReturnsEmptyPaginatedResult()
+        {
+            // Arrange
+            var filter = new QueryParameters { Page = 1, PageSize = 10 };
+            var storedProcedure = "TestStoredProcedure";
+            var paginationParameters = new PaginationParameters();
+            var emptyResult = new PagedData<AuditlogArchived>(new List<AuditlogArchived>(), 0);
+            var expectedResult = new PaginatedResult<AuditLogArchivedDto> { TotalCount = 0 };
+
+            SetupMockMapper(filter, paginationParameters);
+            SetupMockRepository(paginationParameters, storedProcedure, emptyResult);
+            SetupMockMapperForResult(emptyResult, expectedResult);
+
+            // Act
+            var result = await Service.GetArchiveAuditLogsAsync(filter, storedProcedure);
+
+            // Assert
+            Assert.Equal(0, result.TotalCount);
+          
+            Assert.Empty(result.data); 
+        }
+        
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_WhenMapperThrowsException_ThrowsException()
+        {
+            // Arrange
+            var filter = new QueryParameters { Page = 1, PageSize = 10 };
+            var storedProcedure = "TestStoredProcedure";
+            var paginationParameters = new PaginationParameters();
+            var repositoryResult = new PagedData<AuditlogArchived>(new List<AuditlogArchived>(), 0);
+
+            SetupMockMapper(filter, paginationParameters);
+            SetupMockRepository(paginationParameters, storedProcedure, repositoryResult);
+            SetupMockMapperToThrowException(repositoryResult);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<AutoMapperMappingException>(() => Service.GetArchiveAuditLogsAsync(filter, storedProcedure));
+        }
+        [Fact]
+        public async Task GetStoredProcedureNamesAsync_ReturnsExpectedList()
+        {
+            // Arrange
+            var expectedProcedures = new List<string> { "proc1", "proc2", "proc3" };
+            SetupMockRepositoryForStoredProcedureNames(expectedProcedures);
+
+            // Act
+            var result = await Service.GetStoredProcedureNamesAsync();
+
+            // Assert
+            Assert.Equal(expectedProcedures, result);
+            await MockRepository.Received(1).GetStoredProcedureNamesAsync();
+        }
+
+        [Fact]
+        public async Task GetStoredProcedureNamesAsync_RepositoryThrowsException_ThrowsException()
+        {
+            // Arrange
+            var expectedException = new Exception("Database error");
+            SetupMockRepositoryForStoredProcedureNamesToThrowException(expectedException);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => Service.GetStoredProcedureNamesAsync());
+            await MockRepository.Received(1).GetStoredProcedureNamesAsync();
+        }
+
+        [Fact]
+        public async Task GetStoredProcedureNamesAsync_ReturnsEmptyList_WhenRepositoryReturnsEmptyList()
+        {
+            // Arrange
+            var emptyList = new List<string>();
+            SetupMockRepositoryForStoredProcedureNames(emptyList);
+
+            // Act
+            var result = await Service.GetStoredProcedureNamesAsync();
+
+            // Assert
+            Assert.Empty(result);
+            await MockRepository.Received(1).GetStoredProcedureNamesAsync();
+        }
+    }
+
+}
