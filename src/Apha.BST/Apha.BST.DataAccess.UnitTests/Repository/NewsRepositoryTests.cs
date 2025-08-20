@@ -72,7 +72,7 @@ namespace Apha.BST.DataAccess.UnitTests.Repository
             var mockContext = new Mock<BstContext>();
 
             var mockRepo = new Mock<NewsRepository>(mockContext.Object) { CallBase = true };
-            
+
 
             // Mock ExecuteSqlAsync to return 1 row affected
             mockRepo

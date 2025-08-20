@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apha.BST.Application.UnitTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apha.BST.Web.UnitTests", "Apha.BST\Apha.BST.Web.UnitTests\Apha.BST.Web.UnitTests.csproj", "{62B3DF29-FD78-4182-B490-CABEF85EE48A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apha.BST.DataAccess.UnitTests", "Apha.BST.DataAccess.UnitTests\Apha.BST.DataAccess.UnitTests.csproj", "{01DA6BC8-AA69-4472-B7EC-11C224C10622}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apha.BST.DataAccess.UnitTests", "Apha.BST\Apha.BST.DataAccess.UnitTests\Apha.BST.DataAccess.UnitTests.csproj", "{3A6F7833-27AF-47A0-8EC6-4E3AF543E748}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{62B3DF29-FD78-4182-B490-CABEF85EE48A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62B3DF29-FD78-4182-B490-CABEF85EE48A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62B3DF29-FD78-4182-B490-CABEF85EE48A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01DA6BC8-AA69-4472-B7EC-11C224C10622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01DA6BC8-AA69-4472-B7EC-11C224C10622}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01DA6BC8-AA69-4472-B7EC-11C224C10622}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01DA6BC8-AA69-4472-B7EC-11C224C10622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A6F7833-27AF-47A0-8EC6-4E3AF543E748}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A6F7833-27AF-47A0-8EC6-4E3AF543E748}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A6F7833-27AF-47A0-8EC6-4E3AF543E748}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A6F7833-27AF-47A0-8EC6-4E3AF543E748}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

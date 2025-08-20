@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Apha.BST\Apha.BST.Core\Apha.BST.Core.csproj" />
-    <ProjectReference Include="..\Apha.BST\Apha.BST.DataAccess\Apha.BST.DataAccess.csproj" />
+    <ProjectReference Include="..\Apha.BST.DataAccess\Apha.BST.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>
