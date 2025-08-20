@@ -12,7 +12,7 @@ namespace Apha.BST.Web.Models
         public bool SortOrderFor(string column)
         {
             if (Pagination != null)
-                return Pagination.SortColumn == column && Pagination.SortDirection ? false : true;
+                return !(Pagination.SortColumn == column && Pagination.SortDirection);
             else
                 return true;
         }

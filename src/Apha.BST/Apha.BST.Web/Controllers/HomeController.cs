@@ -26,17 +26,7 @@ namespace Apha.BST.Web.Controllers
             var latestNews = _mapper.Map<IEnumerable<NewsViewModel>>(latestNewsDto);
            
             return View(latestNews);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        }        
+        
     }
 }

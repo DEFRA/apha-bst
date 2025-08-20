@@ -1,12 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Apha.BST.Web.Models;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Apha.BST.Web.Controllers
 {
+    [AllowAnonymous]
     public class ErrorController : Controller
     {
         public IActionResult AccessDenied()
         {
            
+            return View();
+        }
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Index()
+        {
             return View();
         }
     }

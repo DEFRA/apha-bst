@@ -47,7 +47,7 @@ namespace Apha.BST.Web.Middleware
 
 
                 // Redirect to generic error page (no code in query string)
-                context.Response.Redirect("/Home/Error");
+                context.Response.Redirect("/Error");
 
             }
         }
