@@ -100,7 +100,7 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"DEFRA_apha-bst" `
             /o:"defra" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.token="$SONAR_TOKEN" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
             /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
@@ -140,8 +140,7 @@ jobs:
         shell: pwsh
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{
-          secrets.SONAR_TOKEN }}"
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
   push-image:
     name: Push Docker Image
     needs: build-and-analyze
