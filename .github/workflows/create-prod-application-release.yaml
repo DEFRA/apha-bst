@@ -1,20 +1,11 @@
-name: Promote DEV Release
+name: Create PROD Application Release
 on:
   workflow_dispatch:
     inputs:
       RELEASEVERSION:
-        description: 'DEV Application Release Version'
+        description: 'PROD Application Release Version'
         type: string
         required: true
-
-      environment:
-        description: "Select environment"
-        required: true
-        type: choice
-        options:
-          - test
-          - pre-prod
-          - prod          
 
 env:
   REPOSITORY: apha/bst

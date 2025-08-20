@@ -1,9 +1,9 @@
-name: Dev Application Release
+name: Create DEV Image Version and Push ECR
 on:
   workflow_dispatch:
     inputs:
       RELEASEVERSION:
-        description: 'Application Release Version'
+        description: 'DEV Image Version'
         type: string
         required: true
 
