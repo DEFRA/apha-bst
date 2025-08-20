@@ -73,7 +73,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<AuditLogListViewModel>(viewResult.Model);
-            Assert.Equal(2, model.AuditLogsResults?.Count());
+            Assert.Equal(2, model.AuditLogsResults?.Count);
             Assert.Equal(2, model.StoredProcedures.Count());
             Assert.Equal(storedProcedure, model.StoredProcedure);
             Assert.Equal(pageNo, model.Pagination?.PageNumber);

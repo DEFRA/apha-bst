@@ -26,7 +26,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _mockMapper = Substitute.For<IMapper>();
             _controller = new AuditLogArchivedController(_mockAuditLogArchiveService, _mockMapper);
         }
-        public static List<AuditLogArchivedDto> SampleAuditLogs = new List<AuditLogArchivedDto>
+        private static List<AuditLogArchivedDto> SampleAuditLogs = new List<AuditLogArchivedDto>
         {
             new AuditLogArchivedDto { Procedure = "Proc1", Parameters = "Param1", User = "User1", Date = DateTime.Now, TransactionType = "Type1" },
             new AuditLogArchivedDto { Procedure = "Proc2", Parameters = "Param2", User = "User2", Date = DateTime.Now.AddDays(-1), TransactionType = "Type2" }
