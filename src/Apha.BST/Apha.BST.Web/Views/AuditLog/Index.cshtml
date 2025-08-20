@@ -50,7 +50,7 @@
                         <a asp-action="Index"
                            asp-route-column="Procedure"
                            asp-route-sortOrder="@Model.SortOrderFor("Procedure")"
-                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-storedProcedure="@Html.Encode(Model.StoredProcedure)"
                            asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
                             Procedure
                         </a>
@@ -59,7 +59,7 @@
                         <a asp-action="Index"
                            asp-route-column="Parameters"
                            asp-route-sortOrder="@Model.SortOrderFor("Parameters")"
-                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-storedProcedure="@Html.Encode(Model.StoredProcedure)"
                            asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
                             Parameters
                         </a>
@@ -68,7 +68,7 @@
                         <a asp-action="Index"
                            asp-route-column="User"
                            asp-route-sortOrder="@Model.SortOrderFor("User")"
-                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-storedProcedure="@Html.Encode(Model.StoredProcedure)"
                            asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
                             User
                         </a>
@@ -77,7 +77,7 @@
                         <a asp-action="Index"
                            asp-route-column="Date"
                            asp-route-sortOrder="@Model.SortOrderFor("Date")"
-                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-storedProcedure="@Html.Encode(Model.StoredProcedure)"
                            asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
                             Date
                         </a>
@@ -86,7 +86,7 @@
                         <a asp-action="Index"
                            asp-route-column="TransactionType"
                            asp-route-sortOrder="@Model.SortOrderFor("TransactionType")"
-                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-storedProcedure="@Html.Encode(Model.StoredProcedure)"
                            asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
                             TransactionType
                         </a>
