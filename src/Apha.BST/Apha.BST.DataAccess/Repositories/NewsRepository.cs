@@ -12,19 +12,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class NewsRepository : INewsRepository
+    public class NewsRepository : RepositoryBase<News>,INewsRepository
     {
-        private readonly BstContext _context;
-        public NewsRepository(BstContext context)
-        {
-            _context = context;
-        }
+        public NewsRepository(BstContext context) : base(context) { }       
+
         public async Task<IEnumerable<News>> GetLatestNewsAsync()
         {
-            return await _context.News
-                 .FromSqlRaw("EXEC sp_GetNews")
-                 .ToListAsync();
+            // Use the base GetQueryableResult method
+            return await GetQueryableResult("EXEC sp_GetNews").ToListAsync();
         }
+
         public async Task AddNewsAsync(News news)
         {
             var parameters = new[]
@@ -35,15 +32,14 @@ namespace Apha.BST.DataAccess.Repositories
             new SqlParameter("@Author", news.Author ?? (object)DBNull.Value)
         };
 
-            await _context.Database.ExecuteSqlRawAsync(
+            await ExecuteSqlAsync(
                 "EXEC sp_News_Add @Title, @NewsContent, @DatePublished, @Author", parameters);
         }
 
         public async Task<List<News>> GetNewsAsync()
         {
-            return await _context.News
-                .FromSqlRaw("EXEC sp_GetAllNews")
-                .ToListAsync();
+            // Use the base GetQueryableResult method to execute the stored procedure
+            return await GetQueryableResult("EXEC sp_GetAllNews").ToListAsync();
         }
 
         public async Task DeleteNewsAsync(string title)
@@ -52,7 +48,7 @@ namespace Apha.BST.DataAccess.Repositories
             {
                 Value = title
             };
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_News_Delete @Title", param);
+            await ExecuteSqlAsync("EXEC sp_News_Delete @Title", param);
         }
     }
 }
