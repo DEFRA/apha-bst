@@ -49,12 +49,15 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Bump version from commit
+      
+      - name: Read version from VERSION file
         id: versioning
         shell: pwsh
         run: |
-          $CommitMsg = "${{ github.event.head_commit.message }}"
-          ./gh-actions-scripts/bump-version.ps1 -CommitMsg $CommitMsg
+          $version = Get-Content VERSION -Raw
+          $version = $version.Trim()
+          "version=v$version" >> $env:GITHUB_OUTPUT
+          
       - name: Extract short SHA
         id: shortsha
         shell: pwsh
