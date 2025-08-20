@@ -1,0 +1,47 @@
+﻿
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[sp_Trainer_TrainedBy_Trained]
+	@PersonID int,
+	@AnimalType NVarChar(30)
+	
+AS
+
+BEGIN
+WITH cte AS
+(
+    SELECT 
+	T.PersonID, 
+	P.Person, 
+	'Trained by' As [Role], 
+	T.TrainerID, 
+	T.TrainingAnimal,
+	T.TrainingDateTime,
+	M.Person As Trainer
+    FROM tTraining T
+    JOIN tPerson P ON T.PersonID = P.PersonID
+	JOIN tPerson M ON T.TrainerID = M.PersonID
+	WHERE T.PersonID = @PersonID
+    AND T.TrainingAnimal = @AnimalType	
+	UNION ALL 
+	SELECT 
+	T.PersonID, 
+	P.Person, 
+	CASE T.TrainerID WHEN @PersonID THEN 'Trained on' 
+	ELSE 'Cascaded ' END as [Role], 
+	T.TrainerID,
+	T.TrainingAnimal,
+	T.TrainingDateTime, 
+	M.Person As Trainer
+    FROM tTraining T
+    JOIN tPerson P ON T.PersonID = P.PersonID
+	JOIN tPerson M ON T.TrainerID = M.PersonID
+	INNER JOIN cte ON cte.PersonID = T.TrainerID
+	WHERE T.TrainingAnimal = @AnimalType	
+)
+SELECT * FROM cte
+END
+
