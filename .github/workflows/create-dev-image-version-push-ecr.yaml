@@ -1,9 +1,9 @@
-name: Dev Application Release
+name: Create DEV Image Version and Push ECR
 on:
   workflow_dispatch:
     inputs:
       RELEASEVERSION:
-        description: 'Application Release Version'
+        description: 'DEV Image Version'
         type: string
         required: true
 
@@ -55,7 +55,7 @@ jobs:
         id: imgtag
         shell: pwsh
         run: |
-          $imageTag = "v${{ github.event.inputs.RELEASEVERSION }}-dev"
+          $imageTag = "v${{ github.event.inputs.RELEASEVERSION }}"
           "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
 
       - name: Print Docker image tag
@@ -89,7 +89,7 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"DEFRA_apha-bst" `
             /o:"defra" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.token="$env:SONAR_TOKEN" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
             /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
@@ -129,8 +129,7 @@ jobs:
         shell: pwsh
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{
-          secrets.SONAR_TOKEN }}"
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
   push-image:
     name: Push Docker Image
     needs: build-and-analyze

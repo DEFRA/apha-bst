@@ -1,0 +1,32 @@
+name: Create PROD Application Release
+on:
+  workflow_dispatch:
+    inputs:
+      RELEASEVERSION:
+        description: 'PROD Application Release Version'
+        type: string
+        required: true
+
+env:
+  REPOSITORY: apha/bst
+jobs:
+  push-image:
+    name: Retag & Push Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_ENV_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ENV_ACCOUNT }}:role/${{ secrets.AWS_ENV_ROLE }}
+

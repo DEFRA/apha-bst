@@ -49,12 +49,15 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Bump version from commit
+      
+      - name: Read version from VERSION file
         id: versioning
         shell: pwsh
         run: |
-          $CommitMsg = "${{ github.event.head_commit.message }}"
-          ./gh-actions-scripts/bump-version.ps1 -CommitMsg $CommitMsg
+          $version = Get-Content VERSION -Raw
+          $version = $version.Trim()
+          "version=v$version" >> $env:GITHUB_OUTPUT
+          
       - name: Extract short SHA
         id: shortsha
         shell: pwsh
@@ -97,7 +100,7 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"DEFRA_apha-bst" `
             /o:"defra" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.token="$env:SONAR_TOKEN" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /v:"${{ steps.imgtag.outputs.image_tag }}" `
             /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
@@ -137,8 +140,7 @@ jobs:
         shell: pwsh
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{
-          secrets.SONAR_TOKEN }}"
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
   push-image:
     name: Push Docker Image
     needs: build-and-analyze
