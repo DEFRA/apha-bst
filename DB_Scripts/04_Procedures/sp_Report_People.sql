@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[sp_Report_People]    Script Date: 8/18/2025 11:34:32 AM ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
