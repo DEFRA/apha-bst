@@ -13,6 +13,10 @@ WORKDIR /home/dotnet/src
 # Copy all source code into the image under /home/dotnet/src
 COPY --chown=dotnet:dotnet src/. .
 
+# Remove write permissions (files: 444, dirs: 555)
+RUN find . -type d -exec chmod 555 {} \; && \
+    find . -type f -exec chmod 444 {} \;
+
 # Restore, build and publish the Web project
 RUN dotnet restore ./Apha.BST/Apha.BST.Web/Apha.BST.Web.csproj
 RUN dotnet publish ./Apha.BST/Apha.BST.Web -c Release -o /home/dotnet/out /p:UseAppHost=false
