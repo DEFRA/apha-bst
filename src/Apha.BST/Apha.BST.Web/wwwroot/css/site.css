@@ -423,6 +423,7 @@ body {
         font-weight: 900;
         text-decoration: underline;
     }
+/* Screen Reader Only */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -434,3 +435,23 @@ body {
     white-space: nowrap;
     border: 0;
 }
+/*Audit log*/
+.audit-log-table {
+    width: 100%;
+    height: fit-content;
+    border-collapse: collapse;
+}
+
+    .audit-log-table tr th {
+        border: 1px solid #333333;
+    }
+
+    .audit-log-table tr td {
+        border: 1px solid #333333;
+        word-break: break-all;
+    }
+
+    .audit-log-table tr th a:link {
+        color: #0b2677;
+        text-decoration: none;
+    }

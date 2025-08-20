@@ -30,6 +30,8 @@ namespace Apha.BST.Web.Mappings
             CreateMap<AddNewsViewModel, NewsDto>().ReverseMap();
             CreateMap<SiteInputDto, EditSiteViewModel>().ReverseMap();
             CreateMap<ReportViewModel, ReportDto>().ReverseMap();
+            CreateMap<AuditLogViewModel, AuditLogDto>().ReverseMap();
+            CreateMap<AuditLogsArchivedViewModel, AuditLogArchivedDto>().ReverseMap();
 
         }
     }

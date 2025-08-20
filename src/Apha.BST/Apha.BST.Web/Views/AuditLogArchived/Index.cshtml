@@ -1,0 +1,130 @@
+﻿@model AuditLogArchivedListViewModel
+@{
+    ViewData["Title"] = "Audit Logs Archive";
+}
+<div class="row mb-2">
+    <div class="col-md-3 ">
+        <form asp-action="CurrentAuditLog" method="post">
+            <input type="submit" name="btnViewAudit" value="View Current Audit Log" id="btnViewAudit">
+        </form>
+    </div>
+
+    <div class="col-md-3 ">
+        <strong>Choose SP:</strong>
+    </div>
+    <div class="col-md-3 text-center">
+        <form method="get" asp-action="Index" style="display:inline;">
+            <select id="StoredProcedure" asp-for="StoredProcedure" asp-items="Model.StoredProcedures" onchange="this.form.submit()">
+                <option value="%">Select</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="lblException" class="text-danger"></div>
+    </div>
+</div>
+
+<div class="row" id="gridAuditLogResult">
+    <div class="col-md-12">
+        <table id="gvAudit" border="1" class="audit-log-table">
+            <thead>
+                <tr>
+
+
+                    <th>
+                        <a asp-action="Index"
+                           asp-route-column="Procedure"
+                           asp-route-sortOrder="@Model.SortOrderFor("Procedure")"
+                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
+                            Procedure
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index"
+                           asp-route-column="Parameters"
+                           asp-route-sortOrder="@Model.SortOrderFor("Parameters")"
+                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
+                            Parameters
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index"
+                           asp-route-column="User"
+                           asp-route-sortOrder="@Model.SortOrderFor("User")"
+                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
+                            User
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index"
+                           asp-route-column="Date"
+                           asp-route-sortOrder="@Model.SortOrderFor("Date")"
+                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
+                            Date
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index"
+                           asp-route-column="TransactionType"
+                           asp-route-sortOrder="@Model.SortOrderFor("TransactionType")"
+                           asp-route-storedProcedure="@Model.StoredProcedure"
+                           asp-route-pageNo="@(Model.Pagination?.PageNumber ?? 1)">
+                            TransactionType
+                        </a>
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.AuditLogsResults != null)
+                {
+                    @foreach (var item in Model.AuditLogsResults)
+                    {
+                        <tr>
+                            <td>@item.Procedure</td>
+                            <td>@item.Parameters</td>
+                            <td>@item.User</td>
+                            <td> @(item.Date?.ToString("yyyy-MM-dd HH:mm:ss") ?? "")</td>
+                            <td>@item.TransactionType</td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <div id="girdPagination" class="pagination">
+        <div class="pagination">
+            <span>&nbsp;</span>
+            <span>&nbsp;</span>
+            @if (Model.Pagination != null){
+            @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
+            {
+                if (i == Model.Pagination.PageNumber)
+                {
+
+                    <a class="page active" href="#">@i</a>
+                    <span>&nbsp;</span>
+                }
+                else
+                {
+
+                    <a class="page"
+                       href="@(ViewContext.HttpContext.Request.Path)?pageNo=@i&column=@Model.Pagination.SortColumn&sortOrder=@Model.Pagination.SortDirection&storedProcedure=@Model.StoredProcedure">
+                        @i
+
+                    </a>
+                    <span>&nbsp;</span>
+                }
+            }
+            }
+        </div>
+    </div>
+</div>

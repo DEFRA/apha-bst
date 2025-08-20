@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Interfaces;
+using Apha.BST.Application.Pagination;
 using Apha.BST.Core.Interfaces;
+using Apha.BST.Core.Pagination;
 using Apha.BST.DataAccess.Repositories;
+using AutoMapper;
 using Microsoft.Data.SqlClient;
 
 namespace Apha.BST.Application.Services
@@ -13,14 +17,27 @@ namespace Apha.BST.Application.Services
     public class AuditLogService : IAuditLogService
     {
         private readonly IAuditLogRepository _auditLogRepository;
-        public AuditLogService(IAuditLogRepository auditLogRepository)
+        private readonly IMapper _mapper;
+        public AuditLogService(IAuditLogRepository auditLogRepository, IMapper mapper)
         {
             _auditLogRepository = auditLogRepository;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-
-        public async Task WriteAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string? error = null)
+       
+        public async Task<PaginatedResult<AuditLogDto>> GetAuditLogsAsync(QueryParameters filter, string storedProcedure)
         {
-            await _auditLogRepository.AddAuditLogAsync(procedure, parameters, transactionType, error);
+            var queryFilter = _mapper.Map<PaginationParameters>(filter);
+            var auditLogs = await _auditLogRepository.GetAuditLogsAsync(queryFilter, storedProcedure);
+            return _mapper.Map<PaginatedResult<AuditLogDto>>(auditLogs);
+
+        }
+        public async Task<List<string>> GetStoredProcedureNamesAsync()
+        {
+            return await _auditLogRepository.GetStoredProcedureNamesAsync();
+        }
+        public async Task ArchiveAuditLogAsync(string userName)
+        {
+            await _auditLogRepository.ArchiveAuditLogAsync(userName);
         }
     }
 }

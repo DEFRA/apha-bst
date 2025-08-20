@@ -1,5 +1,7 @@
 ﻿using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Pagination;
 using Apha.BST.Core.Entities;
+using Apha.BST.Core.Pagination;
 using AutoMapper;
 
 namespace Apha.BST.Application.Mappings
@@ -36,6 +38,11 @@ namespace Apha.BST.Application.Mappings
 
             CreateMap<TrainingReport, TrainingReportDto>().ReverseMap();
             CreateMap<AphaReport, AphaReportDto>().ReverseMap();
+            CreateMap<AuditLog, AuditLogDto>().ReverseMap();
+            CreateMap<QueryParameters, PaginationParameters>().ReverseMap();
+            CreateMap<PagedData<AuditLog>, PaginatedResult<AuditLogDto>>();
+            CreateMap<AuditlogArchived, AuditLogArchivedDto>().ReverseMap();
+            CreateMap<PagedData<AuditlogArchived>, PaginatedResult<AuditLogArchivedDto>>();
         }
     }
 }
