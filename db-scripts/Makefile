@@ -3,7 +3,7 @@ DB_SERVER ?= localhost
 DB_NAME ?= bstdb
 DB_USER ?= bstdev
 DB_PASSWORD ?= $(if $(DB_PASSWORD),$(DB_PASSWORD),$(error DB_PASSWORD is not set))
-SQLCMD=sqlcmd -S $(DB_SERVER) -U $(DB_USER) -P $(DB_PASSWORD)
+SQLCMD=sqlcmd -S $(DB_SERVER) -U $(DB_USER) -P $(DB_PASSWORD) -C
 
 # Default target
 all: post-deploy
