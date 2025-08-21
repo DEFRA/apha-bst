@@ -9,23 +9,15 @@ using Apha.BST.DataAccess.Repositories;
 
 namespace Apha.BST.DataAccess.UnitTests.UserRepositoryTest
 {
-    public class TestUserRepository : UserRepository
+    public class TestUserRepository(
+        BstContext context,
+        IQueryable<User>? users = null,
+        IQueryable<UserView>? userViews = null,
+        IQueryable<VlaLocView>? vlaLocViews = null) : UserRepository(context)
     {
-        private readonly IQueryable<User>? _users;
-        private readonly IQueryable<UserView>? _userViews;
-        private readonly IQueryable<VlaLocView>? _vlaLocViews;
-
-        public TestUserRepository( 
-            BstContext context,
-            IQueryable<User>? users = null,
-            IQueryable<UserView>? userViews = null,
-            IQueryable<VlaLocView>? vlaLocViews = null)
-            : base(context)
-        {
-            _users = users;
-            _userViews = userViews;
-            _vlaLocViews = vlaLocViews;
-        }
+        private readonly IQueryable<User>? _users = users;
+        private readonly IQueryable<UserView>? _userViews = userViews;
+        private readonly IQueryable<VlaLocView>? _vlaLocViews = vlaLocViews;
 
         protected override IQueryable<T> GetDbSetFor<T>()
         {

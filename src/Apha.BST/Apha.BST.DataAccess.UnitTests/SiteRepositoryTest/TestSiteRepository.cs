@@ -10,15 +10,9 @@ using Apha.BST.DataAccess.Repositories;
 
 namespace Apha.BST.DataAccess.UnitTests.SiteRepositoryTest
 {
-    public class TestSiteRepository : SiteRepository
+    public class TestSiteRepository(BstContext context, IAuditLogRepository auditLogRepo, IQueryable<SiteTrainee> trainees) : SiteRepository(context, auditLogRepo)
     {
-        private readonly IQueryable<SiteTrainee> _trainees;
-
-        public TestSiteRepository(BstContext context, IAuditLogRepository auditLogRepo, IQueryable<SiteTrainee> trainees)
-            : base(context, auditLogRepo)
-        {
-            _trainees = trainees;
-        }
+        private readonly IQueryable<SiteTrainee> _trainees = trainees;
 
         protected override IQueryable<T> GetQueryableResultFor<T>(string sql, params object[] parameters)
         {

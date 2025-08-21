@@ -13,6 +13,7 @@ using Moq.Protected;
 using Moq;
 using Microsoft.Data.SqlClient;
 using Apha.BST.DataAccess.UnitTests.SiteRepositoryTest;
+using Apha.BST.DataAccess.UnitTests.TrainingRepositoryTest;
 
 namespace Apha.BST.DataAccess.UnitTests.SiteRepositoryTest
 {
@@ -155,6 +156,59 @@ namespace Apha.BST.DataAccess.UnitTests.SiteRepositoryTest
 
             // Assert
             Assert.Equal(SiteRepository.Exists, result);
+        }
+        [Fact]
+        public async Task GetPersonByIdAsync_ReturnsPerson()
+        {
+            var persons = new TestAsyncEnumerable<Persons>(new[]
+            {
+                new Persons { PersonId = 1, Person = "John" }
+            });
+            var mockContext = new Mock<BstContext>();
+            var repo = new TestTrainingRepository(mockContext.Object, persons: persons);
+
+            var result = await repo.GetPersonByIdAsync(1);
+
+            Assert.NotNull(result);
+            Assert.Equal("John", result.Person);
+        }
+
+        [Fact]
+        public async Task AddSiteAsync_ThrowsException_AndLogsAudit()
+        {
+            // Arrange
+            var site = new Site
+            {
+                PlantNo = "PLANT1",
+                Name = "Site Exception"
+            };
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+
+            mockRepo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.IsAny<string>(),
+                    ItExpr.IsAny<object[]>())
+                .ThrowsAsync(new Exception("DB error"));
+
+            mockAuditLogRepo.Setup(a => a.AddAuditLogAsync(
+                It.IsAny<string>(),
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                It.IsAny<string>(),
+                It.IsAny<string>()))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => mockRepo.Object.AddSiteAsync(site, "admin"));
+            mockAuditLogRepo.Verify(a => a.AddAuditLogAsync(
+                "sp_Sites_Add",
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                "admin",
+                It.Is<string>(e => e != null && e.Contains("DB error"))), Times.Once);
         }
 
         [Fact]

@@ -10,47 +10,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class ReportRepository : IReportRepository
+    public class ReportRepository : RepositoryBase<object>, IReportRepository
     {
-        private readonly BstContext _context;
-
-        public ReportRepository(BstContext context)
-        {
-            _context = context;
-        }
+        public ReportRepository(BstContext context) : base(context) { }        
 
         public async Task<List<AphaReport>> GetAphaReportsAsync()
         {
-            return await _context.Set<AphaReport>()
-                .FromSqlRaw("EXEC sp_Report_APHA")
+            return await GetQueryableResultFor<AphaReport>("EXEC sp_Report_APHA")
                 .ToListAsync();
         }
 
         public async Task<List<PeopleReport>> GetPeopleReportsAsync()
         {
-            return await _context.Set<PeopleReport>()
-                .FromSqlRaw("EXEC sp_Report_People")
+            return await GetQueryableResultFor<PeopleReport>("EXEC sp_Report_People")
                 .ToListAsync();
         }
 
         public async Task<List<SiteReport>> GetSiteReportsAsync()
         {
-            return await _context.Set<SiteReport>()
-                .FromSqlRaw("EXEC sp_Report_Site")
+            return await GetQueryableResultFor<SiteReport>("EXEC sp_Report_Site")
                 .ToListAsync();
         }
 
         public async Task<List<TrainerReport>> GetTrainerReportsAsync()
         {
-            return await _context.Set<TrainerReport>()
-                .FromSqlRaw("EXEC sp_Report_Trainer")
+            return await GetQueryableResultFor<TrainerReport>("EXEC sp_Report_Trainer")
                 .ToListAsync();
         }
 
         public async Task<List<TrainingReport>> GetTrainingReportsAsync()
         {
-            return await _context.Set<TrainingReport>()
-                .FromSqlRaw("EXEC sp_Report_Training")
+            return await GetQueryableResultFor<TrainingReport>("EXEC sp_Report_Training")
                 .ToListAsync();
         }
     }
