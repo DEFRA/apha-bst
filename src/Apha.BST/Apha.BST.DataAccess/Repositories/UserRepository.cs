@@ -11,17 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class UserRepository : IUserRepository
-    {
-        private readonly BstContext _context;
-
-        public UserRepository(BstContext context)
-        {
-            _context = context;
-        }
+    public class UserRepository : RepositoryBase<User>, IUserRepository
+    {   
+        public UserRepository(BstContext context) : base(context) { }
         public async Task<bool> UserExistsAsync(string userId)
         {
-            return await _context.Users.AnyAsync(u => u.UserId == userId);
+            return await GetDbSetFor<User>().AnyAsync(u => u.UserId == userId);
         }
 
         public async Task AddUserAsync(User user)
@@ -34,22 +29,20 @@ namespace Apha.BST.DataAccess.Repositories
          new SqlParameter("@UserLevel", user.UserLevel ?? (object)DBNull.Value)
      };
 
-            await _context.Database.ExecuteSqlRawAsync(
+            await ExecuteSqlAsync(
                 "EXEC sp_User_Add @UserID, @UserName, @User_Loc, @UserLevel", parameters);
         }
 
         public async Task<List<VlaLocView>> GetLocationsAsync()
         {
-            return await _context.Set<VlaLocView>()
-                .FromSqlRaw("EXEC sp_VLALocation_Select")
+            return await GetQueryableResultFor<VlaLocView>("EXEC sp_VLALocation_Select")
                 .ToListAsync();
         }
 
         public async Task<List<UserView>> GetUsersAsync(string userId)
         {
             var param = new SqlParameter("@User", userId ?? "All users");
-            return await _context.Set<UserView>()
-                .FromSqlRaw("EXEC sp_User_SelectAll @User", param)
+            return await GetQueryableResultFor<UserView>("EXEC sp_User_SelectAll @User", param)
                 .ToListAsync();
         }
 
@@ -57,7 +50,7 @@ namespace Apha.BST.DataAccess.Repositories
         public async Task DeleteUserAsync(string userId)
         {
             var param = new SqlParameter("@UserID", userId);
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_User_Delete @UserID", param);
+            await ExecuteSqlAsync("EXEC sp_User_Delete @UserID", param);
         }
 
         public async Task UpdateUserAsync(User user)
@@ -70,7 +63,7 @@ namespace Apha.BST.DataAccess.Repositories
         new SqlParameter("@UserLevel", user.UserLevel ?? (object)DBNull.Value),
     };
 
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_User_Update @UserID, @UserName, @User_Loc, @UserLevel", parameters);
+            await ExecuteSqlAsync("EXEC sp_User_Update @UserID, @UserName, @User_Loc, @UserLevel", parameters);
         }
 
 

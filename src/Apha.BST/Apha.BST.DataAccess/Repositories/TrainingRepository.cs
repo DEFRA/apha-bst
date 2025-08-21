@@ -19,6 +19,7 @@ namespace Apha.BST.DataAccess.Repositories
         public const string Success = "SUCCESS";
         public const string Fail = "FAIL";
         public const string Exists = "EXISTS";
+        public const string TrainingIdParameter = "@TraineeID";
 
         public TrainingRepository(BstContext context)
         {
@@ -33,7 +34,7 @@ namespace Apha.BST.DataAccess.Repositories
         }
         public async Task<IEnumerable<TrainerTraining>> GetTrainingByTraineeAsync(string traineeId)
         {
-            var param = new SqlParameter("@TraineeID", traineeId);
+            var param = new SqlParameter(TrainingIdParameter, traineeId);
 
             return await _context.TrainerTrainings
                 //.FromSqlRaw("EXEC sp_Trainee_Training_Select @TraineeID", param)
@@ -43,7 +44,7 @@ namespace Apha.BST.DataAccess.Repositories
         
         public async Task<IEnumerable<TrainerTraining>> GetAllTrainingsAsync()
         {
-            var param = new SqlParameter("@TraineeID", DBNull.Value);
+            var param = new SqlParameter(TrainingIdParameter, DBNull.Value);
             return await _context.TrainerTrainings
                 .FromSqlRaw("EXEC sp_Training_Select @TraineeID", param)
                 .ToListAsync();
@@ -87,7 +88,7 @@ namespace Apha.BST.DataAccess.Repositories
         {
             var parameters = new[]
             {
-            new SqlParameter("@TraineeID", editTraining.TraineeIdOld),
+            new SqlParameter(TrainingIdParameter, editTraining.TraineeIdOld),
             new SqlParameter("@DateTrained", editTraining.TrainingDateTime),
             new SqlParameter("@DateTrainedOld", editTraining.TrainingDateTimeOld),
             new SqlParameter("@Species", editTraining.TrainingAnimal),
@@ -117,7 +118,7 @@ namespace Apha.BST.DataAccess.Repositories
         {
             var parameters = new[]
             {
-            new SqlParameter("@TraineeID", training.PersonId),
+            new SqlParameter(TrainingIdParameter, training.PersonId),
             new SqlParameter("@TrainerID", training.TrainerId),
             new SqlParameter("@Species", training.TrainingAnimal),
             new SqlParameter("@TrainingType", training.TrainingType),
@@ -130,17 +131,9 @@ namespace Apha.BST.DataAccess.Repositories
                 Value = 0
             }
             };
-           
-            try
-            {
                 await _context.Database.ExecuteSqlRawAsync(                  
                    "EXEC sp_Training_Add @TraineeID, @TrainerID, @Species, @DateTrained, @TrainingType, @ReturnCode OUT",
-                    parameters);
-            }
-            catch
-            {
-                throw;
-            }            
+                    parameters);                    
             var returnCode = (byte)parameters[5].Value;
 
             if (returnCode == 1)
@@ -158,7 +151,7 @@ namespace Apha.BST.DataAccess.Repositories
         { 
             var parameters = new[]
             {
-                 new SqlParameter("@TraineeID", traineeId),
+                 new SqlParameter(TrainingIdParameter, traineeId),
                  new SqlParameter("@Species", species),
                  new SqlParameter("@DateTrained", dateTrained)
             };

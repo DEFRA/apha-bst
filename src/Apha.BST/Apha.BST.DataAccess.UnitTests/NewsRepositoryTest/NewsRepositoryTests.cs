@@ -11,7 +11,7 @@ using Microsoft.Data.SqlClient;
 using Moq;
 using Moq.Protected;
 
-namespace Apha.BST.DataAccess.UnitTests.Repository
+namespace Apha.BST.DataAccess.UnitTests.NewsRepositoryTest
 {
     public class NewsRepositoryTests
     {
