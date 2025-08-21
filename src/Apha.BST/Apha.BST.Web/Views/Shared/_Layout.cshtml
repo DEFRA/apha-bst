@@ -28,9 +28,11 @@
 			<!-- Center: Title Block -->
 			<div class="header-center">
 				<div class="title-block">
-					<span class="large-font">TSE</span>
-					<span class="large-inline-font">Brainstem Training</span>
-					<span class="large-font">Database</span>
+					<span class="large-inline-font">
+						TSE<br/>
+						Brainstem Training<br/>
+						Database
+					</span>
 				</div>
 				<div class="title-image">
 					<img src="~/Images/cattlesheep.jpeg" alt="Brainstem training database">
@@ -42,7 +44,6 @@
 				@if (User.Identity?.IsAuthenticated ?? false)
 				{
 					<span>User: @username</span>
-				
 					<br />
 					if (rolename?.Any() == true)
 					{
