@@ -10,6 +10,8 @@ all: post-deploy
 
 # Run post-deployment scripts
 post-deploy:
+    @echo ">>> Waiting 60 seconds before starting deployment..."
+	@sleep 60
 	@echo "Running post-deploy scripts..."
 	@$(SQLCMD) -d $(DB_NAME) -i 01-tables/modify_tables_post_restore.sql
 	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_report_people.sql
