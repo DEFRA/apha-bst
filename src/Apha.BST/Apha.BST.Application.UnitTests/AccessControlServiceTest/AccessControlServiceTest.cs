@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Application.UnitTests.AccessControlServiceTest
+{
+    public class AccessControlServiceTest : AbstractAccessControlServiceTest
+    {
+        [Fact]
+        public async Task GetRoleIdAndUsernameByEmailAsync_ValidEmail_ReturnsResult()
+        {
+            // Arrange
+            string email = "test@example.com";
+            byte roleId = 1;
+            string username = "testuser";
+            MockGetRoleIdAndUsernameByEmailAsync(email, roleId, username);
+
+            // Act
+            var result = await AccessControlService.GetRoleIdAndUsernameByEmailAsync(email);
+
+            // Assert
+            await AssertGetRoleIdAndUsernameByEmailAsyncCalled(email);
+            Assert.NotNull(result);
+            Assert.Equal(roleId, result.Value.RoleId);
+            Assert.Equal(username, result.Value.Username);
+        }
+
+        [Fact]
+        public async Task GetRoleIdAndUsernameByEmailAsync_ValidEmailNoResult_ReturnsNull()
+        {
+            // Arrange
+            string email = "nonexistent@example.com";
+            MockGetRoleIdAndUsernameByEmailAsync(email, null, null);
+
+            // Act
+            var result = await AccessControlService.GetRoleIdAndUsernameByEmailAsync(email);
+
+            // Assert
+            await AssertGetRoleIdAndUsernameByEmailAsyncCalled(email);
+            Assert.Null(result);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task GetRoleIdAndUsernameByEmailAsync_InvalidEmail_ReturnsNull(string email)
+        {
+            // Arrange
+            MockGetRoleIdAndUsernameByEmailAsync(email, null, null);
+
+            // Act
+            var result = await AccessControlService.GetRoleIdAndUsernameByEmailAsync(email);
+
+            // Assert
+            await AssertGetRoleIdAndUsernameByEmailAsyncCalled(email);
+            Assert.Null(result);
+        }
+    }
+}

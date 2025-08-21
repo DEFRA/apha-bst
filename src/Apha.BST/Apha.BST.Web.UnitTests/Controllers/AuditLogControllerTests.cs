@@ -1,20 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Apha.BST.Application.DTOs;
+﻿using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Interfaces;
 using Apha.BST.Application.Pagination;
 using Apha.BST.Web.Controllers;
 using Apha.BST.Web.Models;
 using Apha.BST.Web.PresentationService;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Data.SqlClient;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+
 
 namespace Apha.BST.Web.UnitTests.Controllers
 {
@@ -25,7 +29,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
         private readonly IUserDataService _userDataService;
         private readonly ILogService _logService;
         private readonly AuditLogController _controller;
-
+        private static SqlException CreateSqlException()
+        {
+            // This creates an uninitialized SqlException instance for testing purposes.
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(typeof(SqlException));
+        }
         public AuditLogControllerTests()
         {
             _auditLogService = Substitute.For<IAuditLogService>();
@@ -33,8 +41,25 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _userDataService = Substitute.For<IUserDataService>();
             _logService = Substitute.For<ILogService>();
             _controller = new AuditLogController(_auditLogService, _mapper, _userDataService, _logService);
+
+            // Setup TempData for the controller
+            var tempData = new TempDataDictionary(new DefaultHttpContext(), Substitute.For<ITempDataProvider>());
+            _controller.TempData = tempData;
+
+            // Setup ControllerContext with ActionDescriptor
+            var httpContext = new DefaultHttpContext();
+            var actionContext = new ActionContext(
+                httpContext,
+                new Microsoft.AspNetCore.Routing.RouteData(),
+                new ControllerActionDescriptor());
+            _controller.ControllerContext = new ControllerContext(actionContext);
+
+            // Setup default permissions
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _userDataService.GetUsername().Returns("testUser");
         }
-        
+
+
         [Fact]
         public async Task Index_ValidInput_ReturnsViewWithCorrectModel()
         {
@@ -125,7 +150,72 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<AuditLogListViewModel>(viewResult.Model);
             Assert.Equal(storedProcedure, model.StoredProcedure);
-        }        
-        
+        }
+        [Fact]
+        public async Task ArchiveAuditLog_Success_RedirectsToIndex()
+        {
+            // Arrange
+            _userDataService.GetUsername().Returns("testUser");
+
+            // Act
+            var result = await _controller.ArchiveAuditLog();
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Index", redirectResult.ActionName);
+            Assert.Equal("AuditLog", redirectResult.ControllerName);
+            await _auditLogService.Received(1).ArchiveAuditLogAsync("testUser");
+        }
+
+        [Fact]
+        public async Task ArchiveAuditLog_SqlException_LogsAndRedirects()
+        {
+            // Arrange
+            _userDataService.GetUsername().Returns("testUser");
+            var sqlException = CreateSqlException();
+            _auditLogService.ArchiveAuditLogAsync(Arg.Any<string>()).Throws(sqlException);
+
+            // Act
+            var result = await _controller.ArchiveAuditLog();
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Index", redirectResult.ActionName);
+            Assert.Equal("AuditLog", redirectResult.ControllerName);
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+            Assert.Equal("Archive Audit Log failed", _controller.TempData["logMessage"]);
+        }
+
+        [Fact]
+        public async Task ArchiveAuditLog_GeneralException_LogsAndRedirects()
+        {
+            // Arrange
+            _userDataService.GetUsername().Returns("testUser");
+            var exception = new Exception("Test exception");
+            _auditLogService.ArchiveAuditLogAsync(Arg.Any<string>()).Throws(exception);
+
+            // Act
+            var result = await _controller.ArchiveAuditLog();
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Index", redirectResult.ActionName);
+            Assert.Equal("AuditLog", redirectResult.ControllerName);
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+            Assert.Equal("Archive Audit Log failed", _controller.TempData["logMessage"]);
+        }
+
+        [Fact]
+        public async Task ArchiveAuditLog_NullUsername_PassesEmptyString()
+        {
+            // Arrange
+            _userDataService.GetUsername().Returns((string)null!);
+
+            // Act
+            await _controller.ArchiveAuditLog();
+
+            // Assert
+            await _auditLogService.Received(1).ArchiveAuditLogAsync("");
+        }
     }
 }

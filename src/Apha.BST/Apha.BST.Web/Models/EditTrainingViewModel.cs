@@ -6,10 +6,10 @@ namespace Apha.BST.Web.Models
     public class EditTrainingViewModel:BaseViewModel
     {
         [Required]
-        public int TraineeId { get; set; }
+        public required int TraineeId { get; set; }
 
         [Required]
-        public int TrainerId { get; set; }
+        public required int TrainerId { get; set; }
 
         [Required]
         public required string TrainingType { get; set; }
@@ -18,7 +18,7 @@ namespace Apha.BST.Web.Models
         public required string TrainingAnimal { get; set; }
 
         [Required]
-        public DateTime TrainingDateTime { get; set; }
+        public required DateTime TrainingDateTime { get; set; }
 
         // Dropdown Lists
         public IEnumerable<SelectListItem> TraineeList { get; set; } = new List<SelectListItem>();
@@ -28,11 +28,11 @@ namespace Apha.BST.Web.Models
 
         //// Keys for locating old record in DB
         [Required]
-        public DateTime TrainingDateTimeOld { get; set; }
+        public required DateTime TrainingDateTimeOld { get; set; }
         [Required]
-        public int TraineeIdOld { get; set; }
+        public required int TraineeIdOld { get; set; }
         [Required]
-        public int TrainerIdOld { get; set; }
+        public required int TrainerIdOld { get; set; }
         [Required]
         public required string TrainingAnimalOld { get; set; }
         [Required]

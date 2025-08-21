@@ -1,5 +1,4 @@
-﻿using Apha.BST.Application.Validation;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace Apha.BST.Web.Middleware
 {

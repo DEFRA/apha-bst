@@ -357,7 +357,7 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
-                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName); ;
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName); 
                 TempData[trainingMessage] = "Delete failed";
             }
             catch (Exception ex)
