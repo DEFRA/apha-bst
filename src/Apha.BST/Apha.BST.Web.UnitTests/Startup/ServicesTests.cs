@@ -17,7 +17,7 @@ namespace Apha.BST.Web.UnitTests.Startup
         public void ConfigureServices_RegistersExpectedServices()
         {
             // Arrange
-            var builder = WebApplication.CreateBuilder(new string[0]);
+            var builder = WebApplication.CreateBuilder(Array.Empty<string>());
 
             // Replace real DB context with in-memory or mock
             builder.Services.AddDbContext<BstContext>(options =>

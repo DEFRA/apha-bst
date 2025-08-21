@@ -118,16 +118,9 @@
 
 
 					<ul class="ErrorText">
-							@foreach (var key in new[] { "PersonId", "TrainerId", "TrainingType", "TrainingAnimal", "TrainingDateTime" })
-							{
-								if (ViewData.ModelState.ContainsKey(key))
-								{
-									foreach (var error in ViewData.ModelState[key].Errors)
-									{
-									<li>@error.ErrorMessage</li>
-									}
-								}
-							}
+						<li>
+							<div asp-validation-summary="All" class="text-danger" style="list-style-type: none;"></div>
+						</li>
 					</ul>
 				</td>
 			</tr>
