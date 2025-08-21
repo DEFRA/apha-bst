@@ -11,17 +11,17 @@ all: post-deploy
 # Run post-deployment scripts
 post-deploy:
 	@echo "Running post-deploy scripts..."
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/01-tables/modify_tables_post_restore.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_report_people.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_sites_add.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_site_trainee_get.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_trainee_update.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_trainer_has_trained.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_trainer_trainedby_trained.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_training_select.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/04-procedures/sp_user_selectall.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/99-direct-scripts/tblDataEntry_add_record.sql || exit 1
-	@$(SQLCMD) -d $(DB_NAME) -i db-scripts/99-direct-scripts/tblUser_add_record.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 01-tables/modify_tables_post_restore.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_report_people.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_sites_add.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_site_trainee_get.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_trainee_update.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_trainer_has_trained.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_trainer_trainedby_trained.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_training_select.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_user_selectall.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 99-direct-scripts/tblDataEntry_add_record.sql || exit 1
+	@$(SQLCMD) -d $(DB_NAME) -i 99-direct-scripts/tblUser_add_record.sql || exit 1
 	@echo "Post-deploy scripts completed."
 
 # Help
