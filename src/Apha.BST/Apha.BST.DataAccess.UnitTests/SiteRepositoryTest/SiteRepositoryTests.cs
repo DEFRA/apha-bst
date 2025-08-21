@@ -158,20 +158,33 @@ namespace Apha.BST.DataAccess.UnitTests.SiteRepositoryTest
             Assert.Equal(SiteRepository.Exists, result);
         }
         [Fact]
-        public async Task GetPersonByIdAsync_ReturnsPerson()
+        public async Task GetPersonNameByIdAsync_ReturnsPersonName()
         {
-            var persons = new TestAsyncEnumerable<Persons>(new[]
-            {
-                new Persons { PersonId = 1, Person = "John" }
-            });
+            // Arrange
+            var personId = 123;
+            var expectedName = "John Doe";
+            var fakePersons = new List<Persons>
+    {
+        new Persons { PersonId = personId, Person = expectedName }
+    }.AsQueryable();
+
+            var asyncFakePersons = new TestAsyncEnumerable<Persons>(fakePersons);
+
+            // Dummy trainees list (not used in this test)
+            var asyncFakeTrainees = new TestAsyncEnumerable<SiteTrainee>(Enumerable.Empty<SiteTrainee>());
+
             var mockContext = new Mock<BstContext>();
-            var repo = new TestTrainingRepository(mockContext.Object, persons: persons);
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
 
-            var result = await repo.GetPersonByIdAsync(1);
+            var repo = new TestSiteRepository(mockContext.Object, mockAuditLogRepo.Object, asyncFakeTrainees, asyncFakePersons);
 
-            Assert.NotNull(result);
-            Assert.Equal("John", result.Person);
+            // Act
+            var result = await repo.GetPersonNameByIdAsync(personId);
+
+            // Assert
+            Assert.Equal(expectedName, result);
         }
+
 
         [Fact]
         public async Task AddSiteAsync_ThrowsException_AndLogsAudit()

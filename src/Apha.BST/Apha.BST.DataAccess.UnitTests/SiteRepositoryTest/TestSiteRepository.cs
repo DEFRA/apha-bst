@@ -10,14 +10,26 @@ using Apha.BST.DataAccess.Repositories;
 
 namespace Apha.BST.DataAccess.UnitTests.SiteRepositoryTest
 {
-    public class TestSiteRepository(BstContext context, IAuditLogRepository auditLogRepo, IQueryable<SiteTrainee> trainees) : SiteRepository(context, auditLogRepo)
+    public class TestSiteRepository(
+        BstContext context,
+        IAuditLogRepository auditLogRepo,
+        IQueryable<SiteTrainee> trainees,
+        IQueryable<Persons>? persons = null) : SiteRepository(context, auditLogRepo)
     {
         private readonly IQueryable<SiteTrainee> _trainees = trainees;
+        private readonly IQueryable<Persons>? _persons = persons;
 
         protected override IQueryable<T> GetQueryableResultFor<T>(string sql, params object[] parameters)
         {
             if (typeof(T) == typeof(SiteTrainee))
                 return (IQueryable<T>)_trainees;
+            throw new NotImplementedException($"No override for type {typeof(T).Name}");
+        }
+
+        protected override IQueryable<T> GetDbSetFor<T>()
+        {
+            if (typeof(T) == typeof(Persons) && _persons != null)
+                return (IQueryable<T>)_persons;
             throw new NotImplementedException($"No override for type {typeof(T).Name}");
         }
     }
