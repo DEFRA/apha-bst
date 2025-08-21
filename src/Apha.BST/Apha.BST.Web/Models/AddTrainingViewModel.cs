@@ -19,7 +19,7 @@ namespace Apha.BST.Web.Models
         public string TrainingAnimal { get; set; } = null!;
 
         [Required(ErrorMessage = "TrainingDateTime is required")]
-        public DateTime TrainingDateTime { get; set; }
+        public DateTime? TrainingDateTime { get; set; }
 
         public IEnumerable<SelectListItem> Persons { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> TrainingTypesList { get; set; } = new List<SelectListItem>();
