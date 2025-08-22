@@ -93,7 +93,7 @@ nav .menu-bar {
 
     .menu-bar ul li {
         width: 13%;
-        padding: 6px 3px 2px 3px;
+        padding: 0 3px; /* remove top/bottom padding, keep left/right if needed */
         position: relative;
     }
 
@@ -106,7 +106,7 @@ nav .menu-bar {
             white-space: nowrap;
             text-decoration: none;
             display: block;
-            padding: 4px;
+            padding: 0;
             border-radius: 2px;
         }
 
