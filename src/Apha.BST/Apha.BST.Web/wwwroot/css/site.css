@@ -247,6 +247,13 @@ nav .menu-bar {
     display: inline-block;
 }
 
+/* ensure JS-opened menus are visible */
+.dropdown.mouse-active .dropdown-menu,
+.dropdown.keyboard-active .dropdown-menu,
+.dropdown .dropdown-menu.show {
+    display: block !important;
+}
+
 /*--Home---*/
 .home-container {
     color: #333333;
