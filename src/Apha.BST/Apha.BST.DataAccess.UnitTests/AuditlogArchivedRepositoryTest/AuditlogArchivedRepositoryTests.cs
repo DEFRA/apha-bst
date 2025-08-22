@@ -10,17 +10,80 @@ using Moq;
 
 namespace Apha.BST.DataAccess.UnitTests.AuditlogArchivedRepositoryTest
 {
+
     public class AuditlogArchivedRepositoryTests
     {
+        private static IQueryable<AuditlogArchived> GetSampleLogs() =>
+            new List<AuditlogArchived>
+            {
+                new AuditlogArchived { Procedure = "sp_Test1", User = "user1", TransactionType = "Write", Parameters = "p1", Date = DateTime.UtcNow.AddDays(-1) },
+                new AuditlogArchived { Procedure = "sp_Test2", User = "user2", TransactionType = "Read", Parameters = "p2", Date = DateTime.UtcNow }
+            }.AsQueryable();
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_SortsByUser()
+        {
+            var logs = GetSampleLogs();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, logs);
+
+            var filter = new PaginationParameters(sortBy: "user", descending: false, page: 1, pageSize: 10);
+            var result = await repo.GetArchiveAuditLogsAsync(filter, "");
+            Assert.Equal("user1", result.Items.First().User);
+        }
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_SortsByTransactionType()
+        {
+            var logs = GetSampleLogs();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, logs);
+
+            var filter = new PaginationParameters(sortBy: "transactiontype", descending: false, page: 1, pageSize: 10);
+            var result = await repo.GetArchiveAuditLogsAsync(filter, "");
+            Assert.Equal("Write", result.Items.Last().TransactionType);
+        }
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_SortsByProcedure()
+        {
+            var logs = GetSampleLogs();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, logs);
+
+            var filter = new PaginationParameters(sortBy: "procedure", descending: false, page: 1, pageSize: 10);
+            var result = await repo.GetArchiveAuditLogsAsync(filter, "");
+            Assert.Equal("sp_Test1", result.Items.First().Procedure);
+        }
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_SortsByParameters()
+        {
+            var logs = GetSampleLogs();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, logs);
+
+            var filter = new PaginationParameters(sortBy: "parameters", descending: false, page: 1, pageSize: 10);
+            var result = await repo.GetArchiveAuditLogsAsync(filter, "");
+            Assert.Equal("p1", result.Items.First().Parameters);
+        }
+
+        [Fact]
+        public async Task GetArchiveAuditLogsAsync_SortsByDate()
+        {
+            var logs = GetSampleLogs();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, logs);
+
+            var filter = new PaginationParameters(sortBy: "date", descending: true, page: 1, pageSize: 10);
+            var result = await repo.GetArchiveAuditLogsAsync(filter, "");
+            Assert.Equal("sp_Test2", result.Items.First().Procedure);
+        }
+        
         [Fact]
         public async Task GetArchiveAuditLogsAsync_ReturnsPagedData()
         {
-            var archivedLogs = new List<AuditlogArchived>
-            {
-                new AuditlogArchived { Procedure = "sp_Test1", User = "user1", TransactionType = "Write", Date = DateTime.UtcNow },
-                new AuditlogArchived { Procedure = "sp_Test2", User = "user2", TransactionType = "Read", Date = DateTime.UtcNow }
-            }.AsQueryable();
-
+            var archivedLogs = GetSampleLogs();
             var mockContext = new Mock<BstContext>();
             var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, archivedLogs);
 
@@ -36,12 +99,7 @@ namespace Apha.BST.DataAccess.UnitTests.AuditlogArchivedRepositoryTest
         [Fact]
         public async Task GetArchiveAuditLogsAsync_FiltersBySearch()
         {
-            var archivedLogs = new List<AuditlogArchived>
-            {
-                new AuditlogArchived { Procedure = "sp_Test1", User = "user1" },
-                new AuditlogArchived { Procedure = "sp_Test2", User = "user2" }
-            }.AsQueryable();
-
+            var archivedLogs = GetSampleLogs();
             var mockContext = new Mock<BstContext>();
             var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, archivedLogs);
 
@@ -73,25 +131,6 @@ namespace Apha.BST.DataAccess.UnitTests.AuditlogArchivedRepositoryTest
         }
 
         [Fact]
-        public async Task GetArchiveAuditLogsAsync_SortsDescending()
-        {
-            var now = DateTime.UtcNow;
-            var archivedLogs = new List<AuditlogArchived>
-            {
-                new AuditlogArchived { Procedure = "sp_Test1", User = "user1", Date = now.AddDays(-1) },
-                new AuditlogArchived { Procedure = "sp_Test2", User = "user2", Date = now }
-            }.AsQueryable();
-
-            var mockContext = new Mock<BstContext>();
-            var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, archivedLogs);
-
-            var filter = new PaginationParameters(sortBy: "date", descending: true, page: 1, pageSize: 10);
-
-            var result = await repo.GetArchiveAuditLogsAsync(filter, "");
-
-            Assert.Equal("sp_Test2", result.Items.First().Procedure);
-        }
-        [Fact]
         public async Task GetArchiveAuditLogsAsync_ReturnsEmpty_WhenNoLogs()
         {
             var mockContext = new Mock<BstContext>();
@@ -116,11 +155,7 @@ namespace Apha.BST.DataAccess.UnitTests.AuditlogArchivedRepositoryTest
         [Fact]
         public async Task GetArchiveAuditLogsAsync_DoesNotFilter_WhenSearchIsNullOrPercent()
         {
-            var archivedLogs = new List<AuditlogArchived>
-    {
-        new AuditlogArchived { Procedure = "sp_Test1", User = "user1" },
-        new AuditlogArchived { Procedure = "sp_Test2", User = "user2" }
-    }.AsQueryable();
+            var archivedLogs = GetSampleLogs();
 
             var mockContext = new Mock<BstContext>();
             var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, archivedLogs);
@@ -137,11 +172,7 @@ namespace Apha.BST.DataAccess.UnitTests.AuditlogArchivedRepositoryTest
         [Fact]
         public async Task GetArchiveAuditLogsAsync_UnknownSortBy_DoesNotThrow()
         {
-            var archivedLogs = new List<AuditlogArchived>
-    {
-        new AuditlogArchived { Procedure = "sp_Test1", User = "user1" },
-        new AuditlogArchived { Procedure = "sp_Test2", User = "user2" }
-    }.AsQueryable();
+            var archivedLogs = GetSampleLogs();
 
             var mockContext = new Mock<BstContext>();
             var repo = new AbstractAuditlogArchivedRepositoryTest(mockContext.Object, archivedLogs);
@@ -150,6 +181,5 @@ namespace Apha.BST.DataAccess.UnitTests.AuditlogArchivedRepositoryTest
             var result = await repo.GetArchiveAuditLogsAsync(filter, "");
             Assert.Equal(2, result.Items.Count);
         }
-
     }
 }

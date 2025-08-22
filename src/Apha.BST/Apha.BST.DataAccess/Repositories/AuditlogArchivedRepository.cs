@@ -12,19 +12,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class AuditlogArchivedRepository : IAuditlogArchivedRepository
+    public class AuditlogArchivedRepository : RepositoryBase<AuditlogArchived>, IAuditlogArchivedRepository
     {
-
-        private readonly BstContext _context;
-        public AuditlogArchivedRepository(BstContext context)
-        {
-            _context = context;
-        }
-        protected virtual IQueryable<T> GetDbSetFor<T>() where T : class
-           => _context.Set<T>().AsQueryable();
-
-        protected virtual IQueryable<T> GetQueryableResultFor<T>(string sql, params object[] parameters) where T : class
-            => _context.Set<T>().FromSqlRaw(sql, parameters);
+        public AuditlogArchivedRepository(BstContext context):base(context) { }
+       
         public virtual async Task<PagedData<AuditlogArchived>> GetArchiveAuditLogsAsync(PaginationParameters filter, string storedProcedure)
         {
             var query = GetDbSetFor<AuditlogArchived>();
