@@ -42,3 +42,183 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+class AccessibleNavigation {
+	constructor() {
+		this.menuBar = document.querySelector('.menu-bar');
+		this.dropdowns = document.querySelectorAll('.dropdown');
+		this.isKeyboardMode = false;
+		this.currentOpenDropdown = null;
+
+		this.init();
+	}
+
+	init() {
+		this.setupEventListeners();
+		this.setupKeyboardNavigation();
+	}
+
+	setupEventListeners() {
+		// Track mouse usage
+		document.addEventListener('mousemove', () => {
+			if (this.isKeyboardMode) {
+				this.switchToMouseMode();
+			}
+		});
+
+		// Track keyboard usage
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Tab' || e.key === 'Enter' || e.key === 'Escape' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+				if (!this.isKeyboardMode) {
+					this.switchToKeyboardMode();
+				}
+			}
+		});
+
+		// Handle clicks outside dropdowns
+		document.addEventListener('click', (e) => {
+			if (!e.target.closest('.dropdown')) {
+				this.closeAllDropdowns();
+			}
+		});
+	}
+
+	setupKeyboardNavigation() {
+		this.dropdowns.forEach(dropdown => {
+			const toggle = dropdown.querySelector('.dropdown-toggle');
+			const menu = dropdown.querySelector('.dropdown-menu');
+			const menuItems = menu.querySelectorAll('.dropdown-item');
+
+			// Handle dropdown toggle
+			toggle.addEventListener('click', (e) => {
+				e.preventDefault();
+				this.toggleDropdown(dropdown);
+			});
+
+			toggle.addEventListener('keydown', (e) => {
+				switch (e.key) {
+					case 'Enter':
+					case ' ':
+					case 'ArrowDown':
+						e.preventDefault();
+						this.openDropdown(dropdown);
+						this.focusFirstMenuItem(dropdown);
+						break;
+					case 'Escape':
+						this.closeAllDropdowns();
+						break;
+				}
+			});
+
+			// Handle menu item navigation
+			menuItems.forEach((item, index) => {
+				item.addEventListener('keydown', (e) => {
+					switch (e.key) {
+						case 'ArrowDown':
+							e.preventDefault();
+							this.focusNextMenuItem(dropdown, index);
+							break;
+						case 'ArrowUp':
+							e.preventDefault();
+							this.focusPrevMenuItem(dropdown, index);
+							break;
+						case 'Escape':
+							e.preventDefault();
+							this.closeDropdown(dropdown);
+							toggle.focus();
+							break;
+						case 'Tab':
+							this.closeDropdown(dropdown);
+							break;
+					}
+				});
+
+				item.addEventListener('click', () => {
+					this.closeAllDropdowns();
+				});
+			});
+
+			// Handle focus events
+			toggle.addEventListener('focus', () => {
+				if (this.isKeyboardMode) {
+					this.closeOtherDropdowns(dropdown);
+				}
+			});
+		});
+	}
+
+	switchToKeyboardMode() {
+		this.isKeyboardMode = true;
+		this.menuBar.classList.add('keyboard-mode');
+		this.closeAllDropdowns();
+	}
+
+	switchToMouseMode() {
+		this.isKeyboardMode = false;
+		this.menuBar.classList.remove('keyboard-mode');
+		this.closeAllDropdowns();
+	}
+
+	toggleDropdown(dropdown) {
+		if (dropdown.classList.contains('keyboard-active')) {
+			this.closeDropdown(dropdown);
+		} else {
+			this.openDropdown(dropdown);
+		}
+	}
+
+	openDropdown(dropdown) {
+		this.closeOtherDropdowns(dropdown);
+		dropdown.classList.add('keyboard-active');
+		const toggle = dropdown.querySelector('.dropdown-toggle');
+		toggle.setAttribute('aria-expanded', 'true');
+		this.currentOpenDropdown = dropdown;
+	}
+
+	closeDropdown(dropdown) {
+		dropdown.classList.remove('keyboard-active');
+		const toggle = dropdown.querySelector('.dropdown-toggle');
+		toggle.setAttribute('aria-expanded', 'false');
+		if (this.currentOpenDropdown === dropdown) {
+			this.currentOpenDropdown = null;
+		}
+	}
+
+	closeOtherDropdowns(exceptDropdown) {
+		this.dropdowns.forEach(dropdown => {
+			if (dropdown !== exceptDropdown) {
+				this.closeDropdown(dropdown);
+			}
+		});
+	}
+
+	closeAllDropdowns() {
+		this.dropdowns.forEach(dropdown => {
+			this.closeDropdown(dropdown);
+		});
+	}
+
+	focusFirstMenuItem(dropdown) {
+		const firstItem = dropdown.querySelector('.dropdown-item');
+		if (firstItem) {
+			firstItem.focus();
+		}
+	}
+
+	focusNextMenuItem(dropdown, currentIndex) {
+		const menuItems = dropdown.querySelectorAll('.dropdown-item');
+		const nextIndex = (currentIndex + 1) % menuItems.length;
+		menuItems[nextIndex].focus();
+	}
+
+	focusPrevMenuItem(dropdown, currentIndex) {
+		const menuItems = dropdown.querySelectorAll('.dropdown-item');
+		const prevIndex = currentIndex === 0 ? menuItems.length - 1 : currentIndex - 1;
+		menuItems[prevIndex].focus();
+	}
+}
+
+// Initialize the accessible navigation
+document.addEventListener('DOMContentLoaded', () => {
+	new AccessibleNavigation();
+});
