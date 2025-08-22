@@ -16,12 +16,12 @@
                     <label for="Report">Select report</label>
                 </td>
                 <td class="pt-3 px-5"></td>
-                <td class="pt-3">
+                <td class="pt-3 px-5">
                     <button type="submit" class="btn" @(Model.CanEdit ? "" : "disabled")>
                         <img src="~/Images/Excel.png" alt="Generate Excel Report" />
                     </button>
                 </td>
-                <td class="pt-3">
+                <td class="pt-3 px-5">
                     <a href="@Url.Action("Index", "Home")" class="btn">
                         <img src="~/Images/cancel.jpeg" alt="Back to home" />
                     </a>
