@@ -1,0 +1,166 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+using Apha.BST.DataAccess.UnitTests.Helpers;
+using Microsoft.Data.SqlClient;
+using Moq;
+using Moq.Protected;
+
+namespace Apha.BST.DataAccess.UnitTests.NewsRepositoryTest
+{
+    public class NewsRepositoryTests
+    {
+        [Fact]
+        public async Task GetLatestNewsAsync_ReturnsFakeData()
+        {
+            // Arrange
+            var fakeNews = new List<News>
+            {
+                new News
+                {
+                    Title = "Breaking News",
+                    NewsContent = "Content 1",
+                    DatePublished = DateTime.Now,
+                    Author = "John Doe",
+                    AuthorNavigation = new User { UserName = "jdoe" }
+                },
+                new News
+                {
+                    Title = "Tech Update",
+                    NewsContent = "Content 2",
+                    DatePublished = DateTime.Now,
+                    Author = "Jane Smith",
+                    AuthorNavigation = new User { UserName = "jsmith" }
+                }
+            }.AsQueryable();
+
+            var asyncFakeNews = new TestAsyncEnumerable<News>(fakeNews);
+
+            var mockContext = new Mock<BstContext>();
+
+            var mockRepo = new Mock<NewsRepository>(mockContext.Object) { CallBase = true };
+            mockRepo
+                .Protected()
+                .Setup<IQueryable<News>>("GetQueryableResult", ItExpr.IsAny<string>(), ItExpr.IsAny<object[]>())
+                .Returns(asyncFakeNews);
+
+            // Act
+            var result = await mockRepo.Object.GetLatestNewsAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+            Assert.Contains(result, n => n.Title == "Breaking News");
+        }
+
+        [Fact]
+        public async Task AddNewsAsync_CallsExecuteSqlAsync_WithCorrectParameters()
+        {
+            // Arrange
+            var news = new News
+            {
+                Title = "Breaking News",
+                NewsContent = "Content here",
+                DatePublished = DateTime.Now,
+                Author = "John Doe"
+            };
+            var mockContext = new Mock<BstContext>();
+
+            var mockRepo = new Mock<NewsRepository>(mockContext.Object) { CallBase = true };
+
+
+            // Mock ExecuteSqlAsync to return 1 row affected
+            mockRepo
+                .Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.IsAny<string>(),
+                    ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1)
+                .Verifiable();
+
+            // Act
+            await mockRepo.Object.AddNewsAsync(news);
+
+            // Assert
+            mockRepo.Protected().Verify(
+                "ExecuteSqlAsync",
+                Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_News_Add")),
+                ItExpr.Is<object[]>(p => p.Length == 4)
+            );
+        }
+        [Fact]
+        public async Task GetNewsAsync_ReturnsAllNews()
+        {
+            // Arrange
+            var fakeNews = new List<News>
+    {
+        new News
+        {
+            Title = "First News",
+            NewsContent = "First Content",
+            Author = "Author1"
+        },
+        new News
+        {
+            Title = "Second News",
+            NewsContent = "Second Content",
+            Author = "Author2"
+        }
+    }.AsQueryable();
+
+            var asyncFakeNews = new TestAsyncEnumerable<News>(fakeNews);
+
+            var mockContext = new Mock<BstContext>();
+
+            var mockRepo = new Mock<NewsRepository>(mockContext.Object) { CallBase = true };
+            mockRepo
+                .Protected()
+                .Setup<IQueryable<News>>("GetQueryableResult",
+                    ItExpr.Is<string>(s => s.Contains("sp_GetAllNews")),
+                    ItExpr.IsAny<object[]>())
+                .Returns(asyncFakeNews);
+
+            // Act
+            var result = await mockRepo.Object.GetNewsAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, n => n.Title == "First News");
+        }
+        [Fact]
+        public async Task DeleteNewsAsync_CallsExecuteSqlAsync_WithCorrectParameters()
+        {
+            // Arrange
+            var title = "Delete Me";
+            var mockContext = new Mock<BstContext>();
+
+            var mockRepo = new Mock<NewsRepository>(mockContext.Object) { CallBase = true };
+
+            mockRepo
+                .Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_News_Delete")),
+                    ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1)
+                .Verifiable();
+
+            // Act
+            await mockRepo.Object.DeleteNewsAsync(title);
+
+            // Assert
+            mockRepo.Protected().Verify(
+                "ExecuteSqlAsync",
+                Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_News_Delete")),
+                ItExpr.Is<object[]>(p => p.Length == 1 && ((SqlParameter)p[0]).Value.Equals(title))
+            );
+        }
+    }
+}

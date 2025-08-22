@@ -133,6 +133,14 @@ jobs:
             /p:Deterministic=true `
             /p:DebugType=full /p:DebugSymbols=true `
             --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Web.test_results.trx"
+            
+          dotnet test src/Apha.BST/Apha.BST.DataAccess.UnitTests/Apha.BST.DataAccess.UnitTests.csproj `
+            --no-build --configuration Release /p:CollectCoverage=true `
+            /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.DataAccess.coverage.opencover.xml" `
+            /p:CoverletOutputFormat=opencover `
+            /p:Deterministic=true `
+            /p:DebugType=full /p:DebugSymbols=true `
+            --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.DataAccess.test_results.trx"
       - name: List coverage files
         shell: pwsh
         run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"; Get-ChildItem -Recurse -Filter "*.test_results.trx"

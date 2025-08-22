@@ -1,0 +1,205 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+using Apha.BST.DataAccess.UnitTests.Helpers;
+using Moq.Protected;
+using Moq;
+using Microsoft.Data.SqlClient;
+
+namespace Apha.BST.DataAccess.UnitTests.PersonRepositoryTest
+{
+    public class PersonRepositoryTests
+    {
+        [Fact]
+        public async Task GetSiteByIdAsync_ReturnsLocationId()
+        {
+            var persons = new TestAsyncEnumerable<Persons>(new[]
+            {
+                new Persons { PersonId = 1, Person = "John", LocationId = "LOC1" }
+            });
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new AbstractPersonRepositoryTest(mockContext.Object, mockAudit.Object, persons: persons);
+
+            var result = await repo.GetSiteByIdAsync(1);
+
+            Assert.Equal("LOC1", result);
+        }
+
+        [Fact]
+        public async Task GetPersonNameByIdAsync_ReturnsPersonName()
+        {
+            var persons = new TestAsyncEnumerable<Persons>(new[]
+            {
+                new Persons { PersonId = 2, Person = "Jane" }
+            });
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new AbstractPersonRepositoryTest(mockContext.Object, mockAudit.Object, persons: persons);
+
+            var result = await repo.GetPersonNameByIdAsync(2);
+
+            Assert.Equal("Jane", result);
+        }
+
+        [Fact]
+        public async Task GetAllPersonsForDropdownAsync_ReturnsPersonLookups()
+        {
+            var lookups = new TestAsyncEnumerable<PersonLookup>(new[]
+            {
+                new PersonLookup { PersonID = 1, Person = "John" },
+                new PersonLookup { PersonID = 2, Person = "Jane" }
+            });
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new AbstractPersonRepositoryTest(mockContext.Object, mockAudit.Object, personLookups: lookups);
+
+            var result = await repo.GetAllPersonsForDropdownAsync();
+
+            Assert.Equal(2, result.Count());
+        }
+
+        [Fact]
+        public async Task GetAllPersonByNameAsync_ReturnsPersonDetails()
+        {
+            var details = new TestAsyncEnumerable<PersonDetail>(new[]
+            {
+                new PersonDetail { PersonID = 1, Person = "John", Name = "Site1" }
+            });
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new AbstractPersonRepositoryTest(mockContext.Object, mockAudit.Object, personDetails: details);
+
+            var result = await repo.GetAllPersonByNameAsync(1);
+
+            Assert.Single(result);
+            Assert.Equal("John", result.First().Person);
+        }
+
+        [Fact]
+        public async Task GetAllSitesAsync_ReturnsPersonSiteLookups()
+        {
+            var sites = new TestAsyncEnumerable<PersonSiteLookup>(new[]
+            {
+                new PersonSiteLookup { PlantNo = "P1", Name = "Site1" }
+            });
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new AbstractPersonRepositoryTest(mockContext.Object, mockAudit.Object, personSiteLookups: sites);
+
+            var result = await repo.GetAllSitesAsync("P1");
+
+            Assert.Single(result);
+            Assert.Equal("Site1", result.First().Name);
+        }
+
+        [Fact]
+        public async Task AddPersonAsync_CallsAuditLog_AndReturnsSuccess()
+        {
+            var person = new AddPerson { Name = "John", PlantNo = "P1" };
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new Mock<PersonsRepository>(mockContext.Object, mockAudit.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_Trainee_Add")),
+                    ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1)
+                .Verifiable();
+
+            mockAudit.Setup(a => a.AddAuditLogAsync(
+                "sp_Trainee_Add",
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                "admin",
+                null)).Returns(Task.CompletedTask);
+
+            var result = await repo.Object.AddPersonAsync(person, "admin");
+
+            Assert.Equal(PersonsRepository.Success, result);
+            repo.Protected().Verify("ExecuteSqlAsync", Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_Trainee_Add")),
+                ItExpr.IsAny<object[]>());
+            mockAudit.Verify(a => a.AddAuditLogAsync(
+                "sp_Trainee_Add",
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                "admin",
+                null), Times.Once());
+        }
+
+        [Fact]
+        public async Task DeletePersonAsync_ReturnsTrue_IfNoTraining()
+        {
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new Mock<PersonsRepository>(mockContext.Object, mockAudit.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_Trainee_Delete")),
+                    ItExpr.IsAny<object[]>())
+                .Callback<string, object[]>((sql, parameters) =>
+                {
+                    ((SqlParameter)parameters[1]).Value = (byte)0;
+                })
+                .ReturnsAsync(1);
+
+            var result = await repo.Object.DeletePersonAsync(1);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task DeletePersonAsync_ReturnsFalse_IfHasTraining()
+        {
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new Mock<PersonsRepository>(mockContext.Object, mockAudit.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_Trainee_Delete")),
+                    ItExpr.IsAny<object[]>())
+                .Callback<string, object[]>((sql, parameters) =>
+                {
+                    ((SqlParameter)parameters[1]).Value = (byte)1;
+                })
+                .ReturnsAsync(1);
+
+            var result = await repo.Object.DeletePersonAsync(1);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task UpdatePersonAsync_CallsExecuteSqlAsync_AndReturnsSuccess()
+        {
+            var editPerson = new EditPerson { PersonID = 1, Person = "John", Name = "Site1" };
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new Mock<PersonsRepository>(mockContext.Object, mockAudit.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_Trainee_Update")),
+                    ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1)
+                .Verifiable();
+
+            var result = await repo.Object.UpdatePersonAsync(editPerson);
+
+            Assert.Equal(PersonsRepository.Success, result);
+            repo.Protected().Verify("ExecuteSqlAsync", Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_Trainee_Update")),
+                ItExpr.IsAny<object[]>());
+        }
+    }
+}
