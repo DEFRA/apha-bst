@@ -519,3 +519,7 @@ input[type="date"].custom-date-input {
     white-space: nowrap;
     border: 0;
 }
+
+.ErrorText {
+    color: Red;
+}

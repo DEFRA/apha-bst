@@ -46,316 +46,110 @@ document.addEventListener('DOMContentLoaded', function () {
 // Accessible navigation class (robust version with blur + focusout)
 class AccessibleNavigation {
     constructor() {
-        this.menuBar = document.querySelector('.menu-bar');
-        this.dropdowns = Array.from(document.querySelectorAll('.dropdown'));
+        this.menuBar = document.querySelector(".menu-bar");
+        this.dropdowns = [...document.querySelectorAll(".dropdown")];
         this.isKeyboardMode = false;
-        this.currentOpenDropdown = null;
-        this.bootstrapAvailable = typeof bootstrap !== 'undefined' && !!bootstrap.Dropdown;
-
+        this.currentOpen = null;
+        this.bootstrapAvailable = typeof bootstrap !== "undefined" && !!bootstrap.Dropdown;
         this.init();
     }
 
     init() {
-        // If Bootstrap created Dropdown instances on the anchors, dispose them so we control behavior.
-        this.disableBootstrapDropdowns();
-
-        this.setupGlobalListeners();
-        this.setupPerDropdownListeners();
+        this.disableBootstrap();
+        this.globalListeners();
+        this.dropdownListeners();
     }
 
-    disableBootstrapDropdowns() {
+    disableBootstrap() {
         if (!this.bootstrapAvailable) return;
-        this.dropdowns.forEach(dropdown => {
-            const toggle = dropdown.querySelector('.dropdown-toggle');
-            try {
-                const bs = bootstrap.Dropdown.getInstance(toggle);
-                if (bs && typeof bs.dispose === 'function') bs.dispose();
-            } catch (err) {
-                // ignore if bootstrap not fully loaded
-            }
-            // remove attribute so bootstrap won't try to re-initialize
-            if (toggle) toggle.removeAttribute('data-bs-toggle');
-        });
-    }
-
-    setupGlobalListeners() {
-        // Detect mouse usage and switch modes
-        document.addEventListener('mousemove', () => {
-            if (this.isKeyboardMode) this.switchToMouseMode();
-        });
-
-        // Detect keyboard usage (typical keys that indicate keyboard navigation)
-        document.addEventListener('keydown', (e) => {
-            const keys = ['Tab', 'Enter', 'Escape', 'ArrowDown', 'ArrowUp', ' '];
-            if (keys.includes(e.key) && !this.isKeyboardMode) {
-                this.switchToKeyboardMode();
-            }
-        });
-
-        // Click outside closes any open dropdowns
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.dropdown')) {
-                this.closeAllDropdowns();
-            }
-        });
-    }
-
-    setupPerDropdownListeners() {
-        this.dropdowns.forEach(dropdown => {
-            const toggle = dropdown.querySelector('.dropdown-toggle');
-            const menu = dropdown.querySelector('.dropdown-menu');
-            const items = menu ? Array.from(menu.querySelectorAll('.dropdown-item')) : [];
-
-            // Mouse pointer enters -> mouse mode + open this dropdown (mouse style)
-            dropdown.addEventListener('pointerenter', () => {
-                this.switchToMouseMode();
-                this.openDropdownMouse(dropdown);
-            });
-
-            // Mouse pointer leaves -> close mouse dropdown
-            dropdown.addEventListener('pointerleave', () => {
-                this.closeDropdownMouse(dropdown);
-            });
-
-            // Click on toggle (prevent default / bootstrap) -> open as mouse interaction
-            if (toggle) {
-                toggle.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.switchToMouseMode();
-                    // toggle mouse-open
-                    if (dropdown.classList.contains('mouse-active')) {
-                        this.closeDropdownMouse(dropdown);
-                    } else {
-                        this.openDropdownMouse(dropdown);
-                    }
-                });
-
-                // Keyboard on toggle
-                toggle.addEventListener('keydown', (e) => {
-                    switch (e.key) {
-                        case 'Enter':
-                        case ' ':
-                        case 'ArrowDown':
-                            e.preventDefault();
-                            this.switchToKeyboardMode();
-                            this.openDropdownKeyboard(dropdown);
-                            this.focusFirstMenuItem(dropdown);
-                            break;
-                        case 'Escape':
-                            e.preventDefault();
-                            this.closeAllDropdowns();
-                            toggle.blur();
-                            break;
-                    }
-                });
-
-                // When toggle receives focus via keyboard, open keyboard dropdown (keeps behaviour predictable)
-                toggle.addEventListener('focus', () => {
-                    if (this.isKeyboardMode) {
-                        this.openDropdownKeyboard(dropdown);
-                    }
-                });
-            }
-
-            // Menu item keyboard navigation and click
-            items.forEach((item, index) => {
-                item.addEventListener('keydown', (e) => {
-                    switch (e.key) {
-                        case 'ArrowDown':
-                            e.preventDefault();
-                            this.focusNextMenuItem(dropdown, index);
-                            break;
-                        case 'ArrowUp':
-                            e.preventDefault();
-                            this.focusPrevMenuItem(dropdown, index);
-                            break;
-                        case 'Escape':
-                            e.preventDefault();
-                            this.closeDropdownKeyboard(dropdown);
-                            if (toggle) toggle.focus();
-                            break;
-                        case 'Tab':
-                            // close on tab so focus leaves cleanly
-                            this.closeDropdownKeyboard(dropdown);
-                            break;
-                    }
-                });
-
-                item.addEventListener('click', () => {
-                    // selecting an item (mouse or keyboard) should close everything
-                    this.closeAllDropdowns();
-                });
-            });
-
-            // FOCUS-OUT: when user tabs out of the dropdown completely, close it
-            // (we use a timeout to allow document.activeElement to update)
-            dropdown.addEventListener('focusout', () => {
-                setTimeout(() => {
-                    if (!dropdown.contains(document.activeElement)) {
-                        // If it was keyboard-open, close keyboard; if mouse-open, close mouse.
-                        if (dropdown.classList.contains('keyboard-active')) {
-                            this.closeDropdownKeyboard(dropdown);
-                        } else if (dropdown.classList.contains('mouse-active')) {
-                            this.closeDropdownMouse(dropdown);
-                        }
-                    }
-                }, 0);
-            });
-        });
-    }
-
-    // Helper to safely blur any currently focused element inside the menubar
-    _blurMenuBarActive() {
-        try {
-            const active = document.activeElement;
-            if (active && this.menuBar && this.menuBar.contains(active) && typeof active.blur === 'function') {
-                active.blur();
-            }
-        } catch (err) {
-            // ignore any exotic browser edge-cases
-        }
-    }
-
-    switchToKeyboardMode() {
-        this.isKeyboardMode = true;
-        if (this.menuBar) this.menuBar.classList.add('keyboard-mode');
-        // close any mouse driven dropdowns
-        this.dropdowns.forEach(d => this._hideMenu(d));
-        this.dropdowns.forEach(d => d.classList.remove('mouse-active'));
-        this.currentOpenDropdown = null;
-    }
-
-    switchToMouseMode() {
-        this.isKeyboardMode = false;
-        if (this.menuBar) this.menuBar.classList.remove('keyboard-mode');
-
-        // Blur any focused element inside menubar so keyboard highlight is cleared
-        this._blurMenuBarActive();
-
-        // remove any keyboard-opened dropdowns
         this.dropdowns.forEach(d => {
-            d.classList.remove('keyboard-active', 'focus-active');
-            this._hideMenu(d);
-            const toggle = d.querySelector('.dropdown-toggle');
-            if (toggle) toggle.setAttribute('aria-expanded', 'false');
+            const t = d.querySelector(".dropdown-toggle");
+            try { bootstrap.Dropdown.getInstance(t)?.dispose(); } catch { }
+            if (t) t.removeAttribute("data-bs-toggle");
         });
-        this.currentOpenDropdown = null;
     }
 
-    openDropdownKeyboard(dropdown) {
-        // close all others then show this as keyboard-active
-        this._closeOthers(dropdown);
-        dropdown.classList.remove('mouse-active');
-        dropdown.classList.add('keyboard-active');
-        this._showMenu(dropdown);
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        if (toggle) toggle.setAttribute('aria-expanded', 'true');
-        this.currentOpenDropdown = dropdown;
-    }
-
-    closeDropdownKeyboard(dropdown) {
-        dropdown.classList.remove('keyboard-active', 'focus-active');
-        this._hideMenu(dropdown);
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        if (toggle) toggle.setAttribute('aria-expanded', 'false');
-        if (this.currentOpenDropdown === dropdown) this.currentOpenDropdown = null;
-    }
-
-    openDropdownMouse(dropdown) {
-        // close other dropdowns, remove keyboard-active flags
-        this._closeOthers(dropdown);
-        dropdown.classList.remove('keyboard-active', 'focus-active');
-        dropdown.classList.add('mouse-active');
-
-        // blur any focused menubar element so the keyboard highlight doesn't remain
-        this._blurMenuBarActive();
-
-        this._showMenu(dropdown);
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        if (toggle) toggle.setAttribute('aria-expanded', 'true');
-        this.currentOpenDropdown = dropdown;
-    }
-
-    closeDropdownMouse(dropdown) {
-        dropdown.classList.remove('mouse-active');
-        this._hideMenu(dropdown);
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        if (toggle) toggle.setAttribute('aria-expanded', 'false');
-        if (this.currentOpenDropdown === dropdown) this.currentOpenDropdown = null;
-    }
-
-    toggleDropdown(dropdown) {
-        if (dropdown.classList.contains('keyboard-active')) {
-            this.closeDropdownKeyboard(dropdown);
-        } else if (dropdown.classList.contains('mouse-active')) {
-            this.closeDropdownMouse(dropdown);
-        } else {
-            // prefer current input mode
-            if (this.isKeyboardMode) this.openDropdownKeyboard(dropdown);
-            else this.openDropdownMouse(dropdown);
-        }
-    }
-
-    closeAllDropdowns() {
-        this.dropdowns.forEach(d => {
-            d.classList.remove('keyboard-active', 'mouse-active', 'focus-active');
-            this._hideMenu(d);
-            const toggle = d.querySelector('.dropdown-toggle');
-            if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    globalListeners() {
+        document.addEventListener("mousemove", () => this.isKeyboardMode && this.switchMode(false));
+        document.addEventListener("keydown", e => {
+            if (["Tab", "Enter", "Escape", "ArrowDown", "ArrowUp", " "].includes(e.key) && !this.isKeyboardMode)
+                this.switchMode(true);
         });
-        this.currentOpenDropdown = null;
+        document.addEventListener("click", e => !e.target.closest(".dropdown") && this.closeAll());
     }
 
-    _closeOthers(except) {
+    dropdownListeners() {
         this.dropdowns.forEach(d => {
-            if (d !== except) {
-                d.classList.remove('keyboard-active', 'mouse-active', 'focus-active');
-                this._hideMenu(d);
-                const toggle = d.querySelector('.dropdown-toggle');
-                if (toggle) toggle.setAttribute('aria-expanded', 'false');
+            const t = d.querySelector(".dropdown-toggle"),
+                items = [...d.querySelectorAll(".dropdown-item")];
+
+            d.addEventListener("pointerenter", () => (this.switchMode(false), this.open(d, "mouse")));
+            d.addEventListener("pointerleave", () => this.close(d, "mouse"));
+
+            if (t) {
+                t.addEventListener("click", e => {
+                    e.preventDefault(); this.switchMode(false);
+                    d.classList.contains("mouse-active") ? this.close(d, "mouse") : this.open(d, "mouse");
+                });
+                t.addEventListener("keydown", e => {
+                    if (["Enter", " ", "ArrowDown"].includes(e.key)) {
+                        e.preventDefault(); this.switchMode(true);
+                        this.open(d, "keyboard"); this.focusFirst(d);
+                    } else if (e.key === "Escape") {
+                        e.preventDefault(); this.closeAll(); t.blur();
+                    }
+                });
+                t.addEventListener("focus", () => this.isKeyboardMode && this.open(d, "keyboard"));
             }
+
+            items.forEach((item, i) => {
+                item.addEventListener("keydown", e => {
+                    if (e.key === "ArrowDown") { e.preventDefault(); this.focusNext(d, i); }
+                    else if (e.key === "ArrowUp") { e.preventDefault(); this.focusPrev(d, i); }
+                    else if (e.key === "Escape") { e.preventDefault(); this.close(d, "keyboard"); t?.focus(); }
+                    else if (e.key === "Tab") this.close(d, "keyboard");
+                });
+                item.addEventListener("click", () => this.closeAll());
+            });
+
+            d.addEventListener("focusout", () => setTimeout(() => {
+                if (!d.contains(document.activeElement)) this.close(d, d.classList.contains("keyboard-active") ? "keyboard" : "mouse");
+            }));
         });
     }
 
-    // Show/hide helpers: manipulate both classes and inline style, also remove any Bootstrap 'show' leftovers
-    _showMenu(dropdown) {
-        const menu = dropdown.querySelector('.dropdown-menu');
-        if (!menu) return;
-        menu.style.display = 'block';
-        menu.classList.add('show');
-        dropdown.classList.add('show');
+    switchMode(kb) {
+        this.isKeyboardMode = kb;
+        this.menuBar?.classList.toggle("keyboard-mode", kb);
+        if (!kb) { this._blurActive(); this.dropdowns.forEach(d => this.close(d, "keyboard")); }
+        else this.dropdowns.forEach(d => this.close(d, "mouse"));
     }
 
-    _hideMenu(dropdown) {
-        const menu = dropdown.querySelector('.dropdown-menu');
-        if (!menu) return;
-        menu.style.display = '';
-        menu.classList.remove('show');
-        dropdown.classList.remove('show');
+    open(d, mode) {
+        this._closeOthers(d);
+        d.classList.add(`${mode}-active`); d.classList.remove(mode === "mouse" ? "keyboard-active" : "mouse-active");
+        if (mode === "mouse") this._blurActive();
+        this._show(d); this._aria(d, true);
+        this.currentOpen = d;
     }
 
-    // Keyboard focus helpers
-    focusFirstMenuItem(dropdown) {
-        const first = dropdown.querySelector('.dropdown-item');
-        if (first) first.focus();
+    close(d, mode) {
+        d.classList.remove(`${mode}-active`, "focus-active");
+        this._hide(d); this._aria(d, false);
+        if (this.currentOpen === d) this.currentOpen = null;
     }
 
-    focusNextMenuItem(dropdown, currentIndex) {
-        const items = Array.from(dropdown.querySelectorAll('.dropdown-item'));
-        if (!items.length) return;
-        const next = (currentIndex + 1) % items.length;
-        items[next].focus();
-    }
+    closeAll() { this.dropdowns.forEach(d => this.close(d, "mouse") || this.close(d, "keyboard")); }
 
-    focusPrevMenuItem(dropdown, currentIndex) {
-        const items = Array.from(dropdown.querySelectorAll('.dropdown-item'));
-        if (!items.length) return;
-        const prev = currentIndex === 0 ? items.length - 1 : currentIndex - 1;
-        items[prev].focus();
-    }
+    _closeOthers(except) { this.dropdowns.forEach(d => d !== except && this.close(d, "mouse") && this.close(d, "keyboard")); }
+    _show(d) { d.querySelector(".dropdown-menu")?.classList.add("show"), d.classList.add("show"); }
+    _hide(d) { d.querySelector(".dropdown-menu")?.classList.remove("show"), d.classList.remove("show"); }
+    _aria(d, v) { d.querySelector(".dropdown-toggle")?.setAttribute("aria-expanded", v); }
+    _blurActive() { try { let a = document.activeElement; if (a && this.menuBar?.contains(a)) a.blur() } catch { } }
+
+    focusFirst(d) { d.querySelector(".dropdown-item")?.focus(); }
+    focusNext(d, i) { const items = [...d.querySelectorAll(".dropdown-item")]; items[(i + 1) % items.length]?.focus(); }
+    focusPrev(d, i) { const items = [...d.querySelectorAll(".dropdown-item")]; items[(i ? i : items.length) - 1]?.focus(); }
 }
 
-// Initialize after DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    window._accessibleNav = new AccessibleNavigation();
-});
+document.addEventListener("DOMContentLoaded", () => window._accessibleNav = new AccessibleNavigation());
