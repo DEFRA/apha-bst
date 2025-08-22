@@ -241,13 +241,11 @@ nav .menu-bar {
 
 /* Arrow image sizing */
 .dropdown-arrow {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     margin-left: auto; /* push arrow to right */
     display: inline-block;
 }
-
-
 
 /*--Home---*/
 .home-container {
