@@ -73,7 +73,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             RAND=$(( RANDOM % 9000000 + 1000000 ))
-            BRANCH="release/update-version-${VERSION}-${RAND}"
+            BRANCH="release/update-version-${{ github.event.inputs.DEVIMAGEVERSION }}-${{ github.run_id }}"
             git checkout -b "$BRANCH"
             echo "${{ github.event.inputs.DEVIMAGEVERSION }}" > VERSION
             git add VERSION
@@ -90,6 +90,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ env.BRANCH_NAME }}
+          base: main
           title: "Release: Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
           body: "This PR updates the VERSION file to ${{ github.event.inputs.DEVIMAGEVERSION }}."    
 
