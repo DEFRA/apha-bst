@@ -23,8 +23,6 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<bool> CanEditPage(string action)
         {
-            try
-            {
                 string? CanWrite = await _context.DataEntries
                 .Where(p => p.ActiveViewName == action)
                     .Select(p => p.CanWrite)
@@ -39,9 +37,7 @@ namespace Apha.BST.DataAccess.Repositories
                 else
                 {
                     return false;
-                }
-            }
-            catch { throw; }
+                }            
         }
     }
 }

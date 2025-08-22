@@ -12,9 +12,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class AuditlogArchivedRepository:IAuditlogArchivedRepository
-    {      
-       
+    public class AuditlogArchivedRepository : IAuditlogArchivedRepository
+    {
+
         private readonly BstContext _context;
         public AuditlogArchivedRepository(BstContext context)
         {

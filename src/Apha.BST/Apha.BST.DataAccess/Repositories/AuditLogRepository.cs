@@ -15,15 +15,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class AuditLogRepository : IAuditLogRepository
+    public class AuditLogRepository : RepositoryBase<AuditLog>, IAuditLogRepository
     {
-        private readonly BstContext _context;
-        public AuditLogRepository(BstContext context)
-        {
-            _context = context;
-        }
-
-        public async Task AddAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType,string userName, string? error = null)
+        public AuditLogRepository(BstContext context) : base(context) { }
+       
+        public virtual async Task AddAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string userName, string? error = null)
         {
             var paramString = new StringBuilder();
             if (!string.IsNullOrEmpty(error))
@@ -31,31 +27,31 @@ namespace Apha.BST.DataAccess.Repositories
                 paramString.Append("Error occured in SP: " + error + "\r\n");
             }
 
-            foreach (var param in parameters)
-            {
-                if (param != null)
-                {
-                    paramString.Append(param.ParameterName + ":");
-                    if (param.Value != null && param.Value != DBNull.Value)
-                        paramString.Append(param.Value.ToString());
-                    paramString.Append(";");
-                }
-            }
+            parameters.Where(param => param != null)
+           .ToList()
+           .ForEach(param =>
+           {
+               paramString.Append(param.ParameterName + ":");
+               if (param.Value != null && param.Value != DBNull.Value)
+                   paramString.Append(param.Value.ToString());
+               paramString.Append(';');
+           });
 
             var auditParams = new[]
             {
-                 new SqlParameter("@Procedure", SqlDbType.VarChar, 100) { Value = procedure },
-                 new SqlParameter("@Parameters", SqlDbType.Text) { Value = paramString.ToString() },
-                 new SqlParameter("@User", SqlDbType.VarChar, 50) { Value =userName},
-                 new SqlParameter("@TransactionType", SqlDbType.VarChar, 10) { Value = transactionType }
-            };
+          new SqlParameter("@Procedure", SqlDbType.VarChar, 100) { Value = procedure },
+          new SqlParameter("@Parameters", SqlDbType.Text) { Value = paramString.ToString() },
+          new SqlParameter("@User", SqlDbType.VarChar, 50) { Value =userName},
+          new SqlParameter("@TransactionType", SqlDbType.VarChar, 10) { Value = transactionType }
+     };
 
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_Audit_Log @Procedure, @Parameters, @User, @TransactionType", auditParams);
+            await ExecuteSqlAsync("EXEC sp_Audit_Log @Procedure, @Parameters, @User, @TransactionType", auditParams);
         }
+        
         public async Task<PagedData<AuditLog>> GetAuditLogsAsync(PaginationParameters filter, string storedProcedure)
         {
-            var query = _context.Auditlogs.AsQueryable();           
-            
+            var query = GetDbSetFor<AuditLog>();
+
             query = query.Where(i => i.Procedure == null
                              || (!i.Procedure.StartsWith("sp_GetAll") && !i.Procedure.StartsWith("sp_Audit_log_Archive")));
             if (!string.IsNullOrEmpty(filter.Search) && filter.Search != "%")
@@ -75,8 +71,7 @@ namespace Apha.BST.DataAccess.Repositories
         public async Task<List<string>> GetStoredProcedureNamesAsync()
         {
 
-            var result = await _context.Set<StoredProcedureList>()
-                .FromSqlRaw("EXEC sp_Audit_log_SPList")
+            var result = await GetQueryableResultFor<StoredProcedureList>("EXEC sp_Audit_log_SPList")
                 .ToListAsync();
 
             return result?
@@ -87,12 +82,12 @@ namespace Apha.BST.DataAccess.Repositories
         }
         public async Task ArchiveAuditLogAsync(string userName)
         {
-           
+
             string? error = null;
             string storedProcedure = "sp_Audit_log_Archive";
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC "+ storedProcedure);
+                await ExecuteSqlAsync("EXEC " + storedProcedure);
             }
             catch (Exception ex)
             {

@@ -14,31 +14,27 @@ using Apha.BST.Core;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class SiteRepository : ISiteRepository
+    public class SiteRepository : RepositoryBase<Site>, ISiteRepository
     {
-        private readonly BstContext _context;
         private readonly IAuditLogRepository _auditLogRepository;
         public const string Success = "SUCCESS";
         public const string Exists = "EXISTS";
         public const string PlantNoParameter = "@PlantNo";
-        public SiteRepository(BstContext context, IAuditLogRepository auditLogRepository)
-        {
-            _context = context;
+        public SiteRepository(BstContext context, IAuditLogRepository auditLogRepository) : base(context)
+        {            
             _auditLogRepository = auditLogRepository;
         }
 
         public async Task<IEnumerable<Site>> GetAllSitesAsync(string plantNo)
         {
             var param = new SqlParameter(PlantNoParameter, plantNo);
-            return await _context.Sites
-                .FromSqlRaw("EXEC sp_Sites_Select @PlantNo", param)
+            return await GetQueryableResult("EXEC sp_Sites_Select @PlantNo", param)
                 .ToListAsync();
         }
         public async Task<List<SiteTrainee>> GetSiteTraineesAsync(string plantNo)
         {
             var param = new SqlParameter(PlantNoParameter, plantNo);
-            return await _context.SiteTrainees
-                .FromSqlRaw("EXEC sp_Site_Trainee_Get @PlantNo", param)
+            return await GetQueryableResultFor<SiteTrainee>("EXEC sp_Site_Trainee_Get @PlantNo", param)
                 .ToListAsync();
         }
 
@@ -67,7 +63,7 @@ namespace Apha.BST.DataAccess.Repositories
             string? error = null;
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Sites_Add @PlantNo, @Name, @Add1, @Add2, @AddTown, @AddCounty, @AddPCode, @AddTel, @AddFax, @AddAHVLA, @ReturnCode OUT", parameters);
+                await ExecuteSqlAsync("EXEC sp_Sites_Add @PlantNo, @Name, @Add1, @Add2, @AddTown, @AddCounty, @AddPCode, @AddTel, @AddFax, @AddAHVLA, @ReturnCode OUT", parameters);
             }
             catch (Exception ex)
             {
@@ -98,7 +94,7 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<string?> GetPersonNameByIdAsync(int personId)
         {
-            return await _context.Persons
+            return await GetDbSetFor<Persons>()
                                  .Where(p => p.PersonId == personId)
                                  .Select(p => p.Person)
                                  .FirstOrDefaultAsync();
@@ -120,7 +116,7 @@ namespace Apha.BST.DataAccess.Repositories
             };
 
 
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
+            await ExecuteSqlAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
 
             var personTraining = (byte)parameters[1].Value;
 
@@ -146,7 +142,7 @@ namespace Apha.BST.DataAccess.Repositories
             };
 
 
-            await _context.Database.ExecuteSqlRawAsync(
+            await ExecuteSqlAsync(
                 @"EXEC sp_Sites_Update 
                         @Name, @PlantNo, @Add1, @Add2, @AddTown, @AddCounty, @AddPCode, @AddTel, @AddFax, @AddAHVLA",
                 parameters);

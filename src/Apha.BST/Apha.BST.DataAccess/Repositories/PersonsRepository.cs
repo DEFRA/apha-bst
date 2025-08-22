@@ -13,20 +13,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class PersonsRepository : IPersonsRepository
+    public class PersonsRepository : RepositoryBase<Persons>, IPersonsRepository
     {
-        private readonly BstContext _context;
         private readonly IAuditLogRepository _auditLogRepository;
         public const string Success = "SUCCESS";
        
-        public PersonsRepository(BstContext context, IAuditLogRepository auditLogRepository)
-        {
-            _context = context;
+        public PersonsRepository(BstContext context, IAuditLogRepository auditLogRepository) : base(context)
+        {           
             _auditLogRepository = auditLogRepository;
         }
         public async Task<string?> GetSiteByIdAsync(int personId)
         {
-            return await _context.Persons
+            return await GetDbSetFor<Persons>()
                                 .Where(p => p.PersonId == personId)
                                 .Select(p => p.LocationId)
                                 .FirstOrDefaultAsync();
@@ -34,7 +32,7 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<string?> GetPersonNameByIdAsync(int personId)
         {
-            return await _context.Persons
+            return await GetDbSetFor<Persons>()
                                  .Where(p => p.PersonId == personId)
                                  .Select(p => p.Person)
                                  .FirstOrDefaultAsync();
@@ -42,24 +40,21 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<IEnumerable<PersonLookup>> GetAllPersonsForDropdownAsync()
         {
-            return await _context.PersonLookups
-                .FromSqlRaw("EXEC sp_Trainee_Training_Select")
+            return await GetQueryableResultFor<PersonLookup>("EXEC sp_Trainee_Training_Select")
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<PersonDetail>> GetAllPersonByNameAsync(int person)
         {
             var param = new SqlParameter("@Person", person);
-            return await _context.PersonDetails
-                      .FromSqlRaw("EXEC sp_Trainee_Select @Person", param)
+            return await GetQueryableResultFor<PersonDetail>("EXEC sp_Trainee_Select @Person", param)
                       .ToListAsync();
         }
 
         public async Task<IEnumerable<PersonSiteLookup>> GetAllSitesAsync(string plantNo)
         {
             var param = new SqlParameter("@PlantNo", plantNo);
-            return await _context.PersonSiteLookups
-                .FromSqlRaw("EXEC sp_Sites_Select @PlantNo", param)
+            return await GetQueryableResultFor<PersonSiteLookup>("EXEC sp_Sites_Select @PlantNo", param)
                 .ToListAsync();
         }
         public async Task<string> AddPersonAsync(AddPerson persons, string userName)
@@ -73,7 +68,7 @@ namespace Apha.BST.DataAccess.Repositories
             };
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Add @Person, @LocationID", parameters);
+                await ExecuteSqlAsync("EXEC sp_Trainee_Add @Person, @LocationID", parameters);
                
             }
             catch (Exception ex)
@@ -116,7 +111,7 @@ namespace Apha.BST.DataAccess.Repositories
             };
 
             
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
+                await ExecuteSqlAsync("EXEC sp_Trainee_Delete @PersonID, @PersonTraining OUTPUT", parameters);
                 var personTraining = (byte)parameters[1].Value;
                 return personTraining == 0;
             
@@ -130,7 +125,7 @@ namespace Apha.BST.DataAccess.Repositories
             new SqlParameter("@Plant", editPerson.Name)
             };
            
-                await _context.Database.ExecuteSqlRawAsync(
+                await ExecuteSqlAsync(
                     "EXEC sp_Trainee_Update @TraineeNo, @Trainee, @Plant",
                     parameters);
             return Success;

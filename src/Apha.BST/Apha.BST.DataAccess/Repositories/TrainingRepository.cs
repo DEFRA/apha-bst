@@ -13,39 +13,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class TrainingRepository:ITrainingRepository
+    public class TrainingRepository: RepositoryBase<Training>, ITrainingRepository
     {
-        private readonly BstContext _context;
         public const string Success = "SUCCESS";
         public const string Fail = "FAIL";
         public const string Exists = "EXISTS";
+        public const string TrainingIdParameter = "@TraineeID";
 
-        public TrainingRepository(BstContext context)
-        {
-            _context = context;           
-        }
+        public TrainingRepository(BstContext context):base(context) { }        
 
         public async Task<List<TraineeTrainer>> GetAllTraineesAsync()
         {
-            return await _context.Traines
-                .FromSqlRaw("EXEC sp_Trainee_Training_Select")
+            return await GetQueryableResultFor<TraineeTrainer>("EXEC sp_Trainee_Training_Select")
                 .ToListAsync();
         }
         public async Task<IEnumerable<TrainerTraining>> GetTrainingByTraineeAsync(string traineeId)
         {
-            var param = new SqlParameter("@TraineeID", traineeId);
+            var param = new SqlParameter(TrainingIdParameter, traineeId);
 
-            return await _context.TrainerTrainings
-                //.FromSqlRaw("EXEC sp_Trainee_Training_Select @TraineeID", param)
-                .FromSqlRaw("EXEC sp_Training_Select @TraineeID", param)
+            return await GetQueryableResultFor<TrainerTraining>("EXEC sp_Training_Select @TraineeID", param)
                 .ToListAsync();
         }
         
         public async Task<IEnumerable<TrainerTraining>> GetAllTrainingsAsync()
         {
-            var param = new SqlParameter("@TraineeID", DBNull.Value);
-            return await _context.TrainerTrainings
-                .FromSqlRaw("EXEC sp_Training_Select @TraineeID", param)
+            var param = new SqlParameter(TrainingIdParameter, DBNull.Value);
+            return await GetQueryableResultFor<TrainerTraining>("EXEC sp_Training_Select @TraineeID", param)
                 .ToListAsync();
         }
 
@@ -55,8 +48,7 @@ namespace Apha.BST.DataAccess.Repositories
             var personIdParam = new SqlParameter("@PersonID", personId);
             var animalTypeParam = new SqlParameter("@AnimalType", animalType);
 
-            return await _context.Set<TrainerHistory>()
-                .FromSqlRaw("EXEC sp_Trainer_TrainedBy_Trained @PersonID, @AnimalType", personIdParam, animalTypeParam)
+            return await GetQueryableResultFor<TrainerHistory>("EXEC sp_Trainer_TrainedBy_Trained @PersonID, @AnimalType", personIdParam, animalTypeParam)
                 .ToListAsync();
         }
 
@@ -64,8 +56,7 @@ namespace Apha.BST.DataAccess.Repositories
         public async Task<IEnumerable<TrainerTrained>> GetTrainerTrainedAsync(int trainerId)
         {
             var param = new SqlParameter("@Trainer", trainerId);
-            return await _context.Set<TrainerTrained>()
-                .FromSqlRaw("EXEC sp_Trainer_Has_Trained @Trainer", param)
+            return await GetQueryableResultFor<TrainerTrained>("EXEC sp_Trainer_Has_Trained @Trainer", param)
                 .ToListAsync();
         }
 
@@ -74,7 +65,7 @@ namespace Apha.BST.DataAccess.Repositories
             DateTime fromDate = dateTrained.Date;
             DateTime toDate = fromDate.AddDays(1);
 
-            return await _context.Trainings.FirstOrDefaultAsync(t =>
+            return await GetDbSetFor<Training>().FirstOrDefaultAsync(t =>
                 t.PersonId == traineeId &&
                 t.TrainerId == trainerId &&
                 t.TrainingAnimal == species &&
@@ -87,7 +78,7 @@ namespace Apha.BST.DataAccess.Repositories
         {
             var parameters = new[]
             {
-            new SqlParameter("@TraineeID", editTraining.TraineeIdOld),
+            new SqlParameter(TrainingIdParameter, editTraining.TraineeIdOld),
             new SqlParameter("@DateTrained", editTraining.TrainingDateTime),
             new SqlParameter("@DateTrainedOld", editTraining.TrainingDateTimeOld),
             new SqlParameter("@Species", editTraining.TrainingAnimal),
@@ -98,7 +89,7 @@ namespace Apha.BST.DataAccess.Repositories
             };            
             try
             {
-                await _context.Database.ExecuteSqlRawAsync(
+                await ExecuteSqlAsync(
                     "EXEC sp_Training_Update @TraineeID, @DateTrained, @DateTrainedOld, @Species, @SpeciesOld, @Trainer, @TrainerOld, @TrainingType",
                     parameters);
                 return Success;
@@ -117,7 +108,7 @@ namespace Apha.BST.DataAccess.Repositories
         {
             var parameters = new[]
             {
-            new SqlParameter("@TraineeID", training.PersonId),
+            new SqlParameter(TrainingIdParameter, training.PersonId),
             new SqlParameter("@TrainerID", training.TrainerId),
             new SqlParameter("@Species", training.TrainingAnimal),
             new SqlParameter("@TrainingType", training.TrainingType),
@@ -130,17 +121,9 @@ namespace Apha.BST.DataAccess.Repositories
                 Value = 0
             }
             };
-           
-            try
-            {
-                await _context.Database.ExecuteSqlRawAsync(                  
+                await ExecuteSqlAsync(                  
                    "EXEC sp_Training_Add @TraineeID, @TrainerID, @Species, @DateTrained, @TrainingType, @ReturnCode OUT",
-                    parameters);
-            }
-            catch
-            {
-                throw;
-            }            
+                    parameters);                    
             var returnCode = (byte)parameters[5].Value;
 
             if (returnCode == 1)
@@ -151,21 +134,21 @@ namespace Apha.BST.DataAccess.Repositories
 
         public async Task<Persons?> GetPersonByIdAsync(int personId)
         {
-            return await _context.Persons.FirstOrDefaultAsync(p => p.PersonId == personId);
+            return await GetDbSetFor<Persons>().FirstOrDefaultAsync(p => p.PersonId == personId);
         }
         
         public async Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained)
         { 
             var parameters = new[]
             {
-                 new SqlParameter("@TraineeID", traineeId),
+                 new SqlParameter(TrainingIdParameter, traineeId),
                  new SqlParameter("@Species", species),
                  new SqlParameter("@DateTrained", dateTrained)
             };
 
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);
+                await ExecuteSqlAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);
                 return Success;
             }
             catch 
