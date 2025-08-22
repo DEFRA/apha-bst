@@ -18,6 +18,12 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Validate VERSION format (major.minor.patch)
         shell: bash
