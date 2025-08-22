@@ -2,7 +2,7 @@ name: Create DEV Image Version and Push ECR
 on:
   workflow_dispatch:
     inputs:
-      RELEASEVERSION:
+      DEVIMAGEVERSION:
         description: 'DEV Image Version'
         type: string
         required: true
@@ -13,6 +13,7 @@ jobs:
   build-and-analyze:
     name: Build + Test + Sonar
     runs-on: windows-latest
+    environment: DEV   # 👈 restrict this job to DEV environment
     permissions:
       id-token: write
       contents: write
@@ -55,7 +56,7 @@ jobs:
         id: imgtag
         shell: pwsh
         run: |
-          $imageTag = "v${{ github.event.inputs.RELEASEVERSION }}"
+          $imageTag = "v${{ github.event.inputs.DEVIMAGEVERSION }}"
           "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
 
       - name: Print Docker image tag
@@ -68,18 +69,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! grep -Fxq "${{ github.event.inputs.RELEASEVERSION }}" VERSION; then
+          if ! grep -Fxq "${{ github.event.inputs.DEVIMAGEVERSION }}" VERSION; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            echo "${{ github.event.inputs.RELEASEVERSION }}" > VERSION
+            RAND=$(( RANDOM % 9000000 + 1000000 ))
+            BRANCH="release/update-version-${VERSION}-${RAND}"
+            git checkout -b "$BRANCH"
+            echo "${{ github.event.inputs.DEVIMAGEVERSION }}" > VERSION
             git add VERSION
-            git commit -m "Update VERSION to ${{ github.event.inputs.RELEASEVERSION }}"
-            git push
+            git commit -m "Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
+            git push origin "$BRANCH"
+            echo "BRANCH_NAME=$BRANCH" >> $GITHUB_ENV
           else
-            echo "VERSION file already contains ${{ github.event.inputs.RELEASEVERSION }} — skipping commit"
+            echo "VERSION file already contains ${{ github.event.inputs.DEVIMAGEVERSION }} — skipping commit"
+            exit 1
           fi
 
-
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.BRANCH_NAME }}
+          title: "Release: Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
+          body: "This PR updates the VERSION file to ${{ github.event.inputs.DEVIMAGEVERSION }}."    
 
       - name: Start Sonar Analysis
         shell: pwsh
@@ -134,6 +146,7 @@ jobs:
     name: Push Docker Image
     needs: build-and-analyze
     runs-on: ubuntu-latest
+    environment: DEV   # 👈 restrict this job to DEV environment
     permissions:
       id-token: write
       contents: read
