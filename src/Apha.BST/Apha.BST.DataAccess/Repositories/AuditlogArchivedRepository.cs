@@ -12,17 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class AuditlogArchivedRepository : IAuditlogArchivedRepository
+    public class AuditlogArchivedRepository : RepositoryBase<AuditlogArchived>, IAuditlogArchivedRepository
     {
-
-        private readonly BstContext _context;
-        public AuditlogArchivedRepository(BstContext context)
+        public AuditlogArchivedRepository(BstContext context):base(context) { }
+       
+        public virtual async Task<PagedData<AuditlogArchived>> GetArchiveAuditLogsAsync(PaginationParameters filter, string storedProcedure)
         {
-            _context = context;
-        }
-        public async Task<PagedData<AuditlogArchived>> GetArchiveAuditLogsAsync(PaginationParameters filter, string storedProcedure)
-        {
-            var query = _context.AuditlogArchiveds.AsQueryable();
+            var query = GetDbSetFor<AuditlogArchived>();
             query = query.Where(i => i.Procedure == null
                             || (!i.Procedure.StartsWith("sp_GetAll") && !i.Procedure.StartsWith("sp_Audit_log_Archive")));
             if (!string.IsNullOrEmpty(filter.Search) && filter.Search != "%")
@@ -39,11 +35,10 @@ namespace Apha.BST.DataAccess.Repositories
             return new PagedData<AuditlogArchived>(auditResult, totalRecords);
 
         }
-        public async Task<List<string>> GetStoredProcedureNamesAsync()
+        public virtual async Task<List<string>> GetStoredProcedureNamesAsync()
         {
 
-            var result = await _context.Set<StoredProcedureList>()
-                .FromSqlRaw("EXEC sp_AuditArchive_log_SPList")
+            var result = await GetQueryableResultFor<StoredProcedureList>("EXEC sp_AuditArchive_log_SPList")
                 .ToListAsync();
 
             return result?

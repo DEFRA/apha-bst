@@ -11,19 +11,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class DataEntryRepository : IDataEntryRepository
+    public class DataEntryRepository : RepositoryBase<DataEntry>, IDataEntryRepository
     {
-        private readonly BstContext _context;
+        public DataEntryRepository(BstContext context): base(context) { }
 
-        public DataEntryRepository(BstContext context)
+        public virtual async Task<bool> CanEditPage(string action)
         {
-            _context = context;
-           
-        }
-
-        public async Task<bool> CanEditPage(string action)
-        {
-                string? CanWrite = await _context.DataEntries
+                string? CanWrite = await GetDbSetFor<DataEntry>()
                 .Where(p => p.ActiveViewName == action)
                     .Select(p => p.CanWrite)
                     .FirstOrDefaultAsync();

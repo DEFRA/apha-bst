@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+using Apha.BST.DataAccess.UnitTests.Helpers;
+
+namespace Apha.BST.DataAccess.UnitTests.DataEntryRepositoryTest
+{
+    public class AbstractDataEntryRepositoryTest : DataEntryRepository
+    {
+        private readonly IQueryable<DataEntry>? _dataEntries;
+
+        public AbstractDataEntryRepositoryTest(
+            BstContext context,
+            IQueryable<DataEntry>? dataEntries = null)
+            : base(context)
+        {
+            _dataEntries = dataEntries;
+        }
+
+        protected override IQueryable<T> GetDbSetFor<T>()
+        {
+            if (typeof(T) == typeof(DataEntry) && _dataEntries != null)
+                return new TestAsyncEnumerable<DataEntry>(_dataEntries).Cast<T>();
+            return base.GetDbSetFor<T>();
+        }
+    }
+}
