@@ -139,8 +139,109 @@ namespace Apha.BST.DataAccess.UnitTests.AuditLogTest
                 Assert.Contains("sp_Test1", result);
                 Assert.Contains("sp_Test2", result);
             }
+        [Fact]
+        public async Task GetAuditLogsAsync_DoesNotFilter_WhenSearchIsNullOrPercent()
+        {
+            var auditLogs = new List<AuditLog>
+    {
+        new AuditLog { Procedure = "sp_Test1", User = "user1" },
+        new AuditLog { Procedure = "sp_Test2", User = "user2" }
+    }.AsQueryable();
 
-            [Fact]
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditLogRepositoryTest(mockContext.Object, auditLogs);
+
+            var filterNull = new PaginationParameters(search: null, page: 1, pageSize: 10);
+            var resultNull = await repo.GetAuditLogsAsync(filterNull, "");
+            Assert.Equal(2, resultNull.Items.Count);
+
+            var filterPercent = new PaginationParameters(search: "%", page: 1, pageSize: 10);
+            var resultPercent = await repo.GetAuditLogsAsync(filterPercent, "");
+            Assert.Equal(2, resultPercent.Items.Count);
+        }
+
+        [Fact]
+        public async Task GetAuditLogsAsync_UnknownSortBy_DoesNotThrow()
+        {
+            var auditLogs = new List<AuditLog>
+    {
+        new AuditLog { Procedure = "sp_Test1", User = "user1" },
+        new AuditLog { Procedure = "sp_Test2", User = "user2" }
+    }.AsQueryable();
+
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditLogRepositoryTest(mockContext.Object, auditLogs);
+
+            var filter = new PaginationParameters(sortBy: "unknown", page: 1, pageSize: 10);
+            var result = await repo.GetAuditLogsAsync(filter, "");
+            Assert.Equal(2, result.Items.Count);
+        }
+
+        [Fact]
+        public async Task GetAuditLogsAsync_ReturnsEmpty_WhenNoLogs()
+        {
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditLogRepositoryTest(mockContext.Object, Enumerable.Empty<AuditLog>().AsQueryable());
+            var filter = new PaginationParameters(page: 1, pageSize: 10);
+            var result = await repo.GetAuditLogsAsync(filter, "");
+            Assert.NotNull(result);
+            Assert.Empty(result.Items);
+            Assert.Equal(0, result.TotalCount);
+        }
+
+        [Fact]
+        public async Task GetStoredProcedureNamesAsync_ReturnsEmpty_WhenNoProcedures()
+        {
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditLogRepositoryTest(mockContext.Object, null, Enumerable.Empty<StoredProcedureList>().AsQueryable());
+            var result = await repo.GetStoredProcedureNamesAsync();
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task AddAuditLogAsync_HandlesEmptyParameters()
+        {
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditLogRepositoryTest(mockContext.Object);
+
+            var parameters = Array.Empty<SqlParameter>();
+            await repo.AddAuditLogAsync("sp_Test", parameters, "Write", "tester");
+            Assert.True(repo.ExecuteCalled);
+            Assert.NotNull(repo.LastParameters);
+        }
+
+        [Fact]
+        public async Task ArchiveAuditLogAsync_DoesNotLogForDeleteOrUsageInsert()
+        {
+            var mockContext = new Mock<BstContext>();
+            var repo = new Mock<AuditLogRepository>(mockContext.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync", ItExpr.IsAny<string>(), ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1);
+
+            // Should NOT call AddAuditLogAsync for DELETE
+            await repo.Object.ArchiveAuditLogAsync("user");
+            repo.Verify(x => x.AddAuditLogAsync(
+                "sp_Audit_log_DELETE",
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                "user",
+                It.IsAny<string?>()), Times.Never);
+
+            // Should NOT call AddAuditLogAsync for USAGE_INSERT
+            await repo.Object.ArchiveAuditLogAsync("user");
+            repo.Verify(x => x.AddAuditLogAsync(
+                "sp_Usage_Insert",
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                "user",
+                It.IsAny<string?>()), Times.Never);
+        }
+
+
+        [Fact]
             public async Task ArchiveAuditLogAsync_CallsAddAuditLogAsync()
             {
                 // Arrange

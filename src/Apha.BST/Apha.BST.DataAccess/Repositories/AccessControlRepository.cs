@@ -7,19 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.DataAccess.Repositories
 {
-    public class AccessControlRepository : IAccessControlRepository
+    public class AccessControlRepository : RepositoryBase<UserRoleInfo>, IAccessControlRepository
     {
-        private readonly BstContext _context;
-        public AccessControlRepository(BstContext context)
-        {
-            _context = context;
-
-        }
+        public AccessControlRepository(BstContext context) : base(context) { }
         public async Task<(byte? RoleId, string? Username)?> GetRoleIdAndUsernameByEmailAsync(string email)
         {
             var param = new SqlParameter("@UserID", email);
-            var result = await _context.UserRoleInfos
-                .FromSqlRaw("EXEC sp_User_Get @UserID", param)
+            var result = await GetQueryableResultFor<UserRoleInfo>("EXEC sp_User_Get @UserID", param)
                 .AsNoTracking()
                .ToListAsync();
 

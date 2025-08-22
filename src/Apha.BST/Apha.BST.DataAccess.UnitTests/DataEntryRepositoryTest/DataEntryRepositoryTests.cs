@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.DataAccess.Data;
+using Moq;
+
+namespace Apha.BST.DataAccess.UnitTests.DataEntryRepositoryTest
+{
+    public class DataEntryRepositoryTests
+    {
+        [Fact]
+        public async Task CanEditPage_ReturnsFalse_WhenCanWriteIsS()
+        {
+            var entries = new List<DataEntry>
+            {
+                new DataEntry { ActiveViewName = "page", CanWrite = "S" }
+            }.AsQueryable();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractDataEntryRepositoryTest(mockContext.Object, entries);
+
+            var result = await repo.CanEditPage("page");
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task CanEditPage_ReturnsTrue_WhenCanWriteIsY()
+        {
+            var entries = new List<DataEntry>
+            {
+                new DataEntry { ActiveViewName = "page", CanWrite = "Y" }
+            }.AsQueryable();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractDataEntryRepositoryTest(mockContext.Object, entries);
+
+            var result = await repo.CanEditPage("page");
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task CanEditPage_ReturnsTrue_WhenCanWriteIsOtherNonEmptyValue()
+        {
+            var entries = new List<DataEntry>
+            {
+                new DataEntry { ActiveViewName = "page", CanWrite = "X" }
+            }.AsQueryable();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractDataEntryRepositoryTest(mockContext.Object, entries);
+
+            var result = await repo.CanEditPage("page");
+            Assert.True(result);
+        }
+        [Fact]
+        public async Task CanEditPage_Throws_WhenNoMatchingEntry()
+        {
+            var entries = new List<DataEntry>().AsQueryable();
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractDataEntryRepositoryTest(mockContext.Object, entries);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => repo.CanEditPage("any"));
+        }
+
+    }
+}
