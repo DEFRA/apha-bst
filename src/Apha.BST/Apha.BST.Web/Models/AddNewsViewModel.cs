@@ -18,7 +18,7 @@ namespace Apha.BST.Web.Models
         [Display(Name = "Use current date and time")]
         public bool UseCurrentDateTime { get; set; } = false;
 
-        [Display(Name = "News person")]
+        [Required(ErrorMessage = "select News Person")]
         public string Author { get; set; } = string.Empty;
 
         public IEnumerable<SelectListItem> Users { get; set; } = new List<SelectListItem>();

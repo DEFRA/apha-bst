@@ -3,20 +3,24 @@
     public class LogService : ILogService
     {
         private readonly ILogger<LogService> _logger;
+        private readonly IConfiguration _configuration;
 
-        public LogService(ILogger<LogService> logger)
+        public LogService(ILogger<LogService> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         public void LogGeneralException(Exception ex, string context)
         {
-            _logger.LogError(ex, "[BST.GENERAL_EXCEPTION] Error in [{Context:l}]: {Message}", context, ex.Message);
+            string generalErrorType = _configuration["ExceptionTypes:General"] ?? "BSTDefaultGeneralException";
+            _logger.LogError(ex, "[{ErrorType:l}] Error in [{Context:l}]: {Message}", generalErrorType, context, ex.Message);
         }
 
         public void LogSqlException(Exception ex, string context)
         {
-            _logger.LogError(ex, "[BST.SQLException] Error in [{Context:l}]: {Message}", context, ex.Message);
+            string sqlErrorType = _configuration["ExceptionTypes:Sql"] ?? "BSTDefaultGeneralException";
+            _logger.LogError(ex, "[{ErrorType:l}] Error in [{Context:l}]: {Message}", sqlErrorType,context, ex.Message);
         }
     }
 }
