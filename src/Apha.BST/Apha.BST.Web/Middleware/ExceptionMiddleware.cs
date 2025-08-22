@@ -6,11 +6,13 @@ namespace Apha.BST.Web.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly IConfiguration _configuration;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IConfiguration configuration)
         {
             _next = next;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -22,8 +24,8 @@ namespace Apha.BST.Web.Middleware
             catch (Exception ex)
             {
                 string errorCode;
-                string ErrorType = "BST.GENERAL_EXCEPTION";
-
+                string ErrorType = _configuration["ExceptionTypes:General"] ?? "BSTDefaultGeneralException";              
+               
 
                 if (ex is UnauthorizedAccessException)
                 { 
@@ -35,7 +37,7 @@ namespace Apha.BST.Web.Middleware
 
                 else if (ex is SqlException)
                 {
-                    ErrorType = "BST.SQLException";
+                    ErrorType = _configuration["ExceptionTypes:Sql"] ?? "BSTDefaultGeneralException";
                     errorCode = "500 - SQL Server Error";
                 }
                 else

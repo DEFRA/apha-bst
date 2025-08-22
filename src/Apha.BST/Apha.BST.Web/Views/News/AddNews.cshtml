@@ -58,16 +58,12 @@
                 <td class="pt-3">
                     <label for="Author" id="Author">News person</label>
                 </td>
-                <td class="pt-3">
-                    @if (Model.CanEdit)
-                    {
-                        <select id="Author" asp-for="Author" asp-items="Model.Users" class="search-dropdown w-80"></select>
-                    }
-                    else
-                    {
-                        <select id="Author" asp-for="Author" asp-items="Model.Users" class="search-dropdown w-80" disabled></select>
-                    }
-                    <span asp-for="Author" class="text-danger"></span>
+                <td class="pt-3">                    
+                     <select id="Author" asp-for="Author" asp-items="Model.Users" class="search-dropdown w-80" disabled="@isDisabled">
+                       
+                    </select>                    
+                   
+                    <span asp-validation-for="Author" class="text-danger"></span>
                 </td>
             </tr>
             <tr>
