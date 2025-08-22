@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Apha.BST.Application.UnitTests.RoleMappingServiceTest
 {
-    public class RoleMappingServiceTest : AbstractRoleMappingServiceTest
+    public class RoleMappingServiceTests : AbstractRoleMappingServiceTest
     {
         [Theory]
         [InlineData(1, "Superuser")]

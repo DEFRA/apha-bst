@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apha.BST.Application.UnitTests.AccessControlServiceTest
 {
-    public class AccessControlServiceTest : AbstractAccessControlServiceTest
+    public class AccessControlServiceTests : AbstractAccessControlServiceTest
     {
         [Fact]
         public async Task GetRoleIdAndUsernameByEmailAsync_ValidEmail_ReturnsResult()
