@@ -99,6 +99,7 @@ jobs:
 
       - name: Wait for approval (max 5 minutes)
         id: wait_for_approval
+        shell: bash
         run: |
           pr_number=${{ steps.cpr.outputs.pull-request-number }}
           echo "Waiting up to 5 minutes for PR #$pr_number approval..."
