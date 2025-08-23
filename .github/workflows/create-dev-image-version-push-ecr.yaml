@@ -76,11 +76,12 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             BRANCH="release/update-version-${{ github.event.inputs.DEVIMAGEVERSION }}-${{ github.run_id }}"
             git checkout -b "$BRANCH"
-            echo "${{ github.event.inputs.DEVIMAGEVERSION }}" > VERSION
+            echo "${{ github.event.inputs.DEVIMAGEVERSION }}" >| VERSION
+            cat VERSION
             git add VERSION
             git commit -m "Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
             git push origin "$BRANCH"
-            echo "BRANCH_NAME=$BRANCH" >> $GITHUB_ENV
+            echo "BRANCH_NAME=$BRANCH" >> $GITUB_ENV
           else
             echo "VERSION file already contains ${{ github.event.inputs.DEVIMAGEVERSION }} — skipping commit"
             exit 1
