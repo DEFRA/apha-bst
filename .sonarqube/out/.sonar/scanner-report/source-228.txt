@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Interfaces;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using Apha.BST.DataAccess.Repositories;
+using AutoMapper;
+
+namespace Apha.BST.Application.Services
+{
+    public class NewsService : INewsService
+    {
+        private readonly INewsRepository _newsRepository;
+        private readonly IMapper _mapper;
+        public NewsService(INewsRepository newseRepository, IMapper mapper)
+        {
+            _newsRepository = newseRepository ?? throw new ArgumentNullException(nameof(newseRepository));
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<NewsDto>> GetLatestNewsAsync()
+        {
+            var latestNews = await _newsRepository.GetLatestNewsAsync();
+            return _mapper.Map<IEnumerable<NewsDto>>(latestNews);
+        }
+        public async Task<string> AddNewsAsync(NewsDto dto)
+        {
+            var news = _mapper.Map<News>(dto);
+            await _newsRepository.AddNewsAsync(news);
+            return $"This news: {dto.Title} has been added to the list";
+        }
+
+        public async Task<List<NewsDto>> GetNewsAsync()
+        {
+            var news = await _newsRepository.GetNewsAsync();
+            return _mapper.Map<List<NewsDto>>(news);
+        }
+
+        public async Task<string> DeleteNewsAsync(string title)
+        {
+            await _newsRepository.DeleteNewsAsync(title);
+            return $"The news entitled: {title} has been deleted";
+        }
+    }
+}

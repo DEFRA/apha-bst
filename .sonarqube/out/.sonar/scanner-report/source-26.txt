@@ -1,0 +1,55 @@
+@model ReportViewModel
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<form asp-action="GenerateExcel" method="post">
+    <table class="w-80 h-100">
+        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+        <tbody class="me-5">
+            <tr>
+                <td class="fw-bold text-decoration-underline">Reports</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="Report">Select report</label>
+                </td>
+                <td class="pt-3 px-5"></td>
+                <td class="pt-3 px-5">
+                    <button type="submit" class="btn" @(Model.CanEdit ? "" : "disabled")>
+                        <img src="~/Images/Excel.png" alt="Generate Excel Report" />
+                    </button>
+                </td>
+                <td class="pt-3 px-5">
+                    <a href="@Url.Action("Index", "Home")" class="btn">
+                        <img src="~/Images/cancel.jpeg" alt="Back to home" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="Report detail">Report details</label>
+                </td>
+                <td class="pt-3 px-5"></td>
+                <td class="pt-3" colspan="2">
+                    <div class="pt-3 ErrorText text-danger">
+                        @if (TempData["ReportMessage"] != null)
+                        {
+                            @TempData["ReportMessage"]
+                        }
+                        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <span class="text-danger">@Model.ErrorMessage</span>
+                        }
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 48px;"></td>
+                <td style="height: 48px;"></td>
+                <td style="height: 48px;" colspan="2"></td>
+            </tr>
+        </tbody>
+    </table>
+</form>

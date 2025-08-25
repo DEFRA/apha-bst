@@ -1,0 +1,1 @@
+è (2csX†hrWsrc/Apha.BST/Apha.BST.Application.UnitTests/TrainingServiceTest/TrainingServiceTests.cs

@@ -1,0 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Core.Entities
+{
+    public class VlaLocView
+    {
+        [Column("Loc_ID")]
+        public string LocId { get; set; } = null!;
+
+        [Column("VLA_Location")]
+        public string? VlaLocation { get; set; }
+    }
+}

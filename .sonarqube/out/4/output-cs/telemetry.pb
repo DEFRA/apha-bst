@@ -1,0 +1,1 @@
+~RhD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\Apha.BST.Application.UnitTests.csproj¢net8.0òCSharp12

@@ -1,0 +1,95 @@
+@model AddUserViewModel
+@{
+    ViewData["Title"] = "AddUser";
+}
+@{
+    var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
+
+<form asp-action="AddUser" method="post">
+    <table class="w-80 h-100">
+        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+        <tbody class="me-5">
+            <tr>
+                <td class="fw-bold text-decoration-underline">Add a new user of BST system</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="UserId" id="UserId">Add user email</label>
+                </td>
+                <td class="pt-3 px-5"></td>
+                <td class="pt-3">
+                    <input id="UserId" asp-for="UserId" disabled="@isDisabled" type="email" />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="UserName" id="UserName">Add user name</label>
+                </td>
+                <td class="pt-3 px-5"></td>
+                <td class=" pt-3">
+                    <input id="UserName" asp-for="UserName" disabled="@isDisabled" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="UserLevel" id="UserLevel">Add user level</label>
+                </td>
+
+                <td class="pt-3 px-5"></td>
+                <td class=" pt-3">
+
+                    <select id="UserLevel" asp-for="UserLevel" asp-items="Model.UserLevels" class="search-dropdown" disabled="@isDisabled">
+                        <option value="0">Add user's level......</option>
+                        </select>
+                  
+                    <span asp-validation-for="UserLevel" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt-3">
+                    <label for="UserLoc">Add VLA location</label>
+                </td>
+                <td class="pt-3 px-5"></td>
+                <td class="pt-3">
+
+                    <select id="UserLoc" asp-for="UserLoc" asp-items="Model.Locations" class="search-dropdown" disabled="@isDisabled">
+                            <option value="">Add user location...</option>
+                        </select>
+                  
+                    <span asp-validation-for="UserLoc" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="pt-3 px-5"></td>
+                <td class="pt-3">
+                    <table>
+                        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+                        <tr>
+                            <td>
+                                <button type="submit" class="btn">
+                                    <img src="~/Images/tick.gif" alt="Save user" />
+                                </button>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Index", "Home")" class="btn">
+                                    <img src="~/Images/cancel.jpeg" alt="Cancel action" />
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="pt-3 ErrorText text-danger">
+                        @if (TempData["UserMessage"] != null)
+                        {
+                            @TempData["UserMessage"]
+                        }
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

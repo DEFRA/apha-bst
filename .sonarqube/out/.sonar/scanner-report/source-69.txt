@@ -1,0 +1,30 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Apha.BST.Web.Models
+{
+    public class EditSiteViewModel:BaseViewModel
+    {
+        [Required(ErrorMessage = "Plant / Site No. is required")]
+        public string PlantNo { get; set; } = null!;
+
+        [Required(ErrorMessage = "Plant Name is required")]
+        public required string Name { get; set; }
+
+        public string? AddressLine1 { get; set; }
+
+        public string? AddressLine2 { get; set; }
+
+        public string? AddressTown { get; set; }
+
+        public string? AddressCounty { get; set; }
+
+        public string? AddressPostCode { get; set; }
+
+        public string? Telephone { get; set; }
+
+        public string? Fax { get; set; }
+
+        [Display(Name = "AHVLA Site")]
+        public required bool IsAhvla { get; set; }
+    }
+}

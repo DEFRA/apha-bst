@@ -1,0 +1,1 @@
+£ 2plsqlXhr3db-scripts/04-procedures/sp_trainer_has_trained.sql

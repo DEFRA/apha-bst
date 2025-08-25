@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+
+namespace Apha.BST.DataAccess.UnitTests.PersonRepositoryTest
+{
+    public class AbstractPersonRepositoryTest(
+        BstContext context,
+        IAuditLogRepository auditLogRepo,
+        IQueryable<Persons>? persons = null,
+        IQueryable<PersonLookup>? personLookups = null,
+        IQueryable<PersonDetail>? personDetails = null,
+        IQueryable<PersonSiteLookup>? personSiteLookups = null) : PersonsRepository(context, auditLogRepo)
+    {
+        private readonly IQueryable<Persons>? _persons = persons;
+        private readonly IQueryable<PersonLookup>? _personLookups = personLookups;
+        private readonly IQueryable<PersonDetail>? _personDetails = personDetails;
+        private readonly IQueryable<PersonSiteLookup>? _personSiteLookups = personSiteLookups;
+
+        protected override IQueryable<T> GetDbSetFor<T>()
+        {
+            if (typeof(T) == typeof(Persons) && _persons != null)
+                return (IQueryable<T>)_persons;
+            throw new NotImplementedException($"No override for type {typeof(T).Name}");
+        }
+
+        protected override IQueryable<T> GetQueryableResultFor<T>(string sql, params object[] parameters)
+        {
+            if (typeof(T) == typeof(PersonLookup) && _personLookups != null)
+                return (IQueryable<T>)_personLookups;
+            if (typeof(T) == typeof(PersonDetail) && _personDetails != null)
+                return (IQueryable<T>)_personDetails;
+            if (typeof(T) == typeof(PersonSiteLookup) && _personSiteLookups != null)
+                return (IQueryable<T>)_personSiteLookups;
+            throw new NotImplementedException($"No override for type {typeof(T).Name}");
+        }
+    }
+}

@@ -1,0 +1,1 @@
+& 2webXnhr<src/Apha.BST/Apha.BST.Web/Views/Training/ViewTraining.cshtml

@@ -1,0 +1,28 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Core.Entities
+{
+    /// <summary>
+    /// Represents a detailed view of a person, typically used for display purposes.
+    /// </summary>
+    /// <remarks>
+    /// <para>Database: This is a projection/entity used for queries that join person, site, and training information.</para>
+    /// <para>Usage: Used in service methods (e.g., PersonsService.GetAllPersonByNameAsync) and mapped to PersonDetailsDto for UI/API display.</para>
+    /// </remarks>
+    public class PersonDetail
+    {
+       
+        public int PersonID { get; set; }
+       
+        public string? Person { get; set; }
+      
+        public string? PlantNo { get; set; }
+       
+        public string? Name { get; set; }
+    }
+}

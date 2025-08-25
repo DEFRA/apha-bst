@@ -1,0 +1,42 @@
+using Apha.BST.Application.Interfaces;
+
+namespace Apha.BST.Web.PresentationService
+{
+    public class UserDataService:IUserDataService
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDataEntryService _dataEntryService;
+
+        public UserDataService(IHttpContextAccessor httpContextAccessor, IDataEntryService dataEntryService)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _dataEntryService = dataEntryService;
+        }
+
+        public string? GetUsername()
+        {
+            return _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+        }
+        public async Task<bool> CanEditPage(string action)
+        {
+            var role = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(c =>
+          c.Type == "roleid")?.Value;
+
+            if (string.IsNullOrEmpty(role))
+            {
+                return false;
+            }
+            else if (role == "1")
+                return true; // Superuser role, can edit all pages
+            else if (role == "2")
+            {
+                return await _dataEntryService.CanEditPage(action); // Data entry role, can edit specific pages based on action
+            }
+            else if (role == "3")
+                return false; // Readonly role, cannot edit pages
+            else
+                return false; // Default case, no permissions granted         
+
+        }
+    }
+}

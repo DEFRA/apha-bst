@@ -1,0 +1,80 @@
+@model EditPersonViewModel
+@{
+    ViewData["Title"] = "Edit Person";
+}
+@{
+    var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
+<form asp-action="EditPerson" method="post">
+    <table class="w-100 h-100 mt-3 mx-2">
+        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+        <tbody class="mx-2">
+            <tr>
+                <td class="fw-bold text-decoration-underline">
+                    Change trainee details
+                </td>
+                <td></td>
+            </tr>
+            <tr class="mb-4">
+                <td class="w-25 py-3">
+                    <label for="Person" id="Person">Alter person name (Surname, first)</label>
+                </td>
+                <td class="w-50">
+                    <input class="w-50" id="Person" asp-for="Person" class="form-control" autocomplete="off" disabled="@isDisabled" />
+                    <span asp-validation-for="Person" class="text-danger"></span>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td class="w-25 py-3">
+                    <label for="Name" id="Name">Alter site</label>
+                </td>
+                <td class="w-50">
+                    <select id="Name" asp-for="Name" asp-items="Model.SiteOptions" disabled="@isDisabled">
+                        </select>                  
+                   
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="w-25 py-3">
+                    <label for="PersonId">Person ID</label>
+                </td>
+                <td class="w-50">
+                    <input id="PersonId" class="w-50" asp-for="PersonId" class="form-control" readonly />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="w-25 py-3"></td>
+                <td class="w-50">
+                    <table class="w-100">
+                        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+                        <tr>
+                            <td class="w-20">
+                                <button type="submit" class="btn p-0">
+                                    <img src="~/Images/tick.gif" alt="Save site" />
+                                </button>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Index", "Home")" class="btn">
+                                    <img src="~/Images/cancel.jpeg" alt="Cancel action" />
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="w-10">
+                    <p class="pt-2 ErrorText">
+                        @if (TempData["PersonMessage"] != null)
+                        {
+                            @TempData["PersonMessage"]
+                        }
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

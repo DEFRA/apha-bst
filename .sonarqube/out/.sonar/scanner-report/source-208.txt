@@ -1,0 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Pagination;
+using Microsoft.Data.SqlClient;
+
+namespace Apha.BST.Application.Interfaces
+{
+    public interface IAuditLogService
+    {
+        /// <summary>
+        /// Retrieves audit logs.
+        /// </summary>
+        /// <returns>A collection of audit log entries.</returns>
+        Task<PaginatedResult<AuditLogDto>> GetAuditLogsAsync(QueryParameters filter, string storedProcedure);
+        Task<List<string>> GetStoredProcedureNamesAsync();
+        Task ArchiveAuditLogAsync(string userName);
+    }
+}
