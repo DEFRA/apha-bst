@@ -72,30 +72,30 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! grep -Fxq "${{ github.event.inputs.DEVIMAGEVERSION }}" VERSION; then
-            # git config user.name "github-actions[bot]"
-            # git config user.email "github-actions[bot]@users.noreply.github.com"
-            # BRANCH="release/update-version-${{ github.event.inputs.DEVIMAGEVERSION }}-${{ github.run_id }}"
-            # git checkout -b "$BRANCH"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            BRANCH="release/update-version-${{ github.event.inputs.DEVIMAGEVERSION }}-${{ github.run_id }}"
+            git checkout -b "$BRANCH"
             echo "${{ github.event.inputs.DEVIMAGEVERSION }}" >| VERSION
             cat VERSION
-            # git add VERSION
-            # git commit -m "Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
-            # git push origin "$BRANCH"
-            # echo "BRANCH_NAME=$BRANCH" >> $GITUB_ENV
+            git add VERSION
+            git commit -m "Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
+            git push origin "$BRANCH"
+            echo "BRANCH_NAME=$BRANCH" >> $GITUB_ENV
           else
             echo "VERSION file already contains ${{ github.event.inputs.DEVIMAGEVERSION }} — skipping commit"
             exit 1
           fi
 
-  #     - name: Create Pull Request
-  #       id: cpr 
-  #       uses: peter-evans/create-pull-request@v7
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         branch: ${{ env.BRANCH_NAME }}
-  #         base: main
-  #         title: "Release: Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
-  #         body: "This PR updates the VERSION file to ${{ github.event.inputs.DEVIMAGEVERSION }}."    
+      - name: Create Pull Request
+        id: cpr 
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.BRANCH_NAME }}
+          base: main
+          title: "Release: Update VERSION to ${{ github.event.inputs.DEVIMAGEVERSION }}"
+          body: "This PR updates the VERSION file to ${{ github.event.inputs.DEVIMAGEVERSION }}."    
 
 
   #     - name: Wait for approval (max 5 minutes)
