@@ -4,9 +4,9 @@ yD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\obj\Release\net8.0\.NET
 pD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\obj\Release\net8.0\Apha.BST.DataAccess.GlobalUsings.g.csutf-8_
 VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\UserRepository.csutf-8c
 ZD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\TrainingRepository.csutf-8_
-VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\SiteRepository.csutf-8_
-VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\RepositoryBase.csutf-8a
-XD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\ReportRepository.csutf-8b
+VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\SiteRepository.csutf-8a
+XD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\ReportRepository.csutf-8_
+VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\RepositoryBase.csutf-8b
 YD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\PersonsRepository.csutf-8_
 VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\NewsRepository.csutf-8d
 [D:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\DataEntryRepository.csutf-8c

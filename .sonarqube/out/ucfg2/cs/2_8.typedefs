@@ -1,5 +1,4 @@
-7
-5Apha.BST.Application.Interfaces.IAccessControlService‹
+‹
 &Apha.BST.Application.DTOs.AddPersonDtoobjectG
 AddPersonDto()5Apha.BST.Application.DTOs.AddPersonDto.AddPersonDto();
 Name.get/Apha.BST.Application.DTOs.AddPersonDto.Name.get;
@@ -7,7 +6,8 @@
 LocationId.get5Apha.BST.Application.DTOs.AddPersonDto.LocationId.getG
 LocationId.set5Apha.BST.Application.DTOs.AddPersonDto.LocationId.setA
 PlantNo.get2Apha.BST.Application.DTOs.AddPersonDto.PlantNo.getA
-PlantNo.set2Apha.BST.Application.DTOs.AddPersonDto.PlantNo.setù
+PlantNo.set2Apha.BST.Application.DTOs.AddPersonDto.PlantNo.set7
+5Apha.BST.Application.Interfaces.IAccessControlServiceù
 'Apha.BST.Application.DTOs.AphaReportDtoobjectJ
 AphaReportDto()7Apha.BST.Application.DTOs.AphaReportDto.AphaReportDto()8
 ID.get.Apha.BST.Application.DTOs.AphaReportDto.ID.get8
@@ -15,8 +15,7 @@
 Location.get4Apha.BST.Application.DTOs.AphaReportDto.Location.getD
 Location.set4Apha.BST.Application.DTOs.AphaReportDto.Location.set<
 APHA.get0Apha.BST.Application.DTOs.AphaReportDto.APHA.get<
-APHA.set0Apha.BST.Application.DTOs.AphaReportDto.APHA.set:
-8Apha.BST.Application.Interfaces.IAuditlogArchivedService•
+APHA.set0Apha.BST.Application.DTOs.AphaReportDto.APHA.set•
 -Apha.BST.Application.DTOs.AuditLogArchivedDtoobject\
 AuditLogArchivedDto()CApha.BST.Application.DTOs.AuditLogArchivedDto.AuditLogArchivedDto()L
 Procedure.get;Apha.BST.Application.DTOs.AuditLogArchivedDto.Procedure.getL
@@ -28,11 +27,10 @@
 Date.get6Apha.BST.Application.DTOs.AuditLogArchivedDto.Date.getB
 Date.set6Apha.BST.Application.DTOs.AuditLogArchivedDto.Date.setX
 TransactionType.getAApha.BST.Application.DTOs.AuditLogArchivedDto.TransactionType.getX
-TransactionType.setAApha.BST.Application.DTOs.AuditLogArchivedDto.TransactionType.set•
+TransactionType.setAApha.BST.Application.DTOs.AuditLogArchivedDto.TransactionType.set:
+8Apha.BST.Application.Interfaces.IAuditlogArchivedService•
 *Apha.BST.Application.Mappings.EntityMapperAutoMapper.ProfileobjectK
-EntityMapper()9Apha.BST.Application.Mappings.EntityMapper.EntityMapper()2
-0Apha.BST.Application.Interfaces.IAuditLogService3
-1Apha.BST.Application.Interfaces.IDataEntryService¥
+EntityMapper()9Apha.BST.Application.Mappings.EntityMapper.EntityMapper()¥
 %Apha.BST.Application.DTOs.AuditLogDtoobjectD
 AuditLogDto()3Apha.BST.Application.DTOs.AuditLogDto.AuditLogDto()D
 Procedure.get3Apha.BST.Application.DTOs.AuditLogDto.Procedure.getD
@@ -44,14 +42,16 @@
 Date.get.Apha.BST.Application.DTOs.AuditLogDto.Date.get:
 Date.set.Apha.BST.Application.DTOs.AuditLogDto.Date.setP
 TransactionType.get9Apha.BST.Application.DTOs.AuditLogDto.TransactionType.getP
-TransactionType.set9Apha.BST.Application.DTOs.AuditLogDto.TransactionType.set‹
+TransactionType.set9Apha.BST.Application.DTOs.AuditLogDto.TransactionType.set2
+0Apha.BST.Application.Interfaces.IAuditLogService‹
 2Apha.BST.Application.Pagination.PaginatedResult<T>objectY
 PaginatedResult()DApha.BST.Application.Pagination.PaginatedResult<T>.PaginatedResult()µ
 ?PaginatedResult(System.Collections.Generic.IEnumerable<T>, int)rApha.BST.Application.Pagination.PaginatedResult<T>.PaginatedResult(System.Collections.Generic.IEnumerable<T>, int)G
 data.get;Apha.BST.Application.Pagination.PaginatedResult<T>.data.getG
 data.set;Apha.BST.Application.Pagination.PaginatedResult<T>.data.setS
 TotalCount.getAApha.BST.Application.Pagination.PaginatedResult<T>.TotalCount.getS
-TotalCount.setAApha.BST.Application.Pagination.PaginatedResult<T>.TotalCount.set‰
+TotalCount.setAApha.BST.Application.Pagination.PaginatedResult<T>.TotalCount.set3
+1Apha.BST.Application.Interfaces.IDataEntryService‰
 'Apha.BST.Application.DTOs.EditPersonDtoobjectJ
 EditPersonDto()7Apha.BST.Application.DTOs.EditPersonDto.EditPersonDto()<
 Name.get0Apha.BST.Application.DTOs.EditPersonDto.Name.get<
@@ -62,23 +62,7 @@
 Person.get2Apha.BST.Application.DTOs.EditPersonDto.Person.get@
 
 Person.set2Apha.BST.Application.DTOs.EditPersonDto.Person.set.
-,Apha.BST.Application.Interfaces.INewsService…
-/Apha.BST.Application.Pagination.QueryParametersobjectV
-QueryParameters()AApha.BST.Application.Pagination.QueryParameters.QueryParameters()H
-
-Search.get:Apha.BST.Application.Pagination.QueryParameters.Search.getH
-
-Search.set:Apha.BST.Application.Pagination.QueryParameters.Search.setH
-
-SortBy.get:Apha.BST.Application.Pagination.QueryParameters.SortBy.getH
-
-SortBy.set:Apha.BST.Application.Pagination.QueryParameters.SortBy.setP
-Descending.get>Apha.BST.Application.Pagination.QueryParameters.Descending.getP
-Descending.set>Apha.BST.Application.Pagination.QueryParameters.Descending.setD
-Page.get8Apha.BST.Application.Pagination.QueryParameters.Page.getD
-Page.set8Apha.BST.Application.Pagination.QueryParameters.Page.setL
-PageSize.get<Apha.BST.Application.Pagination.QueryParameters.PageSize.getL
-PageSize.set<Apha.BST.Application.Pagination.QueryParameters.PageSize.setÕ
+,Apha.BST.Application.Interfaces.INewsServiceÕ
 )Apha.BST.Application.DTOs.EditTrainingDtoobjectP
 EditTrainingDto();Apha.BST.Application.DTOs.EditTrainingDto.EditTrainingDto()H
 TraineeId.get7Apha.BST.Application.DTOs.EditTrainingDto.TraineeId.getH
@@ -111,10 +95,7 @@ SortBy.set:Apha.BST.Application.Pagination.QueryParameters.SortBy.setP
 Author.get,Apha.BST.Application.DTOs.NewsDto.Author.get:
 
 Author.set,Apha.BST.Application.DTOs.NewsDto.Author.set1
-/Apha.BST.Application.Interfaces.IPersonsServiceÅ
-2Apha.BST.Application.Services.AccessControlServiceobject5Apha.BST.Application.Interfaces.IAccessControlServiceÅ
-GAccessControlService(Apha.BST.Core.Interfaces.IAccessControlRepository)zApha.BST.Application.Services.AccessControlService.AccessControlService(Apha.BST.Core.Interfaces.IAccessControlRepository)‡
-(GetRoleIdAndUsernameByEmailAsync(string)[Apha.BST.Application.Services.AccessControlService.GetRoleIdAndUsernameByEmailAsync(string)ù
+/Apha.BST.Application.Interfaces.IPersonsServiceù
 )Apha.BST.Application.DTOs.PeopleReportDtoobjectP
 PeopleReportDto();Apha.BST.Application.DTOs.PeopleReportDto.PeopleReportDto()F
 PersonId.get6Apha.BST.Application.DTOs.PeopleReportDto.PersonId.getF
@@ -144,7 +125,11 @@ Person.set4Apha.BST.Application.DTOs.PersonDetailDto.Person.setD
 PlantNo.get5Apha.BST.Application.DTOs.PersonDetailDto.PlantNo.getD
 PlantNo.set5Apha.BST.Application.DTOs.PersonDetailDto.PlantNo.set>
 Name.get2Apha.BST.Application.DTOs.PersonDetailDto.Name.get>
-Name.set2Apha.BST.Application.DTOs.PersonDetailDto.Name.set
+Name.set2Apha.BST.Application.DTOs.PersonDetailDto.Name.set0
+.Apha.BST.Application.Interfaces.IReportServiceÅ
+2Apha.BST.Application.Services.AccessControlServiceobject5Apha.BST.Application.Interfaces.IAccessControlServiceÅ
+GAccessControlService(Apha.BST.Core.Interfaces.IAccessControlRepository)zApha.BST.Application.Services.AccessControlService.AccessControlService(Apha.BST.Core.Interfaces.IAccessControlRepository)‡
+(GetRoleIdAndUsernameByEmailAsync(string)[Apha.BST.Application.Services.AccessControlService.GetRoleIdAndUsernameByEmailAsync(string)
 )Apha.BST.Application.DTOs.PersonLookupDtoobjectP
 PersonLookupDto();Apha.BST.Application.DTOs.PersonLookupDto.PersonLookupDto()F
 PersonID.get6Apha.BST.Application.DTOs.PersonLookupDto.PersonID.getF
@@ -152,12 +137,8 @@ Person.set4Apha.BST.Application.DTOs.PersonDetailDto.Person.setD
 
 Person.get4Apha.BST.Application.DTOs.PersonLookupDto.Person.getB
 
-Person.set4Apha.BST.Application.DTOs.PersonLookupDto.Person.set0
-.Apha.BST.Application.Interfaces.IReportServiceÑ
-5Apha.BST.Application.Services.AuditlogArchivedServiceobject8Apha.BST.Application.Interfaces.IAuditlogArchivedServiceý
-aAuditlogArchivedService(Apha.BST.Core.Interfaces.IAuditlogArchivedRepository, AutoMapper.IMapper)—Apha.BST.Application.Services.AuditlogArchivedService.AuditlogArchivedService(Apha.BST.Core.Interfaces.IAuditlogArchivedRepository, AutoMapper.IMapper)Ý
-QGetArchiveAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)‡Apha.BST.Application.Services.AuditlogArchivedService.GetArchiveAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)v
-GetStoredProcedureNamesAsync()TApha.BST.Application.Services.AuditlogArchivedService.GetStoredProcedureNamesAsync()
+Person.set4Apha.BST.Application.DTOs.PersonLookupDto.Person.set5
+3Apha.BST.Application.Interfaces.IRoleMappingService
 $Apha.BST.Application.DTOs.PersonsDtoobjectA
 PersonsDto()1Apha.BST.Application.DTOs.PersonsDto.PersonsDto()A
 PersonId.get1Apha.BST.Application.DTOs.PersonsDto.PersonId.getA
@@ -169,65 +150,19 @@ Person.set/Apha.BST.Application.DTOs.PersonsDto.Person.setE
 LocationId.get3Apha.BST.Application.DTOs.PersonsDto.LocationId.getE
 LocationId.set3Apha.BST.Application.DTOs.PersonsDto.LocationId.setK
 VlalocationId.get6Apha.BST.Application.DTOs.PersonsDto.VlalocationId.getK
-VlalocationId.set6Apha.BST.Application.DTOs.PersonsDto.VlalocationId.set5
-3Apha.BST.Application.Interfaces.IRoleMappingService±
+VlalocationId.set6Apha.BST.Application.DTOs.PersonsDto.VlalocationId.set±
 -Apha.BST.Application.DTOs.PersonSiteLookupDtoobject\
 PersonSiteLookupDto()CApha.BST.Application.DTOs.PersonSiteLookupDto.PersonSiteLookupDto()H
 PlantNo.get9Apha.BST.Application.DTOs.PersonSiteLookupDto.PlantNo.getH
 PlantNo.set9Apha.BST.Application.DTOs.PersonSiteLookupDto.PlantNo.setB
 Name.get6Apha.BST.Application.DTOs.PersonSiteLookupDto.Name.getB
-Name.set6Apha.BST.Application.DTOs.PersonSiteLookupDto.Name.set¥
-#Apha.BST.Application.DTOs.ReportDtoobject>
-ReportDto()/Apha.BST.Application.DTOs.ReportDto.ReportDto()@
-ReportId.get0Apha.BST.Application.DTOs.ReportDto.ReportId.get@
-ReportId.set0Apha.BST.Application.DTOs.ReportDto.ReportId.setD
-ReportName.get2Apha.BST.Application.DTOs.ReportDto.ReportName.getD
-ReportName.set2Apha.BST.Application.DTOs.ReportDto.ReportName.setJ
-GeneratedDate.get5Apha.BST.Application.DTOs.ReportDto.GeneratedDate.getJ
-GeneratedDate.set5Apha.BST.Application.DTOs.ReportDto.GeneratedDate.setF
-GeneratedBy.get3Apha.BST.Application.DTOs.ReportDto.GeneratedBy.getF
-GeneratedBy.set3Apha.BST.Application.DTOs.ReportDto.GeneratedBy.setå
--Apha.BST.Application.Services.AuditLogServiceobject0Apha.BST.Application.Interfaces.IAuditLogServiceÔ
-QAuditLogService(Apha.BST.Core.Interfaces.IAuditLogRepository, AutoMapper.IMapper)Apha.BST.Application.Services.AuditLogService.AuditLogService(Apha.BST.Core.Interfaces.IAuditLogRepository, AutoMapper.IMapper)Æ
-JGetAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)xApha.BST.Application.Services.AuditLogService.GetAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)n
-GetStoredProcedureNamesAsync()LApha.BST.Application.Services.AuditLogService.GetStoredProcedureNamesAsync()j
-ArchiveAuditLogAsync(string)JApha.BST.Application.Services.AuditLogService.ArchiveAuditLogAsync(string).
+Name.set6Apha.BST.Application.DTOs.PersonSiteLookupDto.Name.setÑ
+5Apha.BST.Application.Services.AuditlogArchivedServiceobject8Apha.BST.Application.Interfaces.IAuditlogArchivedServiceý
+aAuditlogArchivedService(Apha.BST.Core.Interfaces.IAuditlogArchivedRepository, AutoMapper.IMapper)—Apha.BST.Application.Services.AuditlogArchivedService.AuditlogArchivedService(Apha.BST.Core.Interfaces.IAuditlogArchivedRepository, AutoMapper.IMapper)Ý
+QGetArchiveAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)‡Apha.BST.Application.Services.AuditlogArchivedService.GetArchiveAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)v
+GetStoredProcedureNamesAsync()TApha.BST.Application.Services.AuditlogArchivedService.GetStoredProcedureNamesAsync().
 ,Apha.BST.Application.Interfaces.ISiteService8
-6Apha.BST.Application.Interfaces.IStaticDropdownService2
-0Apha.BST.Application.Interfaces.ITraineesService2
-0Apha.BST.Application.Interfaces.ITrainersService‘
-!Apha.BST.Application.DTOs.SiteDtoobject8
-	SiteDto()+Apha.BST.Application.DTOs.SiteDto.SiteDto()<
-PlantNo.get-Apha.BST.Application.DTOs.SiteDto.PlantNo.get<
-PlantNo.set-Apha.BST.Application.DTOs.SiteDto.PlantNo.set6
-Name.get*Apha.BST.Application.DTOs.SiteDto.Name.get6
-Name.set*Apha.BST.Application.DTOs.SiteDto.Name.setF
-AddressLine1.get2Apha.BST.Application.DTOs.SiteDto.AddressLine1.getF
-AddressLine1.set2Apha.BST.Application.DTOs.SiteDto.AddressLine1.setF
-AddressLine2.get2Apha.BST.Application.DTOs.SiteDto.AddressLine2.getF
-AddressLine2.set2Apha.BST.Application.DTOs.SiteDto.AddressLine2.setD
-AddressTown.get1Apha.BST.Application.DTOs.SiteDto.AddressTown.getD
-AddressTown.set1Apha.BST.Application.DTOs.SiteDto.AddressTown.setH
-AddressCounty.get3Apha.BST.Application.DTOs.SiteDto.AddressCounty.getH
-AddressCounty.set3Apha.BST.Application.DTOs.SiteDto.AddressCounty.setL
-AddressPostCode.get5Apha.BST.Application.DTOs.SiteDto.AddressPostCode.getL
-AddressPostCode.set5Apha.BST.Application.DTOs.SiteDto.AddressPostCode.set@
-Telephone.get/Apha.BST.Application.DTOs.SiteDto.Telephone.get@
-Telephone.set/Apha.BST.Application.DTOs.SiteDto.Telephone.set4
-Fax.get)Apha.BST.Application.DTOs.SiteDto.Fax.get4
-Fax.set)Apha.BST.Application.DTOs.SiteDto.Fax.set8
-	Ahvla.get+Apha.BST.Application.DTOs.SiteDto.Ahvla.get8
-	Ahvla.set+Apha.BST.Application.DTOs.SiteDto.Ahvla.setú
-.Apha.BST.Application.Services.DataEntryServiceobject1Apha.BST.Application.Interfaces.IDataEntryService±
-?DataEntryService(Apha.BST.Core.Interfaces.IDataEntryRepository)nApha.BST.Application.Services.DataEntryService.DataEntryService(Apha.BST.Core.Interfaces.IDataEntryRepository)Y
-CanEditPage(string)BApha.BST.Application.Services.DataEntryService.CanEditPage(string)µ
-)Apha.BST.Application.Services.NewsServiceobject,Apha.BST.Application.Interfaces.INewsServiceÀ
-INewsService(Apha.BST.Core.Interfaces.INewsRepository, AutoMapper.IMapper)sApha.BST.Application.Services.NewsService.NewsService(Apha.BST.Core.Interfaces.INewsRepository, AutoMapper.IMapper)V
-GetLatestNewsAsync()>Apha.BST.Application.Services.NewsService.GetLatestNewsAsync()Œ
-/AddNewsAsync(Apha.BST.Application.DTOs.NewsDto)YApha.BST.Application.Services.NewsService.AddNewsAsync(Apha.BST.Application.DTOs.NewsDto)J
-GetNewsAsync()8Apha.BST.Application.Services.NewsService.GetNewsAsync()\
-DeleteNewsAsync(string)AApha.BST.Application.Services.NewsService.DeleteNewsAsync(string)2
-0Apha.BST.Application.Interfaces.ITrainingService‘
+6Apha.BST.Application.Interfaces.IStaticDropdownService‘
 &Apha.BST.Application.DTOs.SiteInputDtoobjectG
 SiteInputDto()5Apha.BST.Application.DTOs.SiteInputDto.SiteInputDto()A
 PlantNo.get2Apha.BST.Application.DTOs.SiteInputDto.PlantNo.getA
@@ -249,19 +184,46 @@ INewsService(Apha.BST.Core.Interfaces.INewsRepository, AutoMapper.IMapper)sApha
 Fax.get.Apha.BST.Application.DTOs.SiteInputDto.Fax.get9
 Fax.set.Apha.BST.Application.DTOs.SiteInputDto.Fax.setA
 IsAhvla.get2Apha.BST.Application.DTOs.SiteInputDto.IsAhvla.getA
-IsAhvla.set2Apha.BST.Application.DTOs.SiteInputDto.IsAhvla.set.
-,Apha.BST.Application.Interfaces.IUserService0
-.Apha.BST.Application.Interfaces.IVlaLocServiceï	
-,Apha.BST.Application.Services.PersonsServiceobject/Apha.BST.Application.Interfaces.IPersonsServiceÏ
-OPersonsService(Apha.BST.Core.Interfaces.IPersonsRepository, AutoMapper.IMapper)|Apha.BST.Application.Services.PersonsService.PersonsService(Apha.BST.Core.Interfaces.IPersonsRepository, AutoMapper.IMapper)i
-GetPersonsForDropdownAsync()IApha.BST.Application.Services.PersonsService.GetPersonsForDropdownAsync()[
-GetSiteByIdAsync(int)BApha.BST.Application.Services.PersonsService.GetSiteByIdAsync(int)a
-GetAllSitesAsync(string)EApha.BST.Application.Services.PersonsService.GetAllSitesAsync(string)i
-GetAllPersonByNameAsync(int)IApha.BST.Application.Services.PersonsService.GetAllPersonByNameAsync(int)­
->AddPersonAsync(Apha.BST.Application.DTOs.AddPersonDto, string)kApha.BST.Application.Services.PersonsService.AddPersonAsync(Apha.BST.Application.DTOs.AddPersonDto, string)g
-GetPersonNameByIdAsync(int)HApha.BST.Application.Services.PersonsService.GetPersonNameByIdAsync(int)¥
-:UpdatePersonAsync(Apha.BST.Application.DTOs.EditPersonDto)gApha.BST.Application.Services.PersonsService.UpdatePersonAsync(Apha.BST.Application.DTOs.EditPersonDto)]
-DeletePersonAsync(int)CApha.BST.Application.Services.PersonsService.DeletePersonAsync(int)…
+IsAhvla.set2Apha.BST.Application.DTOs.SiteInputDto.IsAhvla.set2
+0Apha.BST.Application.Interfaces.ITraineesService2
+0Apha.BST.Application.Interfaces.ITrainersService¥
+#Apha.BST.Application.DTOs.ReportDtoobject>
+ReportDto()/Apha.BST.Application.DTOs.ReportDto.ReportDto()@
+ReportId.get0Apha.BST.Application.DTOs.ReportDto.ReportId.get@
+ReportId.set0Apha.BST.Application.DTOs.ReportDto.ReportId.setD
+ReportName.get2Apha.BST.Application.DTOs.ReportDto.ReportName.getD
+ReportName.set2Apha.BST.Application.DTOs.ReportDto.ReportName.setJ
+GeneratedDate.get5Apha.BST.Application.DTOs.ReportDto.GeneratedDate.getJ
+GeneratedDate.set5Apha.BST.Application.DTOs.ReportDto.GeneratedDate.setF
+GeneratedBy.get3Apha.BST.Application.DTOs.ReportDto.GeneratedBy.getF
+GeneratedBy.set3Apha.BST.Application.DTOs.ReportDto.GeneratedBy.setå
+-Apha.BST.Application.Services.AuditLogServiceobject0Apha.BST.Application.Interfaces.IAuditLogServiceÔ
+QAuditLogService(Apha.BST.Core.Interfaces.IAuditLogRepository, AutoMapper.IMapper)Apha.BST.Application.Services.AuditLogService.AuditLogService(Apha.BST.Core.Interfaces.IAuditLogRepository, AutoMapper.IMapper)Æ
+JGetAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)xApha.BST.Application.Services.AuditLogService.GetAuditLogsAsync(Apha.BST.Application.Pagination.QueryParameters, string)n
+GetStoredProcedureNamesAsync()LApha.BST.Application.Services.AuditLogService.GetStoredProcedureNamesAsync()j
+ArchiveAuditLogAsync(string)JApha.BST.Application.Services.AuditLogService.ArchiveAuditLogAsync(string)‘
+!Apha.BST.Application.DTOs.SiteDtoobject8
+	SiteDto()+Apha.BST.Application.DTOs.SiteDto.SiteDto()<
+PlantNo.get-Apha.BST.Application.DTOs.SiteDto.PlantNo.get<
+PlantNo.set-Apha.BST.Application.DTOs.SiteDto.PlantNo.set6
+Name.get*Apha.BST.Application.DTOs.SiteDto.Name.get6
+Name.set*Apha.BST.Application.DTOs.SiteDto.Name.setF
+AddressLine1.get2Apha.BST.Application.DTOs.SiteDto.AddressLine1.getF
+AddressLine1.set2Apha.BST.Application.DTOs.SiteDto.AddressLine1.setF
+AddressLine2.get2Apha.BST.Application.DTOs.SiteDto.AddressLine2.getF
+AddressLine2.set2Apha.BST.Application.DTOs.SiteDto.AddressLine2.setD
+AddressTown.get1Apha.BST.Application.DTOs.SiteDto.AddressTown.getD
+AddressTown.set1Apha.BST.Application.DTOs.SiteDto.AddressTown.setH
+AddressCounty.get3Apha.BST.Application.DTOs.SiteDto.AddressCounty.getH
+AddressCounty.set3Apha.BST.Application.DTOs.SiteDto.AddressCounty.setL
+AddressPostCode.get5Apha.BST.Application.DTOs.SiteDto.AddressPostCode.getL
+AddressPostCode.set5Apha.BST.Application.DTOs.SiteDto.AddressPostCode.set@
+Telephone.get/Apha.BST.Application.DTOs.SiteDto.Telephone.get@
+Telephone.set/Apha.BST.Application.DTOs.SiteDto.Telephone.set4
+Fax.get)Apha.BST.Application.DTOs.SiteDto.Fax.get4
+Fax.set)Apha.BST.Application.DTOs.SiteDto.Fax.set8
+	Ahvla.get+Apha.BST.Application.DTOs.SiteDto.Ahvla.get8
+	Ahvla.set+Apha.BST.Application.DTOs.SiteDto.Ahvla.set…
 'Apha.BST.Application.DTOs.SiteReportDtoobjectJ
 SiteReportDto()7Apha.BST.Application.DTOs.SiteReportDto.SiteReportDto()B
 PlantNo.get3Apha.BST.Application.DTOs.SiteReportDto.PlantNo.getB
@@ -293,7 +255,11 @@ RunTot.get2Apha.BST.Application.DTOs.SiteReportDto.RunTot.get@
 
 RunTot.set2Apha.BST.Application.DTOs.SiteReportDto.RunTot.set>
 	Excel.get1Apha.BST.Application.DTOs.SiteReportDto.Excel.get>
-	Excel.set1Apha.BST.Application.DTOs.SiteReportDto.Excel.set¹	
+	Excel.set1Apha.BST.Application.DTOs.SiteReportDto.Excel.set2
+0Apha.BST.Application.Interfaces.ITrainingServiceú
+.Apha.BST.Application.Services.DataEntryServiceobject1Apha.BST.Application.Interfaces.IDataEntryService±
+?DataEntryService(Apha.BST.Core.Interfaces.IDataEntryRepository)nApha.BST.Application.Services.DataEntryService.DataEntryService(Apha.BST.Core.Interfaces.IDataEntryRepository)Y
+CanEditPage(string)BApha.BST.Application.Services.DataEntryService.CanEditPage(string)¹	
 +Apha.BST.Application.DTOs.TrainerHistoryDtoobjectV
 TrainerHistoryDto()?Apha.BST.Application.DTOs.TrainerHistoryDto.TrainerHistoryDto()H
 PersonID.get8Apha.BST.Application.DTOs.TrainerHistoryDto.PersonID.getH
@@ -321,7 +287,9 @@ Person.get3Apha.BST.Application.DTOs.SiteTraineeDto.Person.getA
 
 Person.set3Apha.BST.Application.DTOs.SiteTraineeDto.Person.setK
 HasTraining.get8Apha.BST.Application.DTOs.SiteTraineeDto.HasTraining.getK
-HasTraining.set8Apha.BST.Application.DTOs.SiteTraineeDto.HasTraining.set¯
+HasTraining.set8Apha.BST.Application.DTOs.SiteTraineeDto.HasTraining.set.
+,Apha.BST.Application.Interfaces.IUserService0
+.Apha.BST.Application.Interfaces.IVlaLocService¯
 *Apha.BST.Application.DTOs.TrainerReportDtoobjectS
 TrainerReportDto()=Apha.BST.Application.DTOs.TrainerReportDto.TrainerReportDto();
 ID.get1Apha.BST.Application.DTOs.TrainerReportDto.ID.get;
@@ -335,7 +303,13 @@ RunTot.get5Apha.BST.Application.DTOs.TrainerReportDto.RunTot.getC
 
 RunTot.set5Apha.BST.Application.DTOs.TrainerReportDto.RunTot.setA
 	Excel.get4Apha.BST.Application.DTOs.TrainerReportDto.Excel.getA
-	Excel.set4Apha.BST.Application.DTOs.TrainerReportDto.Excel.setõ
+	Excel.set4Apha.BST.Application.DTOs.TrainerReportDto.Excel.setµ
+)Apha.BST.Application.Services.NewsServiceobject,Apha.BST.Application.Interfaces.INewsServiceÀ
+INewsService(Apha.BST.Core.Interfaces.INewsRepository, AutoMapper.IMapper)sApha.BST.Application.Services.NewsService.NewsService(Apha.BST.Core.Interfaces.INewsRepository, AutoMapper.IMapper)V
+GetLatestNewsAsync()>Apha.BST.Application.Services.NewsService.GetLatestNewsAsync()Œ
+/AddNewsAsync(Apha.BST.Application.DTOs.NewsDto)YApha.BST.Application.Services.NewsService.AddNewsAsync(Apha.BST.Application.DTOs.NewsDto)J
+GetNewsAsync()8Apha.BST.Application.Services.NewsService.GetNewsAsync()\
+DeleteNewsAsync(string)AApha.BST.Application.Services.NewsService.DeleteNewsAsync(string)õ
 $Apha.BST.Application.DTOs.TraineeDtoobjectA
 TraineeDto()1Apha.BST.Application.DTOs.TraineeDto.TraineeDto()A
 PersonId.get1Apha.BST.Application.DTOs.TraineeDto.PersonId.getA
@@ -343,7 +317,19 @@ $Apha.BST.Application.DTOs.TraineeDtoobjectA
 
 Person.get/Apha.BST.Application.DTOs.TraineeDto.Person.get=
 
-Person.set/Apha.BST.Application.DTOs.TraineeDto.Person.set…
+Person.set/Apha.BST.Application.DTOs.TraineeDto.Person.seté
+%Apha.BST.Application.DTOs.TrainingDtoobjectD
+TrainingDto()3Apha.BST.Application.DTOs.TrainingDto.TrainingDto()B
+PersonId.get2Apha.BST.Application.DTOs.TrainingDto.PersonId.getB
+PersonId.set2Apha.BST.Application.DTOs.TrainingDto.PersonId.setN
+TrainingAnimal.get8Apha.BST.Application.DTOs.TrainingDto.TrainingAnimal.getN
+TrainingAnimal.set8Apha.BST.Application.DTOs.TrainingDto.TrainingAnimal.setR
+TrainingDateTime.get:Apha.BST.Application.DTOs.TrainingDto.TrainingDateTime.getR
+TrainingDateTime.set:Apha.BST.Application.DTOs.TrainingDto.TrainingDateTime.setJ
+TrainingType.get6Apha.BST.Application.DTOs.TrainingDto.TrainingType.getJ
+TrainingType.set6Apha.BST.Application.DTOs.TrainingDto.TrainingType.setD
+TrainerId.get3Apha.BST.Application.DTOs.TrainingDto.TrainerId.getD
+TrainerId.set3Apha.BST.Application.DTOs.TrainingDto.TrainerId.set…
 +Apha.BST.Application.DTOs.TrainerTrainedDtoobjectV
 TrainerTrainedDto()?Apha.BST.Application.DTOs.TrainerTrainedDto.TrainerTrainedDto()J
 TraineeNo.get9Apha.BST.Application.DTOs.TrainerTrainedDto.TraineeNo.getJ
@@ -355,7 +341,31 @@ Person.set/Apha.BST.Application.DTOs.TraineeDto.Person.set…
 SpeciesTrained.get>Apha.BST.Application.DTOs.TrainerTrainedDto.SpeciesTrained.getT
 SpeciesTrained.set>Apha.BST.Application.DTOs.TrainerTrainedDto.SpeciesTrained.setN
 DateTrained.get;Apha.BST.Application.DTOs.TrainerTrainedDto.DateTrained.getN
-DateTrained.set;Apha.BST.Application.DTOs.TrainerTrainedDto.DateTrained.setß	
+DateTrained.set;Apha.BST.Application.DTOs.TrainerTrainedDto.DateTrained.setñ
++Apha.BST.Application.DTOs.TrainingReportDtoobjectV
+TrainingReportDto()?Apha.BST.Application.DTOs.TrainingReportDto.TrainingReportDto()F
+Trainer.get7Apha.BST.Application.DTOs.TrainingReportDto.Trainer.getF
+Trainer.set7Apha.BST.Application.DTOs.TrainingReportDto.Trainer.setF
+Trainee.get7Apha.BST.Application.DTOs.TrainingReportDto.Trainee.getF
+Trainee.set7Apha.BST.Application.DTOs.TrainingReportDto.Trainee.setJ
+TrainedOn.get9Apha.BST.Application.DTOs.TrainingReportDto.TrainedOn.getJ
+TrainedOn.set9Apha.BST.Application.DTOs.TrainingReportDto.TrainedOn.setT
+TrainingAnimal.get>Apha.BST.Application.DTOs.TrainingReportDto.TrainingAnimal.getT
+TrainingAnimal.set>Apha.BST.Application.DTOs.TrainingReportDto.TrainingAnimal.set>
+VLA.get3Apha.BST.Application.DTOs.TrainingReportDto.VLA.get>
+VLA.set3Apha.BST.Application.DTOs.TrainingReportDto.VLA.setÝ
+!Apha.BST.Application.DTOs.UserDtoobject8
+	UserDto()+Apha.BST.Application.DTOs.UserDto.UserDto():
+
+UserId.get,Apha.BST.Application.DTOs.UserDto.UserId.get:
+
+UserId.set,Apha.BST.Application.DTOs.UserDto.UserId.set>
+UserName.get.Apha.BST.Application.DTOs.UserDto.UserName.get>
+UserName.set.Apha.BST.Application.DTOs.UserDto.UserName.set<
+UserLoc.get-Apha.BST.Application.DTOs.UserDto.UserLoc.get<
+UserLoc.set-Apha.BST.Application.DTOs.UserDto.UserLoc.set@
+UserLevel.get/Apha.BST.Application.DTOs.UserDto.UserLevel.get@
+UserLevel.set/Apha.BST.Application.DTOs.UserDto.UserLevel.setß	
 ,Apha.BST.Application.DTOs.TrainerTrainingDtoobjectY
 TrainerTrainingDto()AApha.BST.Application.DTOs.TrainerTrainingDto.TrainerTrainingDto()I
 PersonID.get9Apha.BST.Application.DTOs.TrainerTrainingDto.PersonID.getI
@@ -373,39 +383,21 @@ Person.set7Apha.BST.Application.DTOs.TrainerTrainingDto.Person.setU
 TrainingDateTime.getAApha.BST.Application.DTOs.TrainerTrainingDto.TrainingDateTime.getY
 TrainingDateTime.setAApha.BST.Application.DTOs.TrainerTrainingDto.TrainingDateTime.setK
 TraineeId.get:Apha.BST.Application.DTOs.TrainerTrainingDto.TraineeId.getK
-TraineeId.set:Apha.BST.Application.DTOs.TrainerTrainingDto.TraineeId.setÝ
-!Apha.BST.Application.DTOs.UserDtoobject8
-	UserDto()+Apha.BST.Application.DTOs.UserDto.UserDto():
-
-UserId.get,Apha.BST.Application.DTOs.UserDto.UserId.get:
-
-UserId.set,Apha.BST.Application.DTOs.UserDto.UserId.set>
-UserName.get.Apha.BST.Application.DTOs.UserDto.UserName.get>
-UserName.set.Apha.BST.Application.DTOs.UserDto.UserName.set<
-UserLoc.get-Apha.BST.Application.DTOs.UserDto.UserLoc.get<
-UserLoc.set-Apha.BST.Application.DTOs.UserDto.UserLoc.set@
-UserLevel.get/Apha.BST.Application.DTOs.UserDto.UserLevel.get@
-UserLevel.set/Apha.BST.Application.DTOs.UserDto.UserLevel.seté
-%Apha.BST.Application.DTOs.TrainingDtoobjectD
-TrainingDto()3Apha.BST.Application.DTOs.TrainingDto.TrainingDto()B
-PersonId.get2Apha.BST.Application.DTOs.TrainingDto.PersonId.getB
-PersonId.set2Apha.BST.Application.DTOs.TrainingDto.PersonId.setN
-TrainingAnimal.get8Apha.BST.Application.DTOs.TrainingDto.TrainingAnimal.getN
-TrainingAnimal.set8Apha.BST.Application.DTOs.TrainingDto.TrainingAnimal.setR
-TrainingDateTime.get:Apha.BST.Application.DTOs.TrainingDto.TrainingDateTime.getR
-TrainingDateTime.set:Apha.BST.Application.DTOs.TrainingDto.TrainingDateTime.setJ
-TrainingType.get6Apha.BST.Application.DTOs.TrainingDto.TrainingType.getJ
-TrainingType.set6Apha.BST.Application.DTOs.TrainingDto.TrainingType.setD
-TrainerId.get3Apha.BST.Application.DTOs.TrainingDto.TrainerId.getD
-TrainerId.set3Apha.BST.Application.DTOs.TrainingDto.TrainerId.setÞ
-+Apha.BST.Application.Services.ReportServiceobject.Apha.BST.Application.Interfaces.IReportService²
-€ReportService(Apha.BST.Core.Interfaces.IReportRepository, AutoMapper.IMapper, Microsoft.Extensions.Configuration.IConfiguration)¬Apha.BST.Application.Services.ReportService.ReportService(Apha.BST.Core.Interfaces.IReportRepository, AutoMapper.IMapper, Microsoft.Extensions.Configuration.IConfiguration)Z
-GetAphaReportsAsync()AApha.BST.Application.Services.ReportService.GetAphaReportsAsync()^
-GetPeopleReportsAsync()CApha.BST.Application.Services.ReportService.GetPeopleReportsAsync()Z
-GetSiteReportsAsync()AApha.BST.Application.Services.ReportService.GetSiteReportsAsync()`
-GetTrainerReportsAsync()DApha.BST.Application.Services.ReportService.GetTrainerReportsAsync()b
-GetTrainingReportsAsync()EApha.BST.Application.Services.ReportService.GetTrainingReportsAsync()d
-GenerateExcelReportAsync()FApha.BST.Application.Services.ReportService.GenerateExcelReportAsync()½
+TraineeId.set:Apha.BST.Application.DTOs.TrainerTrainingDto.TraineeId.setï	
+,Apha.BST.Application.Services.PersonsServiceobject/Apha.BST.Application.Interfaces.IPersonsServiceÏ
+OPersonsService(Apha.BST.Core.Interfaces.IPersonsRepository, AutoMapper.IMapper)|Apha.BST.Application.Services.PersonsService.PersonsService(Apha.BST.Core.Interfaces.IPersonsRepository, AutoMapper.IMapper)i
+GetPersonsForDropdownAsync()IApha.BST.Application.Services.PersonsService.GetPersonsForDropdownAsync()[
+GetSiteByIdAsync(int)BApha.BST.Application.Services.PersonsService.GetSiteByIdAsync(int)a
+GetAllSitesAsync(string)EApha.BST.Application.Services.PersonsService.GetAllSitesAsync(string)i
+GetAllPersonByNameAsync(int)IApha.BST.Application.Services.PersonsService.GetAllPersonByNameAsync(int)­
+>AddPersonAsync(Apha.BST.Application.DTOs.AddPersonDto, string)kApha.BST.Application.Services.PersonsService.AddPersonAsync(Apha.BST.Application.DTOs.AddPersonDto, string)g
+GetPersonNameByIdAsync(int)HApha.BST.Application.Services.PersonsService.GetPersonNameByIdAsync(int)¥
+:UpdatePersonAsync(Apha.BST.Application.DTOs.EditPersonDto)gApha.BST.Application.Services.PersonsService.UpdatePersonAsync(Apha.BST.Application.DTOs.EditPersonDto)]
+DeletePersonAsync(int)CApha.BST.Application.Services.PersonsService.DeletePersonAsync(int)ü
+0Apha.BST.Application.Services.RoleMappingServiceobject3Apha.BST.Application.Interfaces.IRoleMappingServiceW
+GetRoleName(byte)BApha.BST.Application.Services.RoleMappingService.GetRoleName(byte)S
+GetUserLevels()@Apha.BST.Application.Services.RoleMappingService.GetUserLevels()]
+RoleMappingService()EApha.BST.Application.Services.RoleMappingService.RoleMappingService()½
 %Apha.BST.Application.DTOs.UserViewDtoobjectD
 UserViewDto()3Apha.BST.Application.DTOs.UserViewDto.UserViewDto()>
 
@@ -421,23 +413,11 @@ UserId.set0Apha.BST.Application.DTOs.UserViewDto.UserId.setB
 UserLevel.get3Apha.BST.Application.DTOs.UserViewDto.UserLevel.getD
 UserLevel.set3Apha.BST.Application.DTOs.UserViewDto.UserLevel.setL
 UserLevelName.get7Apha.BST.Application.DTOs.UserViewDto.UserLevelName.getL
-UserLevelName.set7Apha.BST.Application.DTOs.UserViewDto.UserLevelName.setü
-0Apha.BST.Application.Services.RoleMappingServiceobject3Apha.BST.Application.Interfaces.IRoleMappingServiceW
-GetRoleName(byte)BApha.BST.Application.Services.RoleMappingService.GetRoleName(byte)S
-GetUserLevels()@Apha.BST.Application.Services.RoleMappingService.GetUserLevels()]
-RoleMappingService()EApha.BST.Application.Services.RoleMappingService.RoleMappingService()ñ
-+Apha.BST.Application.DTOs.TrainingReportDtoobjectV
-TrainingReportDto()?Apha.BST.Application.DTOs.TrainingReportDto.TrainingReportDto()F
-Trainer.get7Apha.BST.Application.DTOs.TrainingReportDto.Trainer.getF
-Trainer.set7Apha.BST.Application.DTOs.TrainingReportDto.Trainer.setF
-Trainee.get7Apha.BST.Application.DTOs.TrainingReportDto.Trainee.getF
-Trainee.set7Apha.BST.Application.DTOs.TrainingReportDto.Trainee.setJ
-TrainedOn.get9Apha.BST.Application.DTOs.TrainingReportDto.TrainedOn.getJ
-TrainedOn.set9Apha.BST.Application.DTOs.TrainingReportDto.TrainedOn.setT
-TrainingAnimal.get>Apha.BST.Application.DTOs.TrainingReportDto.TrainingAnimal.getT
-TrainingAnimal.set>Apha.BST.Application.DTOs.TrainingReportDto.TrainingAnimal.set>
-VLA.get3Apha.BST.Application.DTOs.TrainingReportDto.VLA.get>
-VLA.set3Apha.BST.Application.DTOs.TrainingReportDto.VLA.setý
+UserLevelName.set7Apha.BST.Application.DTOs.UserViewDto.UserLevelName.set›
+3Apha.BST.Application.Services.StaticDropdownServiceobject6Apha.BST.Application.Interfaces.IStaticDropdownService\
+GetTrainingTypes()FApha.BST.Application.Services.StaticDropdownService.GetTrainingTypes()^
+GetTrainingAnimal()GApha.BST.Application.Services.StaticDropdownService.GetTrainingAnimal()f
+StaticDropdownService()KApha.BST.Application.Services.StaticDropdownService.StaticDropdownService()ý
 #Apha.BST.Application.DTOs.VlaLocDtoobject>
 VlaLocDto()/Apha.BST.Application.DTOs.VlaLocDto.VlaLocDto():
 	LocId.get-Apha.BST.Application.DTOs.VlaLocDto.LocId.get:
@@ -447,11 +427,23 @@ UserId.set0Apha.BST.Application.DTOs.UserViewDto.UserId.setB
 	Ahvla.get-Apha.BST.Application.DTOs.VlaLocDto.Ahvla.get:
 	Ahvla.set-Apha.BST.Application.DTOs.VlaLocDto.Ahvla.setF
 TblTrainers.get3Apha.BST.Application.DTOs.VlaLocDto.TblTrainers.getF
-TblTrainers.set3Apha.BST.Application.DTOs.VlaLocDto.TblTrainers.set›
-3Apha.BST.Application.Services.StaticDropdownServiceobject6Apha.BST.Application.Interfaces.IStaticDropdownService\
-GetTrainingTypes()FApha.BST.Application.Services.StaticDropdownService.GetTrainingTypes()^
-GetTrainingAnimal()GApha.BST.Application.Services.StaticDropdownService.GetTrainingAnimal()f
-StaticDropdownService()KApha.BST.Application.Services.StaticDropdownService.StaticDropdownService()ˆ
+TblTrainers.set3Apha.BST.Application.DTOs.VlaLocDto.TblTrainers.set…
+/Apha.BST.Application.Pagination.QueryParametersobjectV
+QueryParameters()AApha.BST.Application.Pagination.QueryParameters.QueryParameters()H
+
+Search.get:Apha.BST.Application.Pagination.QueryParameters.Search.getH
+
+Search.set:Apha.BST.Application.Pagination.QueryParameters.Search.setH
+
+SortBy.get:Apha.BST.Application.Pagination.QueryParameters.SortBy.getH
+
+SortBy.set:Apha.BST.Application.Pagination.QueryParameters.SortBy.setP
+Descending.get>Apha.BST.Application.Pagination.QueryParameters.Descending.getP
+Descending.set>Apha.BST.Application.Pagination.QueryParameters.Descending.setD
+Page.get8Apha.BST.Application.Pagination.QueryParameters.Page.getD
+Page.set8Apha.BST.Application.Pagination.QueryParameters.Page.setL
+PageSize.get<Apha.BST.Application.Pagination.QueryParameters.PageSize.getL
+PageSize.set<Apha.BST.Application.Pagination.QueryParameters.PageSize.setˆ
 )Apha.BST.Application.Services.SiteServiceobject,Apha.BST.Application.Interfaces.ISiteServiceÀ
 ISiteService(Apha.BST.Core.Interfaces.ISiteRepository, AutoMapper.IMapper)sApha.BST.Application.Services.SiteService.SiteService(Apha.BST.Core.Interfaces.ISiteRepository, AutoMapper.IMapper)^
 GetAllSitesAsync(string)BApha.BST.Application.Services.SiteService.GetAllSitesAsync(string)f
@@ -477,4 +469,12 @@ IUserService(Apha.BST.Core.Interfaces.IUserRepository, AutoMapper.IMapper)sApha
 GetUsersAsync(string)?Apha.BST.Application.Services.UserService.GetUsersAsync(string)’
 2UpdateUserAsync(Apha.BST.Application.DTOs.UserDto)\Apha.BST.Application.Services.UserService.UpdateUserAsync(Apha.BST.Application.DTOs.UserDto)^
 GetUserByIdAsync(string)BApha.BST.Application.Services.UserService.GetUserByIdAsync(string)\
-DeleteUserAsync(string)AApha.BST.Application.Services.UserService.DeleteUserAsync(string)
+DeleteUserAsync(string)AApha.BST.Application.Services.UserService.DeleteUserAsync(string)Þ
++Apha.BST.Application.Services.ReportServiceobject.Apha.BST.Application.Interfaces.IReportService²
+€ReportService(Apha.BST.Core.Interfaces.IReportRepository, AutoMapper.IMapper, Microsoft.Extensions.Configuration.IConfiguration)¬Apha.BST.Application.Services.ReportService.ReportService(Apha.BST.Core.Interfaces.IReportRepository, AutoMapper.IMapper, Microsoft.Extensions.Configuration.IConfiguration)Z
+GetAphaReportsAsync()AApha.BST.Application.Services.ReportService.GetAphaReportsAsync()^
+GetPeopleReportsAsync()CApha.BST.Application.Services.ReportService.GetPeopleReportsAsync()Z
+GetSiteReportsAsync()AApha.BST.Application.Services.ReportService.GetSiteReportsAsync()`
+GetTrainerReportsAsync()DApha.BST.Application.Services.ReportService.GetTrainerReportsAsync()b
+GetTrainingReportsAsync()EApha.BST.Application.Services.ReportService.GetTrainingReportsAsync()d
+GenerateExcelReportAsync()FApha.BST.Application.Services.ReportService.GenerateExcelReportAsync()

@@ -22,7 +22,7 @@ $
 !
 msbuild_version17.14.16.36001
  
-peak_used_heap_byte	273177600
+peak_used_heap_byte	363875840
 
 scanner_typeScannerMSBuild
 

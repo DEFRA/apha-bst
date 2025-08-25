@@ -5,10 +5,10 @@ VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\UserReposi
 ZD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\TrainingRepository.cs 8j-7r•	
  "#$&'()*+./0134589:;<=?@ABDEFGHIJKMNOPQRSTUVWXYZ[\]^_abcefhklmnopqrstuvwxyz{|}~ÅÇÑÖáàâäåçéèêëíìïñóòôöõùûü¢£xÇ5"()3;ABDEFGHIJPQRSTUVWX\_enopqrswx|ÅÇÑâèóòù…
 VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\SiteRepository.cs 8jKZ\{rû	
- !"#$%&')*+,-./0123456789:;<=>?@ABCDEFGHIJLMNOPQRSTUVWXYZ\]_`abcdehijklmnopqrstwy|ÄÅÇÉÑÖÜáàâäãåçéëíìîïóòôxÇ=%,-./0123456:;BFGLMOXYZ\abckpqwy|ÉÑÖÜáàâäãåçëïè
+ !"#$%&')*+,-./0123456789:;<=>?@ABCDEFGHIJLMNOPQRSTUVWXYZ\]_`abcdehijklmnopqrstwy|ÄÅÇÉÑÖÜáàâäãåçéëíìîïóòôxÇ=%,-./0123456:;BFGLMOXYZ\abckpqwy|ÉÑÖÜáàâäãåçëïï
+XD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\ReportRepository.cs 8r)	 !#$%&')*+,-./Ç%+è
 VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\RepositoryBase.cs 8jr"	
- !$%&'()Ç &ï
-XD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\ReportRepository.cs 8r)	 !#$%&')*+,-./Ç%+ã
+ !$%&'()Ç &ã
 YD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\PersonsRepository.cs 	8jRr|	
 !"#$%&')*+,-/012346789:;<=>@ABCDEFGIJKMNOPQSTUVWXYZ[\]_abcdefghijklmnorstvwxyz{|}~ÄÅÇÉÖÜáxÇ"#$%+29ABCGMNSTVafklrstz{|}ÄÉ°
 VD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Repositories\NewsRepository.cs 8j)r.	
@@ -33,11 +33,11 @@ KD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Data\TrainingMap.cs
  !Ç
 Ä
 KD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Data\TrainersMap.cs 8r
- !Ç	~
-KD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Data\TraineesMap.cs 8r
- ÇÜ
+ !Ç	Ü
 GD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Data\SiteMap.cs 8jr!
- !"#Ç x
+ !"#Ç ~
+KD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Data\TraineesMap.cs 8r
+ Çx
 JD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Data\PersonsMap.cs 8r
 Çz
 GD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.DataAccess\Data\NewsMap.cs 8r

@@ -14,7 +14,11 @@ hAuditLogArchivedController(Apha.BST.Application.Interfaces.IAuditlogArchivedSer
 πAuditLogController(Apha.BST.Application.Interfaces.IAuditLogService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)ÂApha.BST.Web.Controllers.AuditLogController.AuditLogController(Apha.BST.Application.Interfaces.IAuditLogService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)p
  Index(int, string, bool, string)LApha.BST.Web.Controllers.AuditLogController.Index(int, string, bool, string)R
 ArchiveAuditLog()=Apha.BST.Web.Controllers.AuditLogController.ArchiveAuditLog()\
-ViewArchivedAuditLog()BApha.BST.Web.Controllers.AuditLogController.ViewArchivedAuditLog()Ï
+ViewArchivedAuditLog()BApha.BST.Web.Controllers.AuditLogController.ViewArchivedAuditLog()Ÿ
+(Apha.BST.Web.Controllers.ErrorController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectI
+AccessDenied()7Apha.BST.Web.Controllers.ErrorController.AccessDenied();
+Index()0Apha.BST.Web.Controllers.ErrorController.Index()O
+ErrorController():Apha.BST.Web.Controllers.ErrorController.ErrorController()Ï
 $Apha.BST.Web.Models.AddNewsViewModel!Apha.BST.Web.Models.BaseViewModelobjectM
 AddNewsViewModel()7Apha.BST.Web.Models.AddNewsViewModel.AddNewsViewModel();
 	Title.get.Apha.BST.Web.Models.AddNewsViewModel.Title.get;
@@ -30,14 +34,13 @@ Author.get/Apha.BST.Web.Models.AddNewsViewModel.Author.get=
 
 Author.set/Apha.BST.Web.Models.AddNewsViewModel.Author.set;
 	Users.get.Apha.BST.Web.Models.AddNewsViewModel.Users.get;
-	Users.set.Apha.BST.Web.Models.AddNewsViewModel.Users.setŸ
-(Apha.BST.Web.Controllers.ErrorController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectI
-AccessDenied()7Apha.BST.Web.Controllers.ErrorController.AccessDenied();
-Index()0Apha.BST.Web.Controllers.ErrorController.Index()O
-ErrorController():Apha.BST.Web.Controllers.ErrorController.ErrorController()ç
+	Users.set.Apha.BST.Web.Models.AddNewsViewModel.Users.setç
 'Apha.BST.Web.Controllers.HelpController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobject>
 	Help(int)1Apha.BST.Web.Controllers.HelpController.Help(int)L
-HelpController()8Apha.BST.Web.Controllers.HelpController.HelpController()∏
+HelpController()8Apha.BST.Web.Controllers.HelpController.HelpController()ä
+'Apha.BST.Web.Controllers.HomeController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectÃ
+PHomeController(Apha.BST.Application.Interfaces.INewsService, AutoMapper.IMapper)xApha.BST.Web.Controllers.HomeController.HomeController(Apha.BST.Application.Interfaces.INewsService, AutoMapper.IMapper):
+Index()/Apha.BST.Web.Controllers.HomeController.Index()∏
 &Apha.BST.Web.Models.AddPersonViewModel!Apha.BST.Web.Models.BaseViewModelobjectS
 AddPersonViewModel();Apha.BST.Web.Models.AddPersonViewModel.AddPersonViewModel();
 Name.get/Apha.BST.Web.Models.AddPersonViewModel.Name.get;
@@ -47,10 +50,7 @@ Author.set/Apha.BST.Web.Models.AddNewsViewModel.Author.set;
 LocationId.get5Apha.BST.Web.Models.AddPersonViewModel.LocationId.getG
 LocationId.set5Apha.BST.Web.Models.AddPersonViewModel.LocationId.set=
 	Sites.get0Apha.BST.Web.Models.AddPersonViewModel.Sites.get=
-	Sites.set0Apha.BST.Web.Models.AddPersonViewModel.Sites.setä
-'Apha.BST.Web.Controllers.HomeController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectÃ
-PHomeController(Apha.BST.Application.Interfaces.INewsService, AutoMapper.IMapper)xApha.BST.Web.Controllers.HomeController.HomeController(Apha.BST.Application.Interfaces.INewsService, AutoMapper.IMapper):
-Index()/Apha.BST.Web.Controllers.HomeController.Index()¥
+	Sites.set0Apha.BST.Web.Models.AddPersonViewModel.Sites.set¥
 (Apha.BST.Web.Models.AddTrainingViewModel!Apha.BST.Web.Models.BaseViewModelobjectY
 AddTrainingViewModel()?Apha.BST.Web.Models.AddTrainingViewModel.AddTrainingViewModel()E
 PersonId.get5Apha.BST.Web.Models.AddTrainingViewModel.PersonId.getE
@@ -137,19 +137,11 @@ UserId.set/Apha.BST.Web.Models.AddUserViewModel.UserId.setA
 Pagination.get8Apha.BST.Web.Models.AuditLogListViewModel.Pagination.getJ
 Pagination.set8Apha.BST.Web.Models.AuditLogListViewModel.Pagination.setT
 StoredProcedure.get=Apha.BST.Web.Models.AuditLogListViewModel.StoredProcedure.getT
-StoredProcedure.set=Apha.BST.Web.Models.AuditLogListViewModel.StoredProcedure.setØ
-.Apha.BST.Web.Models.AuditLogsArchivedViewModelobjectk
-AuditLogsArchivedViewModel()KApha.BST.Web.Models.AuditLogsArchivedViewModel.AuditLogsArchivedViewModel()M
-Procedure.get<Apha.BST.Web.Models.AuditLogsArchivedViewModel.Procedure.getM
-Procedure.set<Apha.BST.Web.Models.AuditLogsArchivedViewModel.Procedure.setO
-Parameters.get=Apha.BST.Web.Models.AuditLogsArchivedViewModel.Parameters.getO
-Parameters.set=Apha.BST.Web.Models.AuditLogsArchivedViewModel.Parameters.setC
-User.get7Apha.BST.Web.Models.AuditLogsArchivedViewModel.User.getC
-User.set7Apha.BST.Web.Models.AuditLogsArchivedViewModel.User.setC
-Date.get7Apha.BST.Web.Models.AuditLogsArchivedViewModel.Date.getC
-Date.set7Apha.BST.Web.Models.AuditLogsArchivedViewModel.Date.setY
-TransactionType.getBApha.BST.Web.Models.AuditLogsArchivedViewModel.TransactionType.getY
-TransactionType.setBApha.BST.Web.Models.AuditLogsArchivedViewModel.TransactionType.setˆ
+StoredProcedure.set=Apha.BST.Web.Models.AuditLogListViewModel.StoredProcedure.setÑ
+)Apha.BST.Web.Controllers.ReportController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectÚ
+°ReportController(Apha.BST.Application.Interfaces.IReportService, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)ÀApha.BST.Web.Controllers.ReportController.ReportController(Apha.BST.Application.Interfaces.IReportService, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)>
+Report()2Apha.BST.Web.Controllers.ReportController.Report()L
+GenerateExcel()9Apha.BST.Web.Controllers.ReportController.GenerateExcel()ˆ
 
 0AspNetCoreGeneratedDocument.Views_AuditLog_Index0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectQ
 ExecuteAsync()?AspNetCoreGeneratedDocument.Views_AuditLog_Index.ExecuteAsync()a
@@ -165,7 +157,19 @@ UserId.set/Apha.BST.Web.Models.AddUserViewModel.UserId.setA
 Json.get9AspNetCoreGeneratedDocument.Views_AuditLog_Index.Json.getE
 Json.set9AspNetCoreGeneratedDocument.Views_AuditLog_Index.Json.setE
 Html.get9AspNetCoreGeneratedDocument.Views_AuditLog_Index.Html.getE
-Html.set9AspNetCoreGeneratedDocument.Views_AuditLog_Index.Html.set±
+Html.set9AspNetCoreGeneratedDocument.Views_AuditLog_Index.Html.setØ
+.Apha.BST.Web.Models.AuditLogsArchivedViewModelobjectk
+AuditLogsArchivedViewModel()KApha.BST.Web.Models.AuditLogsArchivedViewModel.AuditLogsArchivedViewModel()M
+Procedure.get<Apha.BST.Web.Models.AuditLogsArchivedViewModel.Procedure.getM
+Procedure.set<Apha.BST.Web.Models.AuditLogsArchivedViewModel.Procedure.setO
+Parameters.get=Apha.BST.Web.Models.AuditLogsArchivedViewModel.Parameters.getO
+Parameters.set=Apha.BST.Web.Models.AuditLogsArchivedViewModel.Parameters.setC
+User.get7Apha.BST.Web.Models.AuditLogsArchivedViewModel.User.getC
+User.set7Apha.BST.Web.Models.AuditLogsArchivedViewModel.User.setC
+Date.get7Apha.BST.Web.Models.AuditLogsArchivedViewModel.Date.getC
+Date.set7Apha.BST.Web.Models.AuditLogsArchivedViewModel.Date.setY
+TransactionType.getBApha.BST.Web.Models.AuditLogsArchivedViewModel.TransactionType.getY
+TransactionType.setBApha.BST.Web.Models.AuditLogsArchivedViewModel.TransactionType.set±
 %Apha.BST.Web.Models.AuditLogViewModelobjectP
 AuditLogViewModel()9Apha.BST.Web.Models.AuditLogViewModel.AuditLogViewModel()D
 Procedure.get3Apha.BST.Web.Models.AuditLogViewModel.Procedure.getD
@@ -177,11 +181,7 @@ UserId.set/Apha.BST.Web.Models.AddUserViewModel.UserId.setA
 Date.get.Apha.BST.Web.Models.AuditLogViewModel.Date.get:
 Date.set.Apha.BST.Web.Models.AuditLogViewModel.Date.setP
 TransactionType.get9Apha.BST.Web.Models.AuditLogViewModel.TransactionType.getP
-TransactionType.set9Apha.BST.Web.Models.AuditLogViewModel.TransactionType.setÑ
-)Apha.BST.Web.Controllers.ReportController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectÚ
-°ReportController(Apha.BST.Application.Interfaces.IReportService, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)ÀApha.BST.Web.Controllers.ReportController.ReportController(Apha.BST.Application.Interfaces.IReportService, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)>
-Report()2Apha.BST.Web.Controllers.ReportController.Report()L
-GenerateExcel()9Apha.BST.Web.Controllers.ReportController.GenerateExcel()Ì
+TransactionType.set9Apha.BST.Web.Models.AuditLogViewModel.TransactionType.setÌ
 !Apha.BST.Web.Models.BaseViewModelobjectD
 BaseViewModel()1Apha.BST.Web.Models.BaseViewModel.BaseViewModel()<
 CanEdit.get-Apha.BST.Web.Models.BaseViewModel.CanEdit.get<
@@ -197,7 +197,31 @@ Person.get2Apha.BST.Web.Models.EditPersonViewModel.Person.get@
 
 Person.set2Apha.BST.Web.Models.EditPersonViewModel.Person.setJ
 SiteOptions.get7Apha.BST.Web.Models.EditPersonViewModel.SiteOptions.getJ
-SiteOptions.set7Apha.BST.Web.Models.EditPersonViewModel.SiteOptions.set®
+SiteOptions.set7Apha.BST.Web.Models.EditPersonViewModel.SiteOptions.set∂	
+'Apha.BST.Web.Controllers.SiteController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectê
+±SiteController(Apha.BST.Application.Interfaces.ISiteService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)ŸApha.BST.Web.Controllers.SiteController.SiteController(Apha.BST.Application.Interfaces.ISiteService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)L
+ViewSite(string)8Apha.BST.Web.Controllers.SiteController.ViewSite(string)T
+SiteTrainee(string?)<Apha.BST.Web.Controllers.SiteController.SiteTrainee(string?)>
+	AddSite()1Apha.BST.Web.Controllers.SiteController.AddSite()Ä
+*AddSite(Apha.BST.Web.Models.SiteViewModel)RApha.BST.Web.Controllers.SiteController.AddSite(Apha.BST.Web.Models.SiteViewModel)`
+DeleteTrainee(int, string)BApha.BST.Web.Controllers.SiteController.DeleteTrainee(int, string)L
+EditSite(string)8Apha.BST.Web.Controllers.SiteController.EditSite(string)ä
+/EditSite(Apha.BST.Web.Models.EditSiteViewModel)WApha.BST.Web.Controllers.SiteController.EditSite(Apha.BST.Web.Models.EditSiteViewModel)∫
+4AspNetCoreGeneratedDocument.Views_Error_AccessDenied0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectU
+ExecuteAsync()CAspNetCoreGeneratedDocument.Views_Error_AccessDenied.ExecuteAsync()m
+Views_Error_AccessDenied()OAspNetCoreGeneratedDocument.Views_Error_AccessDenied.Views_Error_AccessDenied()o
+__tagHelperScopeManager.getPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.__tagHelperScopeManager.geto
+__tagHelperScopeManager.setPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.__tagHelperScopeManager.seto
+ModelExpressionProvider.getPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.ModelExpressionProvider.geto
+ModelExpressionProvider.setPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.ModelExpressionProvider.setG
+Url.get<AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Url.getG
+Url.set<AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Url.setS
+Component.getBAspNetCoreGeneratedDocument.Views_Error_AccessDenied.Component.getS
+Component.setBAspNetCoreGeneratedDocument.Views_Error_AccessDenied.Component.setI
+Json.get=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Json.getI
+Json.set=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Json.setI
+Html.get=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Html.getI
+Html.set=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Html.set®
 %Apha.BST.Web.Models.EditSiteViewModel!Apha.BST.Web.Models.BaseViewModelobjectP
 EditSiteViewModel()9Apha.BST.Web.Models.EditSiteViewModel.EditSiteViewModel()@
 PlantNo.get1Apha.BST.Web.Models.EditSiteViewModel.PlantNo.get@
@@ -219,31 +243,20 @@ Person.set2Apha.BST.Web.Models.EditPersonViewModel.Person.setJ
 Fax.get-Apha.BST.Web.Models.EditSiteViewModel.Fax.get8
 Fax.set-Apha.BST.Web.Models.EditSiteViewModel.Fax.set@
 IsAhvla.get1Apha.BST.Web.Models.EditSiteViewModel.IsAhvla.get@
-IsAhvla.set1Apha.BST.Web.Models.EditSiteViewModel.IsAhvla.set∫
-4AspNetCoreGeneratedDocument.Views_Error_AccessDenied0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectU
-ExecuteAsync()CAspNetCoreGeneratedDocument.Views_Error_AccessDenied.ExecuteAsync()m
-Views_Error_AccessDenied()OAspNetCoreGeneratedDocument.Views_Error_AccessDenied.Views_Error_AccessDenied()o
-__tagHelperScopeManager.getPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.__tagHelperScopeManager.geto
-__tagHelperScopeManager.setPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.__tagHelperScopeManager.seto
-ModelExpressionProvider.getPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.ModelExpressionProvider.geto
-ModelExpressionProvider.setPAspNetCoreGeneratedDocument.Views_Error_AccessDenied.ModelExpressionProvider.setG
-Url.get<AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Url.getG
-Url.set<AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Url.setS
-Component.getBAspNetCoreGeneratedDocument.Views_Error_AccessDenied.Component.getS
-Component.setBAspNetCoreGeneratedDocument.Views_Error_AccessDenied.Component.setI
-Json.get=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Json.getI
-Json.set=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Json.setI
-Html.get=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Html.getI
-Html.set=AspNetCoreGeneratedDocument.Views_Error_AccessDenied.Html.set∂	
-'Apha.BST.Web.Controllers.SiteController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectê
-±SiteController(Apha.BST.Application.Interfaces.ISiteService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)ŸApha.BST.Web.Controllers.SiteController.SiteController(Apha.BST.Application.Interfaces.ISiteService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)L
-ViewSite(string)8Apha.BST.Web.Controllers.SiteController.ViewSite(string)T
-SiteTrainee(string?)<Apha.BST.Web.Controllers.SiteController.SiteTrainee(string?)>
-	AddSite()1Apha.BST.Web.Controllers.SiteController.AddSite()Ä
-*AddSite(Apha.BST.Web.Models.SiteViewModel)RApha.BST.Web.Controllers.SiteController.AddSite(Apha.BST.Web.Models.SiteViewModel)`
-DeleteTrainee(int, string)BApha.BST.Web.Controllers.SiteController.DeleteTrainee(int, string)L
-EditSite(string)8Apha.BST.Web.Controllers.SiteController.EditSite(string)ä
-/EditSite(Apha.BST.Web.Models.EditSiteViewModel)WApha.BST.Web.Controllers.SiteController.EditSite(Apha.BST.Web.Models.EditSiteViewModel)‘
+IsAhvla.set1Apha.BST.Web.Models.EditSiteViewModel.IsAhvla.setÔ
+-AspNetCoreGeneratedDocument.Views_Error_Index0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectN
+ExecuteAsync()<AspNetCoreGeneratedDocument.Views_Error_Index.ExecuteAsync()X
+Views_Error_Index()AAspNetCoreGeneratedDocument.Views_Error_Index.Views_Error_Index()h
+ModelExpressionProvider.getIAspNetCoreGeneratedDocument.Views_Error_Index.ModelExpressionProvider.geth
+ModelExpressionProvider.setIAspNetCoreGeneratedDocument.Views_Error_Index.ModelExpressionProvider.set@
+Url.get5AspNetCoreGeneratedDocument.Views_Error_Index.Url.get@
+Url.set5AspNetCoreGeneratedDocument.Views_Error_Index.Url.setL
+Component.get;AspNetCoreGeneratedDocument.Views_Error_Index.Component.getL
+Component.set;AspNetCoreGeneratedDocument.Views_Error_Index.Component.setB
+Json.get6AspNetCoreGeneratedDocument.Views_Error_Index.Json.getB
+Json.set6AspNetCoreGeneratedDocument.Views_Error_Index.Json.setB
+Html.get6AspNetCoreGeneratedDocument.Views_Error_Index.Html.getB
+Html.set6AspNetCoreGeneratedDocument.Views_Error_Index.Html.set‘
 )Apha.BST.Web.Models.EditTrainingViewModel!Apha.BST.Web.Models.BaseViewModelobject\
 EditTrainingViewModel()AApha.BST.Web.Models.EditTrainingViewModel.EditTrainingViewModel()H
 TraineeId.get7Apha.BST.Web.Models.EditTrainingViewModel.TraineeId.getH
@@ -273,36 +286,18 @@ Person.set2Apha.BST.Web.Models.EditPersonViewModel.Person.setJ
 TrainingAnimalOld.get?Apha.BST.Web.Models.EditTrainingViewModel.TrainingAnimalOld.getX
 TrainingAnimalOld.set?Apha.BST.Web.Models.EditTrainingViewModel.TrainingAnimalOld.setT
 TrainingTypeOld.get=Apha.BST.Web.Models.EditTrainingViewModel.TrainingTypeOld.getT
-TrainingTypeOld.set=Apha.BST.Web.Models.EditTrainingViewModel.TrainingTypeOld.setÔ
--AspNetCoreGeneratedDocument.Views_Error_Index0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectN
-ExecuteAsync()<AspNetCoreGeneratedDocument.Views_Error_Index.ExecuteAsync()X
-Views_Error_Index()AAspNetCoreGeneratedDocument.Views_Error_Index.Views_Error_Index()h
-ModelExpressionProvider.getIAspNetCoreGeneratedDocument.Views_Error_Index.ModelExpressionProvider.geth
-ModelExpressionProvider.setIAspNetCoreGeneratedDocument.Views_Error_Index.ModelExpressionProvider.set@
-Url.get5AspNetCoreGeneratedDocument.Views_Error_Index.Url.get@
-Url.set5AspNetCoreGeneratedDocument.Views_Error_Index.Url.setL
-Component.get;AspNetCoreGeneratedDocument.Views_Error_Index.Component.getL
-Component.set;AspNetCoreGeneratedDocument.Views_Error_Index.Component.setB
-Json.get6AspNetCoreGeneratedDocument.Views_Error_Index.Json.getB
-Json.set6AspNetCoreGeneratedDocument.Views_Error_Index.Json.setB
-Html.get6AspNetCoreGeneratedDocument.Views_Error_Index.Html.getB
-Html.set6AspNetCoreGeneratedDocument.Views_Error_Index.Html.setÿ
-%Apha.BST.Web.Models.EditUserViewModel!Apha.BST.Web.Models.BaseViewModelobjectP
-EditUserViewModel()9Apha.BST.Web.Models.EditUserViewModel.EditUserViewModel()>
-
-UserId.get0Apha.BST.Web.Models.EditUserViewModel.UserId.get>
-
-UserId.set0Apha.BST.Web.Models.EditUserViewModel.UserId.setB
-UserName.get2Apha.BST.Web.Models.EditUserViewModel.UserName.getB
-UserName.set2Apha.BST.Web.Models.EditUserViewModel.UserName.set@
-UserLoc.get1Apha.BST.Web.Models.EditUserViewModel.UserLoc.get@
-UserLoc.set1Apha.BST.Web.Models.EditUserViewModel.UserLoc.setD
-UserLevel.get3Apha.BST.Web.Models.EditUserViewModel.UserLevel.getD
-UserLevel.set3Apha.BST.Web.Models.EditUserViewModel.UserLevel.setD
-Locations.get3Apha.BST.Web.Models.EditUserViewModel.Locations.getD
-Locations.set3Apha.BST.Web.Models.EditUserViewModel.Locations.setF
-UserLevels.get4Apha.BST.Web.Models.EditUserViewModel.UserLevels.getF
-UserLevels.set4Apha.BST.Web.Models.EditUserViewModel.UserLevels.set°
+TrainingTypeOld.set=Apha.BST.Web.Models.EditTrainingViewModel.TrainingTypeOld.set™
++Apha.BST.Web.Controllers.TrainingController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectî
+ÒTrainingController(Apha.BST.Web.PresentationService.ILogService, Apha.BST.Application.Interfaces.ITrainingService, AutoMapper.IMapper, Apha.BST.Application.Interfaces.IStaticDropdownService, Apha.BST.Web.PresentationService.IUserDataService)ùApha.BST.Web.Controllers.TrainingController.TrainingController(Apha.BST.Web.PresentationService.ILogService, Apha.BST.Application.Interfaces.ITrainingService, AutoMapper.IMapper, Apha.BST.Application.Interfaces.IStaticDropdownService, Apha.BST.Web.PresentationService.IUserDataService)>
+Index()3Apha.BST.Web.Controllers.TrainingController.Index()J
+AddTraining()9Apha.BST.Web.Controllers.TrainingController.AddTraining()ö
+5AddTraining(Apha.BST.Web.Models.AddTrainingViewModel)aApha.BST.Web.Controllers.TrainingController.AddTraining(Apha.BST.Web.Models.AddTrainingViewModel)û
+7EditTraining(int, int, string, System.DateTime, string)cApha.BST.Web.Controllers.TrainingController.EditTraining(int, int, string, System.DateTime, string)û
+7EditTraining(Apha.BST.Web.Models.EditTrainingViewModel)cApha.BST.Web.Controllers.TrainingController.EditTraining(Apha.BST.Web.Models.EditTrainingViewModel)X
+ViewTraining(string)@Apha.BST.Web.Controllers.TrainingController.ViewTraining(string)f
+TrainerHistory(int, string)GApha.BST.Web.Controllers.TrainingController.TrainerHistory(int, string)V
+TrainerTrained(int)?Apha.BST.Web.Controllers.TrainingController.TrainerTrained(int)à
+,DeleteTraining(int, string, System.DateTime)XApha.BST.Web.Controllers.TrainingController.DeleteTraining(int, string, System.DateTime)°
 
 +AspNetCoreGeneratedDocument.Views_Help_Help0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectL
 ExecuteAsync():AspNetCoreGeneratedDocument.Views_Help_Help.ExecuteAsync()R
@@ -318,7 +313,23 @@ UserId.set0Apha.BST.Web.Models.EditUserViewModel.UserId.setB
 Json.get4AspNetCoreGeneratedDocument.Views_Help_Help.Json.get@
 Json.set4AspNetCoreGeneratedDocument.Views_Help_Help.Json.set@
 Html.get4AspNetCoreGeneratedDocument.Views_Help_Help.Html.get@
-Html.set4AspNetCoreGeneratedDocument.Views_Help_Help.Html.setë
+Html.set4AspNetCoreGeneratedDocument.Views_Help_Help.Html.setÿ
+%Apha.BST.Web.Models.EditUserViewModel!Apha.BST.Web.Models.BaseViewModelobjectP
+EditUserViewModel()9Apha.BST.Web.Models.EditUserViewModel.EditUserViewModel()>
+
+UserId.get0Apha.BST.Web.Models.EditUserViewModel.UserId.get>
+
+UserId.set0Apha.BST.Web.Models.EditUserViewModel.UserId.setB
+UserName.get2Apha.BST.Web.Models.EditUserViewModel.UserName.getB
+UserName.set2Apha.BST.Web.Models.EditUserViewModel.UserName.set@
+UserLoc.get1Apha.BST.Web.Models.EditUserViewModel.UserLoc.get@
+UserLoc.set1Apha.BST.Web.Models.EditUserViewModel.UserLoc.setD
+UserLevel.get3Apha.BST.Web.Models.EditUserViewModel.UserLevel.getD
+UserLevel.set3Apha.BST.Web.Models.EditUserViewModel.UserLevel.setD
+Locations.get3Apha.BST.Web.Models.EditUserViewModel.Locations.getD
+Locations.set3Apha.BST.Web.Models.EditUserViewModel.Locations.setF
+UserLevels.get4Apha.BST.Web.Models.EditUserViewModel.UserLevels.getF
+UserLevels.set4Apha.BST.Web.Models.EditUserViewModel.UserLevels.setë
 "Apha.BST.Web.Models.ErrorViewModelobjectG
 ErrorViewModel()3Apha.BST.Web.Models.ErrorViewModel.ErrorViewModel()A
 RequestId.get0Apha.BST.Web.Models.ErrorViewModel.RequestId.getA
@@ -334,24 +345,37 @@ UserId.set0Apha.BST.Web.Models.EditUserViewModel.UserId.setB
 Description.get5Apha.BST.Web.Models.HelpListViewModel.Description.getH
 Description.set5Apha.BST.Web.Models.HelpListViewModel.Description.setN
 AdditionalInfo.get8Apha.BST.Web.Models.HelpListViewModel.AdditionalInfo.getN
-AdditionalInfo.set8Apha.BST.Web.Models.HelpListViewModel.AdditionalInfo.set™
-+Apha.BST.Web.Controllers.TrainingController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobjectî
-ÒTrainingController(Apha.BST.Web.PresentationService.ILogService, Apha.BST.Application.Interfaces.ITrainingService, AutoMapper.IMapper, Apha.BST.Application.Interfaces.IStaticDropdownService, Apha.BST.Web.PresentationService.IUserDataService)ùApha.BST.Web.Controllers.TrainingController.TrainingController(Apha.BST.Web.PresentationService.ILogService, Apha.BST.Application.Interfaces.ITrainingService, AutoMapper.IMapper, Apha.BST.Application.Interfaces.IStaticDropdownService, Apha.BST.Web.PresentationService.IUserDataService)>
-Index()3Apha.BST.Web.Controllers.TrainingController.Index()J
-AddTraining()9Apha.BST.Web.Controllers.TrainingController.AddTraining()ö
-5AddTraining(Apha.BST.Web.Models.AddTrainingViewModel)aApha.BST.Web.Controllers.TrainingController.AddTraining(Apha.BST.Web.Models.AddTrainingViewModel)û
-7EditTraining(int, int, string, System.DateTime, string)cApha.BST.Web.Controllers.TrainingController.EditTraining(int, int, string, System.DateTime, string)û
-7EditTraining(Apha.BST.Web.Models.EditTrainingViewModel)cApha.BST.Web.Controllers.TrainingController.EditTraining(Apha.BST.Web.Models.EditTrainingViewModel)X
-ViewTraining(string)@Apha.BST.Web.Controllers.TrainingController.ViewTraining(string)f
-TrainerHistory(int, string)GApha.BST.Web.Controllers.TrainingController.TrainerHistory(int, string)V
-TrainerTrained(int)?Apha.BST.Web.Controllers.TrainingController.TrainerTrained(int)à
-,DeleteTraining(int, string, System.DateTime)XApha.BST.Web.Controllers.TrainingController.DeleteTraining(int, string, System.DateTime)ç
+AdditionalInfo.set8Apha.BST.Web.Models.HelpListViewModel.AdditionalInfo.set≤
+
+,AspNetCoreGeneratedDocument.Views_Home_Index0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectM
+ExecuteAsync();AspNetCoreGeneratedDocument.Views_Home_Index.ExecuteAsync()U
+Views_Home_Index()?AspNetCoreGeneratedDocument.Views_Home_Index.Views_Home_Index()g
+__tagHelperScopeManager.getHAspNetCoreGeneratedDocument.Views_Home_Index.__tagHelperScopeManager.getg
+__tagHelperScopeManager.setHAspNetCoreGeneratedDocument.Views_Home_Index.__tagHelperScopeManager.setg
+ModelExpressionProvider.getHAspNetCoreGeneratedDocument.Views_Home_Index.ModelExpressionProvider.getg
+ModelExpressionProvider.setHAspNetCoreGeneratedDocument.Views_Home_Index.ModelExpressionProvider.set?
+Url.get4AspNetCoreGeneratedDocument.Views_Home_Index.Url.get?
+Url.set4AspNetCoreGeneratedDocument.Views_Home_Index.Url.setK
+Component.get:AspNetCoreGeneratedDocument.Views_Home_Index.Component.getK
+Component.set:AspNetCoreGeneratedDocument.Views_Home_Index.Component.setA
+Json.get5AspNetCoreGeneratedDocument.Views_Home_Index.Json.getA
+Json.set5AspNetCoreGeneratedDocument.Views_Home_Index.Json.setA
+Html.get5AspNetCoreGeneratedDocument.Views_Home_Index.Html.getA
+Html.set5AspNetCoreGeneratedDocument.Views_Home_Index.Html.setç
 !Apha.BST.Web.Models.HelpViewModelobjectD
 HelpViewModel()1Apha.BST.Web.Models.HelpViewModel.HelpViewModel()>
 Sections.get.Apha.BST.Web.Models.HelpViewModel.Sections.get>
 Sections.set.Apha.BST.Web.Models.HelpViewModel.Sections.setL
 ActiveViewIndex.get5Apha.BST.Web.Models.HelpViewModel.ActiveViewIndex.getL
-ActiveViewIndex.set5Apha.BST.Web.Models.HelpViewModel.ActiveViewIndex.set˝
+ActiveViewIndex.set5Apha.BST.Web.Models.HelpViewModel.ActiveViewIndex.set¿	
+'Apha.BST.Web.Controllers.UserController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobject˙
+ÊUserController(Apha.BST.Application.Interfaces.IUserService, Apha.BST.Application.Interfaces.IRoleMappingService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)éApha.BST.Web.Controllers.UserController.UserController(Apha.BST.Application.Interfaces.IUserService, Apha.BST.Application.Interfaces.IRoleMappingService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)>
+	AddUser()1Apha.BST.Web.Controllers.UserController.AddUser()Ü
+-AddUser(Apha.BST.Web.Models.AddUserViewModel)UApha.BST.Web.Controllers.UserController.AddUser(Apha.BST.Web.Models.AddUserViewModel)L
+ViewUser(string)8Apha.BST.Web.Controllers.UserController.ViewUser(string)L
+EditUser(string)8Apha.BST.Web.Controllers.UserController.EditUser(string)ä
+/EditUser(Apha.BST.Web.Models.EditUserViewModel)WApha.BST.Web.Controllers.UserController.EditUser(Apha.BST.Web.Models.EditUserViewModel)P
+DeleteUser(string):Apha.BST.Web.Controllers.UserController.DeleteUser(string)˝
 !Apha.BST.Web.Models.NewsViewModelobjectD
 NewsViewModel()1Apha.BST.Web.Models.NewsViewModel.NewsViewModel()8
 	Title.get+Apha.BST.Web.Models.NewsViewModel.Title.get8
@@ -383,7 +407,9 @@ $Apha.BST.Web.Models.OldNewsViewModel!Apha.BST.Web.Models.BaseViewModelobject
 SortDirection.get5Apha.BST.Web.Models.PaginationModel.SortDirection.getJ
 SortDirection.set5Apha.BST.Web.Models.PaginationModel.SortDirection.setD
 TotalPages.get2Apha.BST.Web.Models.PaginationModel.TotalPages.getD
-TotalPages.set2Apha.BST.Web.Models.PaginationModel.TotalPages.setÑ
+TotalPages.set2Apha.BST.Web.Models.PaginationModel.TotalPages.set.
+,Apha.BST.Web.PresentationService.ILogService3
+1Apha.BST.Web.PresentationService.IUserDataServiceÑ
 'Apha.BST.Web.Models.PersonListViewModel!Apha.BST.Web.Models.BaseViewModelobjectV
 PersonListViewModel()=Apha.BST.Web.Models.PersonListViewModel.PersonListViewModel()F
 AllPerson.get5Apha.BST.Web.Models.PersonListViewModel.AllPerson.getF
@@ -407,55 +433,11 @@ Person.set.Apha.BST.Web.Models.PersonViewModel.Person.setD
 Name.get,Apha.BST.Web.Models.PersonViewModel.Name.get8
 Name.set,Apha.BST.Web.Models.PersonViewModel.Name.set>
 PlantNo.get/Apha.BST.Web.Models.PersonViewModel.PlantNo.get>
-PlantNo.set/Apha.BST.Web.Models.PersonViewModel.PlantNo.set≤
-
-,AspNetCoreGeneratedDocument.Views_Home_Index0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectM
-ExecuteAsync();AspNetCoreGeneratedDocument.Views_Home_Index.ExecuteAsync()U
-Views_Home_Index()?AspNetCoreGeneratedDocument.Views_Home_Index.Views_Home_Index()g
-__tagHelperScopeManager.getHAspNetCoreGeneratedDocument.Views_Home_Index.__tagHelperScopeManager.getg
-__tagHelperScopeManager.setHAspNetCoreGeneratedDocument.Views_Home_Index.__tagHelperScopeManager.setg
-ModelExpressionProvider.getHAspNetCoreGeneratedDocument.Views_Home_Index.ModelExpressionProvider.getg
-ModelExpressionProvider.setHAspNetCoreGeneratedDocument.Views_Home_Index.ModelExpressionProvider.set?
-Url.get4AspNetCoreGeneratedDocument.Views_Home_Index.Url.get?
-Url.set4AspNetCoreGeneratedDocument.Views_Home_Index.Url.setK
-Component.get:AspNetCoreGeneratedDocument.Views_Home_Index.Component.getK
-Component.set:AspNetCoreGeneratedDocument.Views_Home_Index.Component.setA
-Json.get5AspNetCoreGeneratedDocument.Views_Home_Index.Json.getA
-Json.set5AspNetCoreGeneratedDocument.Views_Home_Index.Json.setA
-Html.get5AspNetCoreGeneratedDocument.Views_Home_Index.Html.getA
-Html.set5AspNetCoreGeneratedDocument.Views_Home_Index.Html.set¿
-#Apha.BST.Web.Models.ReportViewModel!Apha.BST.Web.Models.BaseViewModelobjectJ
-ReportViewModel()5Apha.BST.Web.Models.ReportViewModel.ReportViewModel()F
-ReportTitle.get3Apha.BST.Web.Models.ReportViewModel.ReportTitle.getF
-ReportTitle.set3Apha.BST.Web.Models.ReportViewModel.ReportTitle.setH
-ErrorMessage.get4Apha.BST.Web.Models.ReportViewModel.ErrorMessage.getH
-ErrorMessage.set4Apha.BST.Web.Models.ReportViewModel.ErrorMessage.set‡
-%Apha.BST.Web.Models.SiteListViewModel!Apha.BST.Web.Models.BaseViewModelobjectP
-SiteListViewModel()9Apha.BST.Web.Models.SiteListViewModel.SiteListViewModel()B
-AllSites.get2Apha.BST.Web.Models.SiteListViewModel.AllSites.getB
-AllSites.set2Apha.BST.Web.Models.SiteListViewModel.AllSites.setL
-FilteredSites.get7Apha.BST.Web.Models.SiteListViewModel.FilteredSites.getL
-FilteredSites.set7Apha.BST.Web.Models.SiteListViewModel.FilteredSites.setJ
-SelectedSite.get6Apha.BST.Web.Models.SiteListViewModel.SelectedSite.getJ
-SelectedSite.set6Apha.BST.Web.Models.SiteListViewModel.SelectedSite.set¿	
-'Apha.BST.Web.Controllers.UserController#Microsoft.AspNetCore.Mvc.Controller'Microsoft.AspNetCore.Mvc.ControllerBaseobject˙
-ÊUserController(Apha.BST.Application.Interfaces.IUserService, Apha.BST.Application.Interfaces.IRoleMappingService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)éApha.BST.Web.Controllers.UserController.UserController(Apha.BST.Application.Interfaces.IUserService, Apha.BST.Application.Interfaces.IRoleMappingService, AutoMapper.IMapper, Apha.BST.Web.PresentationService.IUserDataService, Apha.BST.Web.PresentationService.ILogService)>
-	AddUser()1Apha.BST.Web.Controllers.UserController.AddUser()Ü
--AddUser(Apha.BST.Web.Models.AddUserViewModel)UApha.BST.Web.Controllers.UserController.AddUser(Apha.BST.Web.Models.AddUserViewModel)L
-ViewUser(string)8Apha.BST.Web.Controllers.UserController.ViewUser(string)L
-EditUser(string)8Apha.BST.Web.Controllers.UserController.EditUser(string)ä
-/EditUser(Apha.BST.Web.Models.EditUserViewModel)WApha.BST.Web.Controllers.UserController.EditUser(Apha.BST.Web.Models.EditUserViewModel)P
-DeleteUser(string):Apha.BST.Web.Controllers.UserController.DeleteUser(string)ƒ
-,Apha.BST.Web.Models.SiteTraineeListViewModel!Apha.BST.Web.Models.BaseViewModelobjecte
-SiteTraineeListViewModel()GApha.BST.Web.Models.SiteTraineeListViewModel.SiteTraineeListViewModel()I
-AllSites.get9Apha.BST.Web.Models.SiteTraineeListViewModel.AllSites.getI
-AllSites.set9Apha.BST.Web.Models.SiteTraineeListViewModel.AllSites.setY
-FilteredTrainees.getAApha.BST.Web.Models.SiteTraineeListViewModel.FilteredTrainees.getY
-FilteredTrainees.setAApha.BST.Web.Models.SiteTraineeListViewModel.FilteredTrainees.setQ
-SelectedSite.get=Apha.BST.Web.Models.SiteTraineeListViewModel.SelectedSite.getQ
-SelectedSite.set=Apha.BST.Web.Models.SiteTraineeListViewModel.SelectedSite.setG
-Message.get8Apha.BST.Web.Models.SiteTraineeListViewModel.Message.getG
-Message.set8Apha.BST.Web.Models.SiteTraineeListViewModel.Message.set‘
+PlantNo.set/Apha.BST.Web.Models.PersonViewModel.PlantNo.set¯
++Apha.BST.Web.PresentationService.LogServiceobject,Apha.BST.Web.PresentationService.ILogService“
+êLogService(Microsoft.Extensions.Logging.ILogger<Apha.BST.Web.PresentationService.LogService>, Microsoft.Extensions.Configuration.IConfiguration)ºApha.BST.Web.PresentationService.LogService.LogService(Microsoft.Extensions.Logging.ILogger<Apha.BST.Web.PresentationService.LogService>, Microsoft.Extensions.Configuration.IConfiguration)ä
+-LogGeneralException(System.Exception, string)YApha.BST.Web.PresentationService.LogService.LogGeneralException(System.Exception, string)Ç
+)LogSqlException(System.Exception, string)UApha.BST.Web.PresentationService.LogService.LogSqlException(System.Exception, string)2,Apha.BST.Web.PresentationService.ILogService‘
 
 .AspNetCoreGeneratedDocument.Views_News_AddNews0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectO
 ExecuteAsync()=AspNetCoreGeneratedDocument.Views_News_AddNews.ExecuteAsync()[
@@ -471,7 +453,25 @@ Person.set.Apha.BST.Web.Models.PersonViewModel.Person.setD
 Json.get7AspNetCoreGeneratedDocument.Views_News_AddNews.Json.getC
 Json.set7AspNetCoreGeneratedDocument.Views_News_AddNews.Json.setC
 Html.get7AspNetCoreGeneratedDocument.Views_News_AddNews.Html.getC
-Html.set7AspNetCoreGeneratedDocument.Views_News_AddNews.Html.set°
+Html.set7AspNetCoreGeneratedDocument.Views_News_AddNews.Html.set¿
+#Apha.BST.Web.Models.ReportViewModel!Apha.BST.Web.Models.BaseViewModelobjectJ
+ReportViewModel()5Apha.BST.Web.Models.ReportViewModel.ReportViewModel()F
+ReportTitle.get3Apha.BST.Web.Models.ReportViewModel.ReportTitle.getF
+ReportTitle.set3Apha.BST.Web.Models.ReportViewModel.ReportTitle.setH
+ErrorMessage.get4Apha.BST.Web.Models.ReportViewModel.ErrorMessage.getH
+ErrorMessage.set4Apha.BST.Web.Models.ReportViewModel.ErrorMessage.setÎ
+0Apha.BST.Web.PresentationService.UserDataServiceobject1Apha.BST.Web.PresentationService.IUserDataServiceö
+rUserDataService(Microsoft.AspNetCore.Http.IHttpContextAccessor, Apha.BST.Application.Interfaces.IDataEntryService)£Apha.BST.Web.PresentationService.UserDataService.UserDataService(Microsoft.AspNetCore.Http.IHttpContextAccessor, Apha.BST.Application.Interfaces.IDataEntryService)O
+GetUsername()>Apha.BST.Web.PresentationService.UserDataService.GetUsername()[
+CanEditPage(string)DApha.BST.Web.PresentationService.UserDataService.CanEditPage(string)21Apha.BST.Web.PresentationService.IUserDataService‡
+%Apha.BST.Web.Models.SiteListViewModel!Apha.BST.Web.Models.BaseViewModelobjectP
+SiteListViewModel()9Apha.BST.Web.Models.SiteListViewModel.SiteListViewModel()B
+AllSites.get2Apha.BST.Web.Models.SiteListViewModel.AllSites.getB
+AllSites.set2Apha.BST.Web.Models.SiteListViewModel.AllSites.setL
+FilteredSites.get7Apha.BST.Web.Models.SiteListViewModel.FilteredSites.getL
+FilteredSites.set7Apha.BST.Web.Models.SiteListViewModel.FilteredSites.setJ
+SelectedSite.get6Apha.BST.Web.Models.SiteListViewModel.SelectedSite.getJ
+SelectedSite.set6Apha.BST.Web.Models.SiteListViewModel.SelectedSite.set°
 (Apha.BST.Web.Models.SiteTraineeViewModelobjectY
 SiteTraineeViewModel()?Apha.BST.Web.Models.SiteTraineeViewModel.SiteTraineeViewModel()E
 PersonId.get5Apha.BST.Web.Models.SiteTraineeViewModel.PersonId.getE
@@ -479,7 +479,17 @@ Person.set.Apha.BST.Web.Models.PersonViewModel.Person.setD
 
 Person.get3Apha.BST.Web.Models.SiteTraineeViewModel.Person.getA
 
-Person.set3Apha.BST.Web.Models.SiteTraineeViewModel.Person.set¿
+Person.set3Apha.BST.Web.Models.SiteTraineeViewModel.Person.setƒ
+,Apha.BST.Web.Models.SiteTraineeListViewModel!Apha.BST.Web.Models.BaseViewModelobjecte
+SiteTraineeListViewModel()GApha.BST.Web.Models.SiteTraineeListViewModel.SiteTraineeListViewModel()I
+AllSites.get9Apha.BST.Web.Models.SiteTraineeListViewModel.AllSites.getI
+AllSites.set9Apha.BST.Web.Models.SiteTraineeListViewModel.AllSites.setY
+FilteredTrainees.getAApha.BST.Web.Models.SiteTraineeListViewModel.FilteredTrainees.getY
+FilteredTrainees.setAApha.BST.Web.Models.SiteTraineeListViewModel.FilteredTrainees.setQ
+SelectedSite.get=Apha.BST.Web.Models.SiteTraineeListViewModel.SelectedSite.getQ
+SelectedSite.set=Apha.BST.Web.Models.SiteTraineeListViewModel.SelectedSite.setG
+Message.get8Apha.BST.Web.Models.SiteTraineeListViewModel.Message.getG
+Message.set8Apha.BST.Web.Models.SiteTraineeListViewModel.Message.set¿
 !Apha.BST.Web.Models.SiteViewModel!Apha.BST.Web.Models.BaseViewModelobjectD
 SiteViewModel()1Apha.BST.Web.Models.SiteViewModel.SiteViewModel()<
 PlantNo.get-Apha.BST.Web.Models.SiteViewModel.PlantNo.get<
@@ -501,21 +511,7 @@ Person.set3Apha.BST.Web.Models.SiteTraineeViewModel.Person.set¿
 Fax.get)Apha.BST.Web.Models.SiteViewModel.Fax.get4
 Fax.set)Apha.BST.Web.Models.SiteViewModel.Fax.set8
 	Ahvla.get+Apha.BST.Web.Models.SiteViewModel.Ahvla.get8
-	Ahvla.set+Apha.BST.Web.Models.SiteViewModel.Ahvla.set.
-,Apha.BST.Web.PresentationService.ILogService3
-1Apha.BST.Web.PresentationService.IUserDataServiceπ
-+Apha.BST.Web.Models.TraineeTrainerViewModelobjectb
-TraineeTrainerViewModel()EApha.BST.Web.Models.TraineeTrainerViewModel.TraineeTrainerViewModel()H
-PersonID.get8Apha.BST.Web.Models.TraineeTrainerViewModel.PersonID.getH
-PersonID.set8Apha.BST.Web.Models.TraineeTrainerViewModel.PersonID.setD
-
-Person.get6Apha.BST.Web.Models.TraineeTrainerViewModel.Person.getD
-
-Person.set6Apha.BST.Web.Models.TraineeTrainerViewModel.Person.set¯
-+Apha.BST.Web.PresentationService.LogServiceobject,Apha.BST.Web.PresentationService.ILogService“
-êLogService(Microsoft.Extensions.Logging.ILogger<Apha.BST.Web.PresentationService.LogService>, Microsoft.Extensions.Configuration.IConfiguration)ºApha.BST.Web.PresentationService.LogService.LogService(Microsoft.Extensions.Logging.ILogger<Apha.BST.Web.PresentationService.LogService>, Microsoft.Extensions.Configuration.IConfiguration)ä
--LogGeneralException(System.Exception, string)YApha.BST.Web.PresentationService.LogService.LogGeneralException(System.Exception, string)Ç
-)LogSqlException(System.Exception, string)UApha.BST.Web.PresentationService.LogService.LogSqlException(System.Exception, string)2,Apha.BST.Web.PresentationService.ILogService‹	
+	Ahvla.set+Apha.BST.Web.Models.SiteViewModel.Ahvla.set‹	
 +Apha.BST.Web.Models.TrainerHistoryViewModel!Apha.BST.Web.Models.BaseViewModelobjectb
 TrainerHistoryViewModel()EApha.BST.Web.Models.TrainerHistoryViewModel.TrainerHistoryViewModel()Z
 SelectedTrainerId.getAApha.BST.Web.Models.TrainerHistoryViewModel.SelectedTrainerId.getZ
@@ -529,7 +525,15 @@ Person.set6Apha.BST.Web.Models.TraineeTrainerViewModel.Person.set¯
 HistoryDetails.get>Apha.BST.Web.Models.TrainerHistoryViewModel.HistoryDetails.getT
 HistoryDetails.set>Apha.BST.Web.Models.TrainerHistoryViewModel.HistoryDetails.set\
 TrainingAnimalList.getBApha.BST.Web.Models.TrainerHistoryViewModel.TrainingAnimalList.get\
-TrainingAnimalList.setBApha.BST.Web.Models.TrainerHistoryViewModel.TrainingAnimalList.set‘
+TrainingAnimalList.setBApha.BST.Web.Models.TrainerHistoryViewModel.TrainingAnimalList.setπ
++Apha.BST.Web.Models.TraineeTrainerViewModelobjectb
+TraineeTrainerViewModel()EApha.BST.Web.Models.TraineeTrainerViewModel.TraineeTrainerViewModel()H
+PersonID.get8Apha.BST.Web.Models.TraineeTrainerViewModel.PersonID.getH
+PersonID.set8Apha.BST.Web.Models.TraineeTrainerViewModel.PersonID.setD
+
+Person.get6Apha.BST.Web.Models.TraineeTrainerViewModel.Person.getD
+
+Person.set6Apha.BST.Web.Models.TraineeTrainerViewModel.Person.set‘
 
 .AspNetCoreGeneratedDocument.Views_News_OldNews0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectO
 ExecuteAsync()=AspNetCoreGeneratedDocument.Views_News_OldNews.ExecuteAsync()[
@@ -545,11 +549,7 @@ Person.set6Apha.BST.Web.Models.TraineeTrainerViewModel.Person.set¯
 Json.get7AspNetCoreGeneratedDocument.Views_News_OldNews.Json.getC
 Json.set7AspNetCoreGeneratedDocument.Views_News_OldNews.Json.setC
 Html.get7AspNetCoreGeneratedDocument.Views_News_OldNews.Html.getC
-Html.set7AspNetCoreGeneratedDocument.Views_News_OldNews.Html.setÎ
-0Apha.BST.Web.PresentationService.UserDataServiceobject1Apha.BST.Web.PresentationService.IUserDataServiceö
-rUserDataService(Microsoft.AspNetCore.Http.IHttpContextAccessor, Apha.BST.Application.Interfaces.IDataEntryService)£Apha.BST.Web.PresentationService.UserDataService.UserDataService(Microsoft.AspNetCore.Http.IHttpContextAccessor, Apha.BST.Application.Interfaces.IDataEntryService)O
-GetUsername()>Apha.BST.Web.PresentationService.UserDataService.GetUsername()[
-CanEditPage(string)DApha.BST.Web.PresentationService.UserDataService.CanEditPage(string)21Apha.BST.Web.PresentationService.IUserDataServiceÈ
+Html.set7AspNetCoreGeneratedDocument.Views_News_OldNews.Html.setÈ
 'Apha.BST.Web.Models.TrainerTrainedModelobjectV
 TrainerTrainedModel()=Apha.BST.Web.Models.TrainerTrainedModel.TrainerTrainedModel()F
 TraineeNo.get5Apha.BST.Web.Models.TrainerTrainedModel.TraineeNo.getF
@@ -627,15 +627,7 @@ Person.set3Apha.BST.Web.Models.TrainingHistoryModel.Person.set=
 TrainingDateTime.get=Apha.BST.Web.Models.TrainingHistoryModel.TrainingDateTime.getU
 TrainingDateTime.set=Apha.BST.Web.Models.TrainingHistoryModel.TrainingDateTime.setC
 Trainer.get4Apha.BST.Web.Models.TrainingHistoryModel.Trainer.getC
-Trainer.set4Apha.BST.Web.Models.TrainingHistoryModel.Trainer.set∏
-)Apha.BST.Web.Models.TrainingListViewModel!Apha.BST.Web.Models.BaseViewModelobject\
-TrainingListViewModel()AApha.BST.Web.Models.TrainingListViewModel.TrainingListViewModel()L
-AllTrainees.get9Apha.BST.Web.Models.TrainingListViewModel.AllTrainees.getL
-AllTrainees.set9Apha.BST.Web.Models.TrainingListViewModel.AllTrainees.setX
-FilteredTrainings.get?Apha.BST.Web.Models.TrainingListViewModel.FilteredTrainings.getX
-FilteredTrainings.set?Apha.BST.Web.Models.TrainingListViewModel.FilteredTrainings.setX
-SelectedTraineeId.get?Apha.BST.Web.Models.TrainingListViewModel.SelectedTraineeId.getX
-SelectedTraineeId.set?Apha.BST.Web.Models.TrainingListViewModel.SelectedTraineeId.setÂ
+Trainer.set4Apha.BST.Web.Models.TrainingHistoryModel.Trainer.setÂ
 
 /AspNetCoreGeneratedDocument.Views_News_ViewNews0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectP
 ExecuteAsync()>AspNetCoreGeneratedDocument.Views_News_ViewNews.ExecuteAsync()^
@@ -651,7 +643,15 @@ Person.set3Apha.BST.Web.Models.TrainingHistoryModel.Person.set=
 Json.get8AspNetCoreGeneratedDocument.Views_News_ViewNews.Json.getD
 Json.set8AspNetCoreGeneratedDocument.Views_News_ViewNews.Json.setD
 Html.get8AspNetCoreGeneratedDocument.Views_News_ViewNews.Html.getD
-Html.set8AspNetCoreGeneratedDocument.Views_News_ViewNews.Html.set‘
+Html.set8AspNetCoreGeneratedDocument.Views_News_ViewNews.Html.set∏
+)Apha.BST.Web.Models.TrainingListViewModel!Apha.BST.Web.Models.BaseViewModelobject\
+TrainingListViewModel()AApha.BST.Web.Models.TrainingListViewModel.TrainingListViewModel()L
+AllTrainees.get9Apha.BST.Web.Models.TrainingListViewModel.AllTrainees.getL
+AllTrainees.set9Apha.BST.Web.Models.TrainingListViewModel.AllTrainees.setX
+FilteredTrainings.get?Apha.BST.Web.Models.TrainingListViewModel.FilteredTrainings.getX
+FilteredTrainings.set?Apha.BST.Web.Models.TrainingListViewModel.FilteredTrainings.setX
+SelectedTraineeId.get?Apha.BST.Web.Models.TrainingListViewModel.SelectedTraineeId.getX
+SelectedTraineeId.set?Apha.BST.Web.Models.TrainingListViewModel.SelectedTraineeId.set‘
 
 .AspNetCoreGeneratedDocument.Views_Site_AddSite0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectO
 ExecuteAsync()=AspNetCoreGeneratedDocument.Views_Site_AddSite.ExecuteAsync()[
@@ -713,22 +713,22 @@ Person.set3Apha.BST.Web.Models.TrainingHistoryModel.Person.set=
 Json.get;AspNetCoreGeneratedDocument.Views_Site_SiteTrainee.Json.getG
 Json.set;AspNetCoreGeneratedDocument.Views_Site_SiteTrainee.Json.setG
 Html.get;AspNetCoreGeneratedDocument.Views_Site_SiteTrainee.Html.getG
-Html.set;AspNetCoreGeneratedDocument.Views_Site_SiteTrainee.Html.set‹
-6AspNetCoreGeneratedDocument.Views_Training_AddTraining0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectW
-ExecuteAsync()EAspNetCoreGeneratedDocument.Views_Training_AddTraining.ExecuteAsync()s
-Views_Training_AddTraining()SAspNetCoreGeneratedDocument.Views_Training_AddTraining.Views_Training_AddTraining()q
-__tagHelperScopeManager.getRAspNetCoreGeneratedDocument.Views_Training_AddTraining.__tagHelperScopeManager.getq
-__tagHelperScopeManager.setRAspNetCoreGeneratedDocument.Views_Training_AddTraining.__tagHelperScopeManager.setq
-ModelExpressionProvider.getRAspNetCoreGeneratedDocument.Views_Training_AddTraining.ModelExpressionProvider.getq
-ModelExpressionProvider.setRAspNetCoreGeneratedDocument.Views_Training_AddTraining.ModelExpressionProvider.setI
-Url.get>AspNetCoreGeneratedDocument.Views_Training_AddTraining.Url.getI
-Url.set>AspNetCoreGeneratedDocument.Views_Training_AddTraining.Url.setU
-Component.getDAspNetCoreGeneratedDocument.Views_Training_AddTraining.Component.getU
-Component.setDAspNetCoreGeneratedDocument.Views_Training_AddTraining.Component.setK
-Json.get?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Json.getK
-Json.set?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Json.setK
-Html.get?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Html.getK
-Html.set?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Html.set∫
+Html.set;AspNetCoreGeneratedDocument.Views_Site_SiteTrainee.Html.setè
+9AspNetCoreGeneratedDocument.Views_Training_TrainerTrained0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectZ
+ExecuteAsync()HAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.ExecuteAsync()|
+Views_Training_TrainerTrained()YAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Views_Training_TrainerTrained()t
+__tagHelperScopeManager.getUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.__tagHelperScopeManager.gett
+__tagHelperScopeManager.setUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.__tagHelperScopeManager.sett
+ModelExpressionProvider.getUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.ModelExpressionProvider.gett
+ModelExpressionProvider.setUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.ModelExpressionProvider.setL
+Url.getAAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Url.getL
+Url.setAAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Url.setX
+Component.getGAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Component.getX
+Component.setGAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Component.setN
+Json.getBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Json.getN
+Json.setBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Json.setN
+Html.getBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Html.getN
+Html.setBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Html.set∫
 4AspNetCoreGeneratedDocument.Views_Persons_EditPerson0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectU
 ExecuteAsync()CAspNetCoreGeneratedDocument.Views_Persons_EditPerson.ExecuteAsync()m
 Views_Persons_EditPerson()OAspNetCoreGeneratedDocument.Views_Persons_EditPerson.Views_Persons_EditPerson()o
@@ -743,7 +743,53 @@ Person.set3Apha.BST.Web.Models.TrainingHistoryModel.Person.set=
 Json.get=AspNetCoreGeneratedDocument.Views_Persons_EditPerson.Json.getI
 Json.set=AspNetCoreGeneratedDocument.Views_Persons_EditPerson.Json.setI
 Html.get=AspNetCoreGeneratedDocument.Views_Persons_EditPerson.Html.getI
-Html.set=AspNetCoreGeneratedDocument.Views_Persons_EditPerson.Html.setÂ
+Html.set=AspNetCoreGeneratedDocument.Views_Persons_EditPerson.Html.set‹
+6AspNetCoreGeneratedDocument.Views_Training_AddTraining0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectW
+ExecuteAsync()EAspNetCoreGeneratedDocument.Views_Training_AddTraining.ExecuteAsync()s
+Views_Training_AddTraining()SAspNetCoreGeneratedDocument.Views_Training_AddTraining.Views_Training_AddTraining()q
+__tagHelperScopeManager.getRAspNetCoreGeneratedDocument.Views_Training_AddTraining.__tagHelperScopeManager.getq
+__tagHelperScopeManager.setRAspNetCoreGeneratedDocument.Views_Training_AddTraining.__tagHelperScopeManager.setq
+ModelExpressionProvider.getRAspNetCoreGeneratedDocument.Views_Training_AddTraining.ModelExpressionProvider.getq
+ModelExpressionProvider.setRAspNetCoreGeneratedDocument.Views_Training_AddTraining.ModelExpressionProvider.setI
+Url.get>AspNetCoreGeneratedDocument.Views_Training_AddTraining.Url.getI
+Url.set>AspNetCoreGeneratedDocument.Views_Training_AddTraining.Url.setU
+Component.getDAspNetCoreGeneratedDocument.Views_Training_AddTraining.Component.getU
+Component.setDAspNetCoreGeneratedDocument.Views_Training_AddTraining.Component.setK
+Json.get?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Json.getK
+Json.set?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Json.setK
+Html.get?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Html.getK
+Html.set?AspNetCoreGeneratedDocument.Views_Training_AddTraining.Html.setÌ
+7AspNetCoreGeneratedDocument.Views_Training_ViewTraining0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectX
+ExecuteAsync()FAspNetCoreGeneratedDocument.Views_Training_ViewTraining.ExecuteAsync()v
+Views_Training_ViewTraining()UAspNetCoreGeneratedDocument.Views_Training_ViewTraining.Views_Training_ViewTraining()r
+__tagHelperScopeManager.getSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.__tagHelperScopeManager.getr
+__tagHelperScopeManager.setSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.__tagHelperScopeManager.setr
+ModelExpressionProvider.getSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.ModelExpressionProvider.getr
+ModelExpressionProvider.setSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.ModelExpressionProvider.setJ
+Url.get?AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Url.getJ
+Url.set?AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Url.setV
+Component.getEAspNetCoreGeneratedDocument.Views_Training_ViewTraining.Component.getV
+Component.setEAspNetCoreGeneratedDocument.Views_Training_ViewTraining.Component.setL
+Json.get@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Json.getL
+Json.set@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Json.setL
+Html.get@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Html.getL
+Html.set@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Html.setˆ
+
+0AspNetCoreGeneratedDocument.Views_Shared__Layout0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectQ
+ExecuteAsync()?AspNetCoreGeneratedDocument.Views_Shared__Layout.ExecuteAsync()a
+Views_Shared__Layout()GAspNetCoreGeneratedDocument.Views_Shared__Layout.Views_Shared__Layout()k
+__tagHelperScopeManager.getLAspNetCoreGeneratedDocument.Views_Shared__Layout.__tagHelperScopeManager.getk
+__tagHelperScopeManager.setLAspNetCoreGeneratedDocument.Views_Shared__Layout.__tagHelperScopeManager.setk
+ModelExpressionProvider.getLAspNetCoreGeneratedDocument.Views_Shared__Layout.ModelExpressionProvider.getk
+ModelExpressionProvider.setLAspNetCoreGeneratedDocument.Views_Shared__Layout.ModelExpressionProvider.setC
+Url.get8AspNetCoreGeneratedDocument.Views_Shared__Layout.Url.getC
+Url.set8AspNetCoreGeneratedDocument.Views_Shared__Layout.Url.setO
+Component.get>AspNetCoreGeneratedDocument.Views_Shared__Layout.Component.getO
+Component.set>AspNetCoreGeneratedDocument.Views_Shared__Layout.Component.setE
+Json.get9AspNetCoreGeneratedDocument.Views_Shared__Layout.Json.getE
+Json.set9AspNetCoreGeneratedDocument.Views_Shared__Layout.Json.setE
+Html.get9AspNetCoreGeneratedDocument.Views_Shared__Layout.Html.getE
+Html.set9AspNetCoreGeneratedDocument.Views_Shared__Layout.Html.setÂ
 
 /AspNetCoreGeneratedDocument.Views_Site_ViewSite0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectP
 ExecuteAsync()>AspNetCoreGeneratedDocument.Views_Site_ViewSite.ExecuteAsync()^
@@ -774,140 +820,7 @@ Person.set3Apha.BST.Web.Models.TrainingHistoryModel.Person.set=
 Json.get@AspNetCoreGeneratedDocument.Views_Training_EditTraining.Json.getL
 Json.set@AspNetCoreGeneratedDocument.Views_Training_EditTraining.Json.setL
 Html.get@AspNetCoreGeneratedDocument.Views_Training_EditTraining.Html.getL
-Html.set@AspNetCoreGeneratedDocument.Views_Training_EditTraining.Html.set∫
-4AspNetCoreGeneratedDocument.Views_Persons_ViewPerson0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectU
-ExecuteAsync()CAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.ExecuteAsync()m
-Views_Persons_ViewPerson()OAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Views_Persons_ViewPerson()o
-__tagHelperScopeManager.getPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.__tagHelperScopeManager.geto
-__tagHelperScopeManager.setPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.__tagHelperScopeManager.seto
-ModelExpressionProvider.getPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.ModelExpressionProvider.geto
-ModelExpressionProvider.setPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.ModelExpressionProvider.setG
-Url.get<AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Url.getG
-Url.set<AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Url.setS
-Component.getBAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Component.getS
-Component.setBAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Component.setI
-Json.get=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Json.getI
-Json.set=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Json.setI
-Html.get=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Html.getI
-Html.set=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Html.setè
-9AspNetCoreGeneratedDocument.Views_Training_TrainerHistory0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectZ
-ExecuteAsync()HAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.ExecuteAsync()|
-Views_Training_TrainerHistory()YAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Views_Training_TrainerHistory()t
-__tagHelperScopeManager.getUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.__tagHelperScopeManager.gett
-__tagHelperScopeManager.setUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.__tagHelperScopeManager.sett
-ModelExpressionProvider.getUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.ModelExpressionProvider.gett
-ModelExpressionProvider.setUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.ModelExpressionProvider.setL
-Url.getAAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Url.getL
-Url.setAAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Url.setX
-Component.getGAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Component.getX
-Component.setGAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Component.setN
-Json.getBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Json.getN
-Json.setBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Json.setN
-Html.getBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Html.getN
-Html.setBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Html.setè
-9AspNetCoreGeneratedDocument.Views_Training_TrainerTrained0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectZ
-ExecuteAsync()HAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.ExecuteAsync()|
-Views_Training_TrainerTrained()YAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Views_Training_TrainerTrained()t
-__tagHelperScopeManager.getUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.__tagHelperScopeManager.gett
-__tagHelperScopeManager.setUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.__tagHelperScopeManager.sett
-ModelExpressionProvider.getUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.ModelExpressionProvider.gett
-ModelExpressionProvider.setUAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.ModelExpressionProvider.setL
-Url.getAAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Url.getL
-Url.setAAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Url.setX
-Component.getGAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Component.getX
-Component.setGAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Component.setN
-Json.getBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Json.getN
-Json.setBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Json.setN
-Html.getBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Html.getN
-Html.setBAspNetCoreGeneratedDocument.Views_Training_TrainerTrained.Html.setÂ
-
-/AspNetCoreGeneratedDocument.Views_Report_Report0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectP
-ExecuteAsync()>AspNetCoreGeneratedDocument.Views_Report_Report.ExecuteAsync()^
-Views_Report_Report()EAspNetCoreGeneratedDocument.Views_Report_Report.Views_Report_Report()j
-__tagHelperScopeManager.getKAspNetCoreGeneratedDocument.Views_Report_Report.__tagHelperScopeManager.getj
-__tagHelperScopeManager.setKAspNetCoreGeneratedDocument.Views_Report_Report.__tagHelperScopeManager.setj
-ModelExpressionProvider.getKAspNetCoreGeneratedDocument.Views_Report_Report.ModelExpressionProvider.getj
-ModelExpressionProvider.setKAspNetCoreGeneratedDocument.Views_Report_Report.ModelExpressionProvider.setB
-Url.get7AspNetCoreGeneratedDocument.Views_Report_Report.Url.getB
-Url.set7AspNetCoreGeneratedDocument.Views_Report_Report.Url.setN
-Component.get=AspNetCoreGeneratedDocument.Views_Report_Report.Component.getN
-Component.set=AspNetCoreGeneratedDocument.Views_Report_Report.Component.setD
-Json.get8AspNetCoreGeneratedDocument.Views_Report_Report.Json.getD
-Json.set8AspNetCoreGeneratedDocument.Views_Report_Report.Json.setD
-Html.get8AspNetCoreGeneratedDocument.Views_Report_Report.Html.getD
-Html.set8AspNetCoreGeneratedDocument.Views_Report_Report.Html.setÂ
-
-/AspNetCoreGeneratedDocument.Views_User_ViewUser0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectP
-ExecuteAsync()>AspNetCoreGeneratedDocument.Views_User_ViewUser.ExecuteAsync()^
-Views_User_ViewUser()EAspNetCoreGeneratedDocument.Views_User_ViewUser.Views_User_ViewUser()j
-__tagHelperScopeManager.getKAspNetCoreGeneratedDocument.Views_User_ViewUser.__tagHelperScopeManager.getj
-__tagHelperScopeManager.setKAspNetCoreGeneratedDocument.Views_User_ViewUser.__tagHelperScopeManager.setj
-ModelExpressionProvider.getKAspNetCoreGeneratedDocument.Views_User_ViewUser.ModelExpressionProvider.getj
-ModelExpressionProvider.setKAspNetCoreGeneratedDocument.Views_User_ViewUser.ModelExpressionProvider.setB
-Url.get7AspNetCoreGeneratedDocument.Views_User_ViewUser.Url.getB
-Url.set7AspNetCoreGeneratedDocument.Views_User_ViewUser.Url.setN
-Component.get=AspNetCoreGeneratedDocument.Views_User_ViewUser.Component.getN
-Component.set=AspNetCoreGeneratedDocument.Views_User_ViewUser.Component.setD
-Json.get8AspNetCoreGeneratedDocument.Views_User_ViewUser.Json.getD
-Json.set8AspNetCoreGeneratedDocument.Views_User_ViewUser.Json.setD
-Html.get8AspNetCoreGeneratedDocument.Views_User_ViewUser.Html.getD
-Html.set8AspNetCoreGeneratedDocument.Views_User_ViewUser.Html.set©
-BAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectc
-ExecuteAsync()QAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.ExecuteAsync()ó
-(Views_Shared__ValidationScriptsPartial()kAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Views_Shared__ValidationScriptsPartial()}
-__tagHelperScopeManager.get^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.__tagHelperScopeManager.get}
-__tagHelperScopeManager.set^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.__tagHelperScopeManager.set}
-ModelExpressionProvider.get^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.ModelExpressionProvider.get}
-ModelExpressionProvider.set^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.ModelExpressionProvider.setU
-Url.getJAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Url.getU
-Url.setJAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Url.seta
-Component.getPAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Component.geta
-Component.setPAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Component.setW
-Json.getKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Json.getW
-Json.setKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Json.setW
-Html.getKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Html.getW
-Html.setKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Html.setÌ
-7AspNetCoreGeneratedDocument.Views_Training_ViewTraining0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectX
-ExecuteAsync()FAspNetCoreGeneratedDocument.Views_Training_ViewTraining.ExecuteAsync()v
-Views_Training_ViewTraining()UAspNetCoreGeneratedDocument.Views_Training_ViewTraining.Views_Training_ViewTraining()r
-__tagHelperScopeManager.getSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.__tagHelperScopeManager.getr
-__tagHelperScopeManager.setSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.__tagHelperScopeManager.setr
-ModelExpressionProvider.getSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.ModelExpressionProvider.getr
-ModelExpressionProvider.setSAspNetCoreGeneratedDocument.Views_Training_ViewTraining.ModelExpressionProvider.setJ
-Url.get?AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Url.getJ
-Url.set?AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Url.setV
-Component.getEAspNetCoreGeneratedDocument.Views_Training_ViewTraining.Component.getV
-Component.setEAspNetCoreGeneratedDocument.Views_Training_ViewTraining.Component.setL
-Json.get@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Json.getL
-Json.set@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Json.setL
-Html.get@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Html.getL
-Html.set@AspNetCoreGeneratedDocument.Views_Training_ViewTraining.Html.set˛
-.AspNetCoreGeneratedDocument.Views__ViewImports0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectO
-ExecuteAsync()=AspNetCoreGeneratedDocument.Views__ViewImports.ExecuteAsync()[
-Views__ViewImports()CAspNetCoreGeneratedDocument.Views__ViewImports.Views__ViewImports()i
-ModelExpressionProvider.getJAspNetCoreGeneratedDocument.Views__ViewImports.ModelExpressionProvider.geti
-ModelExpressionProvider.setJAspNetCoreGeneratedDocument.Views__ViewImports.ModelExpressionProvider.setA
-Url.get6AspNetCoreGeneratedDocument.Views__ViewImports.Url.getA
-Url.set6AspNetCoreGeneratedDocument.Views__ViewImports.Url.setM
-Component.get<AspNetCoreGeneratedDocument.Views__ViewImports.Component.getM
-Component.set<AspNetCoreGeneratedDocument.Views__ViewImports.Component.setC
-Json.get7AspNetCoreGeneratedDocument.Views__ViewImports.Json.getC
-Json.set7AspNetCoreGeneratedDocument.Views__ViewImports.Json.setC
-Html.get7AspNetCoreGeneratedDocument.Views__ViewImports.Html.getC
-Html.set7AspNetCoreGeneratedDocument.Views__ViewImports.Html.set‡
-,AspNetCoreGeneratedDocument.Views__ViewStart0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectM
-ExecuteAsync();AspNetCoreGeneratedDocument.Views__ViewStart.ExecuteAsync()U
-Views__ViewStart()?AspNetCoreGeneratedDocument.Views__ViewStart.Views__ViewStart()g
-ModelExpressionProvider.getHAspNetCoreGeneratedDocument.Views__ViewStart.ModelExpressionProvider.getg
-ModelExpressionProvider.setHAspNetCoreGeneratedDocument.Views__ViewStart.ModelExpressionProvider.set?
-Url.get4AspNetCoreGeneratedDocument.Views__ViewStart.Url.get?
-Url.set4AspNetCoreGeneratedDocument.Views__ViewStart.Url.setK
-Component.get:AspNetCoreGeneratedDocument.Views__ViewStart.Component.getK
-Component.set:AspNetCoreGeneratedDocument.Views__ViewStart.Component.setA
-Json.get5AspNetCoreGeneratedDocument.Views__ViewStart.Json.getA
-Json.set5AspNetCoreGeneratedDocument.Views__ViewStart.Json.setA
-Html.get5AspNetCoreGeneratedDocument.Views__ViewStart.Html.getA
-Html.set5AspNetCoreGeneratedDocument.Views__ViewStart.Html.set‘
+Html.set@AspNetCoreGeneratedDocument.Views_Training_EditTraining.Html.set‘
 
 .AspNetCoreGeneratedDocument.Views_User_AddUser0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectO
 ExecuteAsync()=AspNetCoreGeneratedDocument.Views_User_AddUser.ExecuteAsync()[
@@ -923,23 +836,22 @@ BAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial0Microsoft.A
 Json.get7AspNetCoreGeneratedDocument.Views_User_AddUser.Json.getC
 Json.set7AspNetCoreGeneratedDocument.Views_User_AddUser.Json.setC
 Html.get7AspNetCoreGeneratedDocument.Views_User_AddUser.Html.getC
-Html.set7AspNetCoreGeneratedDocument.Views_User_AddUser.Html.setˆ
-
-0AspNetCoreGeneratedDocument.Views_Shared__Layout0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectQ
-ExecuteAsync()?AspNetCoreGeneratedDocument.Views_Shared__Layout.ExecuteAsync()a
-Views_Shared__Layout()GAspNetCoreGeneratedDocument.Views_Shared__Layout.Views_Shared__Layout()k
-__tagHelperScopeManager.getLAspNetCoreGeneratedDocument.Views_Shared__Layout.__tagHelperScopeManager.getk
-__tagHelperScopeManager.setLAspNetCoreGeneratedDocument.Views_Shared__Layout.__tagHelperScopeManager.setk
-ModelExpressionProvider.getLAspNetCoreGeneratedDocument.Views_Shared__Layout.ModelExpressionProvider.getk
-ModelExpressionProvider.setLAspNetCoreGeneratedDocument.Views_Shared__Layout.ModelExpressionProvider.setC
-Url.get8AspNetCoreGeneratedDocument.Views_Shared__Layout.Url.getC
-Url.set8AspNetCoreGeneratedDocument.Views_Shared__Layout.Url.setO
-Component.get>AspNetCoreGeneratedDocument.Views_Shared__Layout.Component.getO
-Component.set>AspNetCoreGeneratedDocument.Views_Shared__Layout.Component.setE
-Json.get9AspNetCoreGeneratedDocument.Views_Shared__Layout.Json.getE
-Json.set9AspNetCoreGeneratedDocument.Views_Shared__Layout.Json.setE
-Html.get9AspNetCoreGeneratedDocument.Views_Shared__Layout.Html.getE
-Html.set9AspNetCoreGeneratedDocument.Views_Shared__Layout.Html.setÂ
+Html.set7AspNetCoreGeneratedDocument.Views_User_AddUser.Html.setè
+9AspNetCoreGeneratedDocument.Views_Training_TrainerHistory0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectZ
+ExecuteAsync()HAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.ExecuteAsync()|
+Views_Training_TrainerHistory()YAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Views_Training_TrainerHistory()t
+__tagHelperScopeManager.getUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.__tagHelperScopeManager.gett
+__tagHelperScopeManager.setUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.__tagHelperScopeManager.sett
+ModelExpressionProvider.getUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.ModelExpressionProvider.gett
+ModelExpressionProvider.setUAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.ModelExpressionProvider.setL
+Url.getAAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Url.getL
+Url.setAAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Url.setX
+Component.getGAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Component.getX
+Component.setGAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Component.setN
+Json.getBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Json.getN
+Json.setBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Json.setN
+Html.getBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Html.getN
+Html.setBAspNetCoreGeneratedDocument.Views_Training_TrainerHistory.Html.setÂ
 
 /AspNetCoreGeneratedDocument.Views_User_EditUser0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectP
 ExecuteAsync()>AspNetCoreGeneratedDocument.Views_User_EditUser.ExecuteAsync()^
@@ -955,7 +867,95 @@ BAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial0Microsoft.A
 Json.get8AspNetCoreGeneratedDocument.Views_User_EditUser.Json.getD
 Json.set8AspNetCoreGeneratedDocument.Views_User_EditUser.Json.setD
 Html.get8AspNetCoreGeneratedDocument.Views_User_EditUser.Html.getD
-Html.set8AspNetCoreGeneratedDocument.Views_User_EditUser.Html.set†
+Html.set8AspNetCoreGeneratedDocument.Views_User_EditUser.Html.set˛
+.AspNetCoreGeneratedDocument.Views__ViewImports0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectO
+ExecuteAsync()=AspNetCoreGeneratedDocument.Views__ViewImports.ExecuteAsync()[
+Views__ViewImports()CAspNetCoreGeneratedDocument.Views__ViewImports.Views__ViewImports()i
+ModelExpressionProvider.getJAspNetCoreGeneratedDocument.Views__ViewImports.ModelExpressionProvider.geti
+ModelExpressionProvider.setJAspNetCoreGeneratedDocument.Views__ViewImports.ModelExpressionProvider.setA
+Url.get6AspNetCoreGeneratedDocument.Views__ViewImports.Url.getA
+Url.set6AspNetCoreGeneratedDocument.Views__ViewImports.Url.setM
+Component.get<AspNetCoreGeneratedDocument.Views__ViewImports.Component.getM
+Component.set<AspNetCoreGeneratedDocument.Views__ViewImports.Component.setC
+Json.get7AspNetCoreGeneratedDocument.Views__ViewImports.Json.getC
+Json.set7AspNetCoreGeneratedDocument.Views__ViewImports.Json.setC
+Html.get7AspNetCoreGeneratedDocument.Views__ViewImports.Html.getC
+Html.set7AspNetCoreGeneratedDocument.Views__ViewImports.Html.set∫
+4AspNetCoreGeneratedDocument.Views_Persons_ViewPerson0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectU
+ExecuteAsync()CAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.ExecuteAsync()m
+Views_Persons_ViewPerson()OAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Views_Persons_ViewPerson()o
+__tagHelperScopeManager.getPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.__tagHelperScopeManager.geto
+__tagHelperScopeManager.setPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.__tagHelperScopeManager.seto
+ModelExpressionProvider.getPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.ModelExpressionProvider.geto
+ModelExpressionProvider.setPAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.ModelExpressionProvider.setG
+Url.get<AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Url.getG
+Url.set<AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Url.setS
+Component.getBAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Component.getS
+Component.setBAspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Component.setI
+Json.get=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Json.getI
+Json.set=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Json.setI
+Html.get=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Html.getI
+Html.set=AspNetCoreGeneratedDocument.Views_Persons_ViewPerson.Html.set‡
+,AspNetCoreGeneratedDocument.Views__ViewStart0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectM
+ExecuteAsync();AspNetCoreGeneratedDocument.Views__ViewStart.ExecuteAsync()U
+Views__ViewStart()?AspNetCoreGeneratedDocument.Views__ViewStart.Views__ViewStart()g
+ModelExpressionProvider.getHAspNetCoreGeneratedDocument.Views__ViewStart.ModelExpressionProvider.getg
+ModelExpressionProvider.setHAspNetCoreGeneratedDocument.Views__ViewStart.ModelExpressionProvider.set?
+Url.get4AspNetCoreGeneratedDocument.Views__ViewStart.Url.get?
+Url.set4AspNetCoreGeneratedDocument.Views__ViewStart.Url.setK
+Component.get:AspNetCoreGeneratedDocument.Views__ViewStart.Component.getK
+Component.set:AspNetCoreGeneratedDocument.Views__ViewStart.Component.setA
+Json.get5AspNetCoreGeneratedDocument.Views__ViewStart.Json.getA
+Json.set5AspNetCoreGeneratedDocument.Views__ViewStart.Json.setA
+Html.get5AspNetCoreGeneratedDocument.Views__ViewStart.Html.getA
+Html.set5AspNetCoreGeneratedDocument.Views__ViewStart.Html.setÂ
+
+/AspNetCoreGeneratedDocument.Views_User_ViewUser0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectP
+ExecuteAsync()>AspNetCoreGeneratedDocument.Views_User_ViewUser.ExecuteAsync()^
+Views_User_ViewUser()EAspNetCoreGeneratedDocument.Views_User_ViewUser.Views_User_ViewUser()j
+__tagHelperScopeManager.getKAspNetCoreGeneratedDocument.Views_User_ViewUser.__tagHelperScopeManager.getj
+__tagHelperScopeManager.setKAspNetCoreGeneratedDocument.Views_User_ViewUser.__tagHelperScopeManager.setj
+ModelExpressionProvider.getKAspNetCoreGeneratedDocument.Views_User_ViewUser.ModelExpressionProvider.getj
+ModelExpressionProvider.setKAspNetCoreGeneratedDocument.Views_User_ViewUser.ModelExpressionProvider.setB
+Url.get7AspNetCoreGeneratedDocument.Views_User_ViewUser.Url.getB
+Url.set7AspNetCoreGeneratedDocument.Views_User_ViewUser.Url.setN
+Component.get=AspNetCoreGeneratedDocument.Views_User_ViewUser.Component.getN
+Component.set=AspNetCoreGeneratedDocument.Views_User_ViewUser.Component.setD
+Json.get8AspNetCoreGeneratedDocument.Views_User_ViewUser.Json.getD
+Json.set8AspNetCoreGeneratedDocument.Views_User_ViewUser.Json.setD
+Html.get8AspNetCoreGeneratedDocument.Views_User_ViewUser.Html.getD
+Html.set8AspNetCoreGeneratedDocument.Views_User_ViewUser.Html.setÂ
+
+/AspNetCoreGeneratedDocument.Views_Report_Report0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectP
+ExecuteAsync()>AspNetCoreGeneratedDocument.Views_Report_Report.ExecuteAsync()^
+Views_Report_Report()EAspNetCoreGeneratedDocument.Views_Report_Report.Views_Report_Report()j
+__tagHelperScopeManager.getKAspNetCoreGeneratedDocument.Views_Report_Report.__tagHelperScopeManager.getj
+__tagHelperScopeManager.setKAspNetCoreGeneratedDocument.Views_Report_Report.__tagHelperScopeManager.setj
+ModelExpressionProvider.getKAspNetCoreGeneratedDocument.Views_Report_Report.ModelExpressionProvider.getj
+ModelExpressionProvider.setKAspNetCoreGeneratedDocument.Views_Report_Report.ModelExpressionProvider.setB
+Url.get7AspNetCoreGeneratedDocument.Views_Report_Report.Url.getB
+Url.set7AspNetCoreGeneratedDocument.Views_Report_Report.Url.setN
+Component.get=AspNetCoreGeneratedDocument.Views_Report_Report.Component.getN
+Component.set=AspNetCoreGeneratedDocument.Views_Report_Report.Component.setD
+Json.get8AspNetCoreGeneratedDocument.Views_Report_Report.Json.getD
+Json.set8AspNetCoreGeneratedDocument.Views_Report_Report.Json.setD
+Html.get8AspNetCoreGeneratedDocument.Views_Report_Report.Html.getD
+Html.set8AspNetCoreGeneratedDocument.Views_Report_Report.Html.set©
+BAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial0Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>(Microsoft.AspNetCore.Mvc.Razor.RazorPage,Microsoft.AspNetCore.Mvc.Razor.RazorPageBaseobjectc
+ExecuteAsync()QAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.ExecuteAsync()ó
+(Views_Shared__ValidationScriptsPartial()kAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Views_Shared__ValidationScriptsPartial()}
+__tagHelperScopeManager.get^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.__tagHelperScopeManager.get}
+__tagHelperScopeManager.set^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.__tagHelperScopeManager.set}
+ModelExpressionProvider.get^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.ModelExpressionProvider.get}
+ModelExpressionProvider.set^AspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.ModelExpressionProvider.setU
+Url.getJAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Url.getU
+Url.setJAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Url.seta
+Component.getPAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Component.geta
+Component.setPAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Component.setW
+Json.getKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Json.getW
+Json.setKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Json.setW
+Html.getKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Html.getW
+Html.setKAspNetCoreGeneratedDocument.Views_Shared__ValidationScriptsPartial.Html.set†
 
 ,Apha.BST.Application.Services.PersonsServiceobject/Apha.BST.Application.Interfaces.IPersonsServiceœ
 OPersonsService(Apha.BST.Core.Interfaces.IPersonsRepository, AutoMapper.IMapper)|Apha.BST.Application.Services.PersonsService.PersonsService(Apha.BST.Core.Interfaces.IPersonsRepository, AutoMapper.IMapper)i
