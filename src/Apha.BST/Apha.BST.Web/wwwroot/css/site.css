@@ -209,6 +209,10 @@ nav .menu-bar {
     transform: rotate(180deg);
 }
 
+.dropdown-menu .dropdown-item {
+    padding: 3px 5px; /* overrides default */
+}
+
 /* Visual indicator for keyboard mode */
 .menu-bar.keyboard-mode::before {
     content: "Keyboard Navigation Active";
