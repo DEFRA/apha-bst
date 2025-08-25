@@ -1,8 +1,5 @@
 name: push image template
 on:
-  name: Push Image and Tag
-
-on:
   workflow_call:
     inputs:
       IMAGE_VERSION:
