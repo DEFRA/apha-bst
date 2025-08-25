@@ -14,7 +14,6 @@ namespace Apha.BST.Application.DTOs
         public string? VlaLocation { get; set; }
 
         public string? Ahvla { get; set; }
-
-        public virtual ICollection<Trainers> TblTrainers { get; set; } = new List<Trainers>();
+        
     }
 }

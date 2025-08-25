@@ -11,8 +11,7 @@ namespace Apha.BST.Web.Mappings
         {
             CreateMap<SiteViewModel, SiteDto>().ReverseMap();
             CreateMap<SiteTraineeViewModel, SiteTraineeDto>().ReverseMap();
-            CreateMap<AddTrainingViewModel, TrainingDto>().ReverseMap();
-            CreateMap<TrainerTraining, TrainerTrainingDto>().ReverseMap();
+            CreateMap<AddTrainingViewModel, TrainingDto>().ReverseMap();           
             CreateMap<TrainerTrainingDto, TrainingViewModel>().ReverseMap();            
             CreateMap<TraineeDto, TraineeTrainerViewModel>().ReverseMap();
             CreateMap<TraineeDto, TrainerTrainedModel>().ReverseMap();
@@ -26,10 +25,9 @@ namespace Apha.BST.Web.Mappings
             CreateMap<UserDto, AddUserViewModel>().ReverseMap();
             CreateMap<AddUserViewModel, UserDto>().ReverseMap();
             CreateMap<EditUserViewModel, UserDto>().ReverseMap();
-            CreateMap<UserViewDto, ViewUserViewModel>().ReverseMap();           
+            CreateMap<UserViewDto, ViewUserViewModel>().ReverseMap();
             CreateMap<AddNewsViewModel, NewsDto>().ReverseMap();
             CreateMap<SiteInputDto, EditSiteViewModel>().ReverseMap();
-            CreateMap<ReportViewModel, ReportDto>().ReverseMap();
             CreateMap<AuditLogViewModel, AuditLogDto>().ReverseMap();
             CreateMap<AuditLogsArchivedViewModel, AuditLogArchivedDto>().ReverseMap();
 
