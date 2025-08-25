@@ -58,7 +58,7 @@ jobs:
           images: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}
           tags: |
             type=semver,priority=900,pattern={{raw}}
-            type=raw,priority=800,value=${{ needs.build-and-analyze.outputs.image_tag }}
+            type=raw,priority=800,value=${{steps.imgtag.outputs.image_tag }}
           labels: |
             org.opencontainers.image.licenses=OGL-UK-3.0
 
@@ -97,7 +97,7 @@ jobs:
         run: >
           {
             echo "### Docker Image details"
-            echo "The tag is **${{ needs.build-and-analyze.outputs.image_tag }}**"
+            echo "The tag is **${{steps.imgtag.outputs.image_tag }}**"
             echo "| Label      | Value |"
             echo "| ---------- | ----- |"
             echo "| created    | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }} |"
@@ -111,7 +111,7 @@ jobs:
           } >> $GITHUB_STEP_SUMMARY
       - name: Run container locally
         run: |
-          image_tag=${{ needs.build-and-analyze.outputs.image_tag }}
+          image_tag=${{steps.imgtag.outputs.image_tag }}
           docker build -t bst:$image_tag .
           echo "Running local image: $image_tag"
           docker run -d --name test-container -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=local bst:$image_tag
