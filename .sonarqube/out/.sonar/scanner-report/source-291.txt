@@ -1,0 +1,22 @@
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[sp_Trainer_Has_Trained] --12
+@Trainer INT
+AS
+BEGIN
+
+SELECT 
+P.PersonID as TraineeNo,
+p.Person as Trainee,
+S.Name as Site,
+T.TrainingAnimal as SpeciesTrained,
+T.TrainingDateTime as DateTrained
+FROM  tTraining T 
+INNER JOIN [dbo].[tPerson] P ON P.PersonID =T.PersonID
+INNER JOIN [dbo].[tSites] S ON S.PlantNo = P.LocationID
+where T.TrainerID=@Trainer
+ORDER BY T.TrainerID
+END

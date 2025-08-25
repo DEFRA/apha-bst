@@ -1,0 +1,60 @@
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE OR ALTER   PROCEDURE [dbo].[sp_Sites_Add]
+@PlantNo NVarChar(11),
+@Name NVarChar(50),
+@Add1 NVarChar(50),
+@Add2 NVarChar(50),
+@AddTown NVarChar(50),
+@AddCounty NVarChar(50),
+@AddPCode NVarChar(50),
+@AddTel NVarChar(50),
+@AddFax NVarChar(50),
+@AddAHVLA Bit,
+@ReturnCode tinyint OUTPUT
+AS
+SET @ReturnCode = 0
+
+--Verify Plant_No is unique
+IF EXISTS (SELECT *
+FROM tSites
+WHERE LOWER(PlantNo) = LOWER(@PlantNo))
+BEGIN 
+SET @ReturnCode = 1
+RETURN
+END
+
+
+INSERT INTO tSites
+(
+	PlantNo,
+	[Name],
+	AddressLine1,
+	AddressLine2,
+	AddressTown,
+	AddressCounty,
+	AddressPostCode,
+	Telephone,
+	Fax,
+	AHVLA
+)
+VALUES
+( 
+	@PlantNo,
+	@Name, 
+	@Add1, 
+	@Add2, 
+	@AddTown, 
+	@AddCounty, 
+	@AddPCode, 
+	@AddTel, 
+	@AddFax,
+	CASE @AddAHVLA WHEN 1 THEN 'AHVLA' ELSE 'Non-AHVLA' END
+)
+
+
+ 

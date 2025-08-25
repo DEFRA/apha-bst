@@ -1,0 +1,291 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Services;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using AutoMapper;
+using ClosedXML.Excel;
+using Microsoft.Extensions.Configuration;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+
+namespace Apha.BST.Application.UnitTests.ReportServiceTest
+{
+    public class ReportServiceTests : AbstractReportServiceTest
+    {
+        [Fact]
+        public async Task GenerateExcelReportAsync_SuccessfulGeneration_ReturnsCorrectFileContentsAndName()
+        {
+            var sites = new List<SiteReport> { new SiteReport { Name = "Test Site" } };
+            var people = new List<PeopleReport> { new PeopleReport { Person = "Test Person" } };
+            var trainers = new List<TrainerReport> { new TrainerReport { Trainer = "Test Trainer" } };
+            var training = new List<TrainingReport> { new TrainingReport { Trainer = "Test Training" } };
+            var apha = new List<AphaReport> { new AphaReport { Location = "Test Location" } };
+
+            // Create a valid Excel template with .xlsx extension
+            var templatePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
+            using (var workbook = new XLWorkbook())
+            {
+                workbook.AddWorksheet("Template");
+                workbook.SaveAs(templatePath);
+            }
+
+            MockGenerateExcelReportAsync(sites, people, trainers, training, apha, templatePath);
+
+            var result = await _reportService!.GenerateExcelReportAsync();
+
+            Assert.NotNull(result.FileContents);
+            Assert.True(result.FileContents.Length > 0);
+            Assert.Equal($"BST_All_{DateTime.Today:yyyy-MM-dd}.xlsx", result.FileName);
+
+            using var stream = new MemoryStream(result.FileContents);
+            using var workbook2 = new XLWorkbook(stream);
+            Assert.Equal(6, workbook2.Worksheets.Count);
+            Assert.Contains(workbook2.Worksheets, ws => ws.Name == "Sites");
+            Assert.Contains(workbook2.Worksheets, ws => ws.Name == "People");
+            Assert.Contains(workbook2.Worksheets, ws => ws.Name == "Trainers");
+            Assert.Contains(workbook2.Worksheets, ws => ws.Name == "Training");
+            Assert.Contains(workbook2.Worksheets, ws => ws.Name == "APHA");
+        }
+
+        [Fact]
+        public async Task GenerateExcelReportAsync_MissingTemplatePath_ThrowsInvalidOperationException()
+        {
+            MockGenerateExcelReportAsync(
+                new List<SiteReport>(), new List<PeopleReport>(), new List<TrainerReport>(), new List<TrainingReport>(), new List<AphaReport>(), null);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _reportService!.GenerateExcelReportAsync());
+        }
+
+        [Fact]
+        public async Task GenerateExcelReportAsync_RepositoryMethodFailure_ThrowsException()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetSiteReportsAsync().Returns(Task.FromException<List<SiteReport>>(new Exception("Database error")));
+            mockConfig["ReportSettings:TemplateFilePath"].Returns(Path.GetTempFileName());
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            await Assert.ThrowsAsync<Exception>(() => _reportService.GenerateExcelReportAsync());
+        }
+
+        [Fact]
+        public async Task GetSiteReportsAsync_ShouldReturnMappedDtos_WhenRepositoryReturnsData()
+        {
+            var entities = new List<SiteReport> { new SiteReport { Name = "Test Site" } };
+            var dtos = new List<SiteReportDto> { new SiteReportDto { Name = "Test Site" } };
+            MockGetSiteReportsAsync(entities, dtos);
+
+            var result = await _reportService!.GetSiteReportsAsync();
+
+            Assert.Equal(dtos, result);
+            await _reportRepository!.Received(1).GetSiteReportsAsync();
+            _mapper!.Received(1).Map<List<SiteReportDto>>(entities);
+        }
+
+        [Fact]
+        public async Task GetSiteReportsAsync_ShouldThrowException_WhenRepositoryThrowsException()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetSiteReportsAsync().Throws(new Exception("Repository error"));
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            await Assert.ThrowsAsync<Exception>(() => _reportService.GetSiteReportsAsync());
+        }
+
+        [Fact]
+        public async Task GetSiteReportsAsync_ShouldReturnEmptyList_WhenRepositoryReturnsNull()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetSiteReportsAsync().Returns(Task.FromResult(new List<SiteReport>()));
+            mockMapper.Map<List<SiteReportDto>>(Arg.Any<List<SiteReport>>()).Returns(new List<SiteReportDto>());
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            var result = await _reportService.GetSiteReportsAsync();
+
+            Assert.Empty(result);
+            await mockRepo.Received(1).GetSiteReportsAsync();
+            mockMapper.Received(1).Map<List<SiteReportDto>>(Arg.Any<List<SiteReport>>());
+        }
+
+        [Fact]
+        public async Task GetPeopleReportsAsync_ShouldReturnMappedDtos_WhenRepositoryReturnsData()
+        {
+            var entities = new List<PeopleReport> { new PeopleReport { Person = "Test Person" } };
+            var dtos = new List<PeopleReportDto> { new PeopleReportDto { Person = "Test Person" } };
+            MockGetPeopleReportsAsync(entities, dtos);
+
+            var result = await _reportService!.GetPeopleReportsAsync();
+
+            Assert.Equal(dtos, result);
+            await _reportRepository!.Received(1).GetPeopleReportsAsync();
+            _mapper!.Received(1).Map<List<PeopleReportDto>>(entities);
+        }
+
+        [Fact]
+        public async Task GetPeopleReportsAsync_ShouldThrowException_WhenRepositoryThrowsException()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetPeopleReportsAsync().Throws(new Exception("Repository error"));
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            await Assert.ThrowsAsync<Exception>(() => _reportService.GetPeopleReportsAsync());
+        }
+
+        [Fact]
+        public async Task GetPeopleReportsAsync_ShouldReturnEmptyList_WhenRepositoryReturnsNull()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetPeopleReportsAsync().Returns(Task.FromResult(new List<PeopleReport>()));
+            mockMapper.Map<List<PeopleReportDto>>(Arg.Any<List<PeopleReport>>()).Returns(new List<PeopleReportDto>());
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+            var result = await _reportService.GetPeopleReportsAsync();
+
+            Assert.Empty(result);
+            await mockRepo.Received(1).GetPeopleReportsAsync();
+            mockMapper.Received(1).Map<List<PeopleReportDto>>(Arg.Any<List<PeopleReport>>());
+        }
+
+        [Fact]
+        public async Task GetTrainerReportsAsync_ShouldReturnMappedDtos_WhenRepositoryReturnsData()
+        {
+            var entities = new List<TrainerReport> { new TrainerReport { Trainer = "Test Trainer" } };
+            var dtos = new List<TrainerReportDto> { new TrainerReportDto { Trainer = "Test Trainer" } };
+            MockGetTrainerReportsAsync(entities, dtos);
+
+            var result = await _reportService!.GetTrainerReportsAsync();
+
+            Assert.Equal(dtos, result);
+            await _reportRepository!.Received(1).GetTrainerReportsAsync();
+            _mapper!.Received(1).Map<List<TrainerReportDto>>(entities);
+        }
+
+        [Fact]
+        public async Task GetTrainerReportsAsync_ShouldThrowException_WhenRepositoryThrowsException()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetTrainerReportsAsync().Throws(new Exception("Repository error"));
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            await Assert.ThrowsAsync<Exception>(() => _reportService.GetTrainerReportsAsync());
+        }
+
+        [Fact]
+        public async Task GetTrainerReportsAsync_ShouldReturnEmptyList_WhenRepositoryReturnsNull()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetTrainerReportsAsync().Returns(Task.FromResult(new List<TrainerReport>()));
+            mockMapper.Map<List<TrainerReportDto>>(Arg.Any<List<TrainerReport>>()).Returns(new List<TrainerReportDto>());
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            var result = await _reportService.GetTrainerReportsAsync();
+
+            Assert.Empty(result);
+            await mockRepo.Received(1).GetTrainerReportsAsync();
+            mockMapper.Received(1).Map<List<TrainerReportDto>>(Arg.Any<List<TrainerReport>>());
+        }
+
+        [Fact]
+        public async Task GetTrainingReportsAsync_ShouldReturnMappedDtos_WhenRepositoryReturnsData()
+        {
+            var entities = new List<TrainingReport> { new TrainingReport { Trainer = "Test Training" } };
+            var dtos = new List<TrainingReportDto> { new TrainingReportDto { Trainer = "Test Training" } };
+            MockGetTrainingReportsAsync(entities, dtos);
+
+            var result = await _reportService!.GetTrainingReportsAsync();
+
+            Assert.Equal(dtos, result);
+            await _reportRepository!.Received(1).GetTrainingReportsAsync();
+            _mapper!.Received(1).Map<List<TrainingReportDto>>(entities);
+        }
+
+        [Fact]
+        public async Task GetTrainingReportsAsync_ShouldThrowException_WhenRepositoryThrowsException()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetTrainingReportsAsync().Throws(new Exception("Repository error"));
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            await Assert.ThrowsAsync<Exception>(() => _reportService.GetTrainingReportsAsync());
+        }
+
+        [Fact]
+        public async Task GetTrainingReportsAsync_ShouldReturnEmptyList_WhenRepositoryReturnsNull()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetTrainingReportsAsync().Returns(Task.FromResult(new List<TrainingReport>()));
+            mockMapper.Map<List<TrainingReportDto>>(Arg.Any<List<TrainingReport>>()).Returns(new List<TrainingReportDto>());
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            var result = await _reportService.GetTrainingReportsAsync();
+
+            Assert.Empty(result);
+            await mockRepo.Received(1).GetTrainingReportsAsync();
+            mockMapper.Received(1).Map<List<TrainingReportDto>>(Arg.Any<List<TrainingReport>>());
+        }
+
+        [Fact]
+        public async Task GetAphaReportsAsync_ShouldReturnMappedDtos_WhenRepositoryReturnsData()
+        {
+            var entities = new List<AphaReport> { new AphaReport { Location = "Test Location" } };
+            var dtos = new List<AphaReportDto> { new AphaReportDto { Location = "Test Location" } };
+            MockGetAphaReportsAsync(entities, dtos);
+
+            var result = await _reportService!.GetAphaReportsAsync();
+
+            Assert.Equal(dtos, result);
+            await _reportRepository!.Received(1).GetAphaReportsAsync();
+            _mapper!.Received(1).Map<List<AphaReportDto>>(entities);
+        }
+
+        [Fact]
+        public async Task GetAphaReportsAsync_ShouldThrowException_WhenRepositoryThrowsException()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetAphaReportsAsync().Throws(new Exception("Repository error"));
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            await Assert.ThrowsAsync<Exception>(() => _reportService.GetAphaReportsAsync());
+        }
+
+        [Fact]
+        public async Task GetAphaReportsAsync_ShouldReturnEmptyList_WhenRepositoryReturnsNull()
+        {
+            var mockRepo = Substitute.For<IReportRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+            var mockConfig = Substitute.For<IConfiguration>();
+            mockRepo.GetAphaReportsAsync().Returns(Task.FromResult(new List<AphaReport>()));
+            mockMapper.Map<List<AphaReportDto>>(Arg.Any<List<AphaReport>>()).Returns(new List<AphaReportDto>());
+            _reportService = new ReportService(mockRepo, mockMapper, mockConfig);
+
+            var result = await _reportService.GetAphaReportsAsync();
+
+            Assert.Empty(result);
+            await mockRepo.Received(1).GetAphaReportsAsync();
+            mockMapper.Received(1).Map<List<AphaReportDto>>(Arg.Any<List<AphaReport>>());
+        }
+    }
+}

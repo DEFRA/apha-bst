@@ -1,0 +1,22 @@
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[sp_Trainee_Update] 
+
+	@TraineeNo Int,
+	@Trainee NVarChar(100),
+	@Plant NVarChar(11)
+	
+	
+AS
+BEGIN
+
+UPDATE tPerson
+SET
+           Person = @Trainee, 
+			LocationID = @Plant
+WHERE PersonID = @TraineeNo
+END
+

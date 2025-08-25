@@ -1,0 +1,1 @@
+¥ 2plsqlX1hr/db-scripts/04-procedures/sp_training_select.sql

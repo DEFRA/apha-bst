@@ -1,0 +1,39 @@
+@model IEnumerable<Apha.BST.Web.Models.NewsViewModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<table class="home-container w-100">
+    <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+    <tbody>
+        <tr class="news-header">
+            <td>News and Updates.....</td>
+        </tr>
+
+        <tr>
+            <td>
+                @if (Model != null && Model.Any())
+                {
+                    var lastUpdatedNews = Model.LastOrDefault();
+                    <ul>
+                        <li>
+                            <span class="home-title">@lastUpdatedNews?.Title</span>
+                            <span>@lastUpdatedNews?.NewsContent</span>
+                            <span>
+                                <time datetime="@lastUpdatedNews?.DatePublished)">
+                                    @lastUpdatedNews?.DatePublished
+                                </time>
+                                by @lastUpdatedNews?.Author
+                            </span>
+                        </li>
+                    </ul>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="text-end">
+                <a asp-controller="News" asp-action="OldNews">........ Show older posts</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

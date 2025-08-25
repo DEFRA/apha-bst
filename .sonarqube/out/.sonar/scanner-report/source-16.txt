@@ -1,0 +1,39 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Access Denied";
+}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>SND Web - Unauthorised Access</title>
+    <link href="vla-green.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="pageFrame">
+
+
+        <div id="content">
+            <h1>Unauthorised Access</h1>
+            <h2>You are not authorised to access this application, please navigate away from this page immediately</h2>
+            <h3>If you do require access to this system and have been transferred to this page, then please contact the system admistrator and inform them of your problem</h3>
+        </div>
+        <div id="contentHome">
+            <div id="lastUpdatedBox">
+                <br />
+                This applicaton is supported by <strong>
+                    <abbr title="Centre for Epidemiology and Risk Analysis"></abbr>
+                    Data Systems Group
+                </strong><br />
+                Preferred browser: <strong>IE 5.0 and above</strong>
+                <br /><br />
+            </div>
+        </div>
+        <div id="footer">
+            <div id="innerFooter">
+                <label for="footer" id="lblCopyright" class="bottomnavtext">Copyright © 2011 AHVLA</label>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

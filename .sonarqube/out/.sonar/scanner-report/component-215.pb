@@ -1,0 +1,1 @@
+× 2csXhrFsrc/Apha.BST/Apha.BST.Application/Interfaces/IStaticDropdownService.cs

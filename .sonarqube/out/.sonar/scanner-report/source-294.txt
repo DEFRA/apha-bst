@@ -1,0 +1,46 @@
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[sp_User_SelectAll] 
+@User NVarChar(50)
+AS 
+BEGIN
+IF @User = 'All users'
+SELECT   distinct  	 
+	tblUser.UserID, 
+	tblUser.UserName,
+	tblVLALoc.Loc_ID, 
+	tblVLALoc.VLA_Location,
+	tblUser.UserLevel,
+	UserLevelName = 
+	CASE tblUser.UserLevel
+    WHEN 3 THEN 'Read Only'
+	WHEN 2 THEN 'Data Entry'
+	WHEN 1 THEN 'Superuser'
+	ELSE 'Unknown user level' 
+    END
+FROM         tblUser INNER JOIN
+tblVLALoc ON tblUser.User_Loc = tblVLALoc.Loc_ID
+
+ELSE
+SELECT   distinct  	 
+	tblUser.UserID, 
+	tblUser.UserName,
+	tblVLALoc.Loc_ID, 
+	tblVLALoc.VLA_Location,
+	tblUser.UserLevel,
+	UserLevelName = 
+	CASE tblUser.UserLevel
+    WHEN 3 THEN 'Read Only'
+	WHEN 2 THEN 'Data Entry'
+	WHEN 1 THEN 'Superuser'
+	ELSE 'Unknown user level' 
+    END
+FROM         tblUser INNER JOIN
+tblVLALoc ON tblUser.User_Loc = tblVLALoc.Loc_ID
+WHERE tblUser.UserID = @User
+END
+
+-- exec sp_User_SelectAll

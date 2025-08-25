@@ -1,0 +1,130 @@
+@model AddTrainingViewModel
+@{
+	ViewData["Title"] = "AddTraining";	
+}
+@{
+	var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
+
+<form asp-action="AddTraining" method="post">
+	<table class="w-80 h-100 m-4">
+		<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+		<tbody class="me-5">
+			<tr>
+				<td class="fw-bold text-decoration-underline">
+					Add new training for trainee
+				</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td class="pt-2">
+					<label for="PersonId" id="PersonId">Please select trainee</label>
+				</td>
+				<td class="px-5">
+					<select asp-for="PersonId" asp-items="Model.Persons" id="PersonId" disabled="@isDisabled">
+							<option value="0">Select trainee...</option>
+						</select>
+					<span asp-for="PersonId" class="text-danger"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-3 ">
+					<label for="TrainerId" id="TrainerId">Please select trainer</label>
+				</td>
+				<td class="pt-3 px-5">				
+					<select asp-for="TrainerId" asp-items="Model.Persons" id="TrainerId" disabled="@isDisabled">
+						<option value="0">Select trainer...</option>
+					</select>
+					<span asp-for="TrainerId" class="text-danger"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-3">
+					<label for="TrainingType" id="TrainingType">Please select training type</label>
+				</td>
+				<td class="pt-3 px-5">
+					<select asp-for="TrainingType" asp-items="Model.TrainingTypesList" id="TrainingType" disabled="@isDisabled">
+						<option value="">Select training type...</option>						
+					</select>
+					<span asp-for="TrainingType" class="text-danger"></span>
+				</td>
+
+			</tr>
+			<tr>
+				<td class="pt-3">
+					<label for="TrainingDateTime" id="TrainingDateTime">Please select training date</label>
+				</td>
+				<td class="pt-3 px-5">
+
+					<input asp-for="TrainingDateTime" id="dateInput" type="date" class="custom-date-input" placeholder=" " disabled="@isDisabled">
+					<button type="button" onclick="openDateCalender()" class="btn btn-sm">
+						<img src="~/Images/asp-calendar.gif" alt="img" id="calenderImage" />
+					</button>
+
+					<span asp-validation-for="TrainingDateTime" class="text-danger"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-3">
+					<label for="TrainingAnimal" id="TrainingAnimal">Please select species</label>
+				</td>
+				<td class="pt-3 px-5">
+					<select asp-for="TrainingAnimal" asp-items="Model.TrainingAnimalList" id="TrainingAnimal" disabled="@isDisabled">
+						<option value="">Select species...</option>						
+					</select>
+					<span asp-for="TrainingAnimal" class="text-danger"></span>
+				</td>
+
+			<tr class="mt-5">
+				<td></td>
+				<td>
+
+					<table>
+						<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+						<tr>
+							<td class="pt-5 px-5">
+								<button type="submit" class="btn">
+									<img src="~/Images/tick.gif" alt="Save Training" />
+								</button>
+							</td>
+							<td class="pt-5 px-5">
+								<a href="@Url.Action("Index", "Home")" class="btn">
+									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
+								</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<div class="pt-3 px-5 ErrorText">
+							@if (TempData["Message"] != null)
+							{
+								@TempData["Message"]
+							}
+					</div>
+					
+				</td>
+			</tr>
+			<tr>
+				<td class="pt-3 text-danger">
+					<p>** All fields are required to add new training</p>
+					<div asp-Validation-Summary="ModelOnly">
+					</div>
+
+
+					<ul class="ErrorText">
+						<li>
+							<div asp-validation-summary="All" class="text-danger" style="list-style-type: none;"></div>
+						</li>
+					</ul>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+

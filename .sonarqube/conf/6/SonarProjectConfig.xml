@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SonarProjectConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/analyzer/2021/1">
+  <AnalysisConfigPath>D:\a\apha-bst\apha-bst\.sonarqube\conf\SonarQubeAnalysisConfig.xml</AnalysisConfigPath>
+  <ProjectPath>D:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Web.UnitTests\Apha.BST.Web.UnitTests.csproj</ProjectPath>
+  <FilesToAnalyzePath>D:\a\apha-bst\apha-bst\.sonarqube\conf\6\FilesToAnalyze.txt</FilesToAnalyzePath>
+  <OutPath>D:\a\apha-bst\apha-bst\.sonarqube\out\6</OutPath>
+  <ProjectType>Test</ProjectType>
+  <TargetFramework>net8.0</TargetFramework>
+</SonarProjectConfig>

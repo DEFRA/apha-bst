@@ -1,0 +1,69 @@
+@model ViewNewsViewModel
+@{
+    ViewData["Title"] = "View News";
+}
+@{
+    var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
+<div class="w-100 h-100 p-2">
+    <div class="d-flex flex-column mb-3">
+        <div class="d-flex justify-content-between">
+            <span class="w-70 fw-bold text-decoration-underline">View and delete news items</span>
+            <span class="w-30 me-5 px-5">
+                <a href="@Url.Action("Index", "Home")" class="back-button" title="Back to home">
+                    <img src="~/Images/cancel.jpeg" alt="Back to home" />
+                </a>
+            </span>
+        </div>
+
+        <div class="pt-3 px-5 ErrorText text-danger">
+            @if (TempData["NewsMessage"] != null)
+            {
+                @TempData["NewsMessage"]
+            }
+        </div>
+
+    </div>
+
+    <div class="w-100 d-flex justify-content-start">
+        <p class="w-30 me-5">News items</p>
+        <table class="w-60 mx-5 grid-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>News Content</th>
+                    <th>Date Published</th>
+                    <th>Author</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.NewsList != null && Model.NewsList.Any())
+                {
+                    @foreach (var news in Model.NewsList)
+                    {
+                        <tr>
+                            <td>@news.Title</td>
+                            <td>@news.NewsContent</td>
+                            <td>@news.DatePublished.ToString("g")</td>
+                            <td>@news.Author</td>
+                            <td>
+                                <form asp-action="DeleteNews" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="title" value="@news.Title" />
+                                    <button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" disabled="@isDisabled">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">No news items found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

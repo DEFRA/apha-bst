@@ -1,0 +1,24 @@
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+
+namespace Apha.BST.Web.Models
+{
+    public class AddUserViewModel:BaseViewModel
+    {
+        [Required(ErrorMessage = "Email address is required")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string? UserId { get; set; }
+
+        [Required(ErrorMessage = "User Name is required")]
+        public string UserName { get; set; } = string.Empty;
+
+        [Range(1, int.MaxValue, ErrorMessage = "User Level is required")]
+        public byte UserLevel { get; set; } = 0;
+
+        [Required(ErrorMessage = "Please select a user location.")]
+        public string UserLoc { get; set; } = string.Empty;
+
+        public IEnumerable<SelectListItem> UserLevels { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> Locations { get; set; } = new List<SelectListItem>();
+    }
+}

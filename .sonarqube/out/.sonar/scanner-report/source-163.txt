@@ -1,0 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+using Apha.BST.DataAccess.UnitTests.Helpers;
+using Microsoft.Data.SqlClient;
+
+namespace Apha.BST.DataAccess.UnitTests.AuditLogTest
+{
+    public class AbstractAuditLogRepositoryTest : AuditLogRepository
+    {
+        private readonly IQueryable<AuditLog>? _auditLogs;
+        private readonly IQueryable<StoredProcedureList>? _spLists;
+
+        public string? LastSql { get; private set; }
+        public SqlParameter[]? LastParameters { get; private set; }
+        public bool ExecuteCalled { get; private set; }
+        public int ExecuteCallCount { get; private set; }
+        public Exception? SimulateException { get; set; }
+
+        public AbstractAuditLogRepositoryTest(
+            BstContext context,
+            IQueryable<AuditLog>? auditLogs = null,
+            IQueryable<StoredProcedureList>? spLists = null)
+            : base(context)
+        {
+            _auditLogs = auditLogs;
+            _spLists = spLists;
+        }
+
+        protected override IQueryable<T> GetDbSetFor<T>()
+        {
+            if (typeof(T) == typeof(AuditLog) && _auditLogs != null)
+                return new TestAsyncEnumerable<AuditLog>(_auditLogs).Cast<T>();
+            throw new NotImplementedException($"No override for type {typeof(T).Name}");
+        }
+
+        protected override IQueryable<T> GetQueryableResultFor<T>(string sql, params object[] parameters)
+        {
+            if (typeof(T) == typeof(StoredProcedureList) && _spLists != null)
+                return new TestAsyncEnumerable<StoredProcedureList>(_spLists).Cast<T>();
+            throw new NotImplementedException($"No override for type {typeof(T).Name}");
+        }
+
+        // Add this override to capture parameters for assertions
+        public override async Task AddAuditLogAsync(string procedure, SqlParameter[] parameters, string transactionType, string userName, string? error = null)
+        {
+            ExecuteCalled = true;
+            ExecuteCallCount++;
+            LastSql = "EXEC sp_Audit_Log @Procedure, @Parameters, @User, @TransactionType";
+            var paramString = new StringBuilder();
+            if (!string.IsNullOrEmpty(error))
+            {
+                paramString.Append("Error occured in SP: " + error + "\r\n");
+            }
+            parameters.Where(param => param != null)
+                .ToList()
+                .ForEach(param =>
+                {
+                    paramString.Append(param.ParameterName + ":");
+                    if (param.Value != null && param.Value != DBNull.Value)
+                        paramString.Append(param.Value.ToString());
+                    paramString.Append(';');
+                });
+
+            LastParameters = new[]
+            {
+            new SqlParameter("@Procedure", procedure),
+            new SqlParameter("@Parameters", paramString.ToString()),
+            new SqlParameter("@User", userName),
+            new SqlParameter("@TransactionType", transactionType)
+        };
+            await Task.CompletedTask;
+        }
+
+        protected override Task<int> ExecuteSqlAsync(string sql, params object[] parameters)
+        {
+            ExecuteCalled = true;
+            LastSql = sql;
+            // If parameters is a single SqlParameter[] (as in your repo), extract it
+            if (parameters != null && parameters.Length == 1 && parameters[0] is SqlParameter[] arr)
+                LastParameters = arr;
+            else
+                LastParameters = parameters?.OfType<SqlParameter>().ToArray();
+            ExecuteCallCount++;
+            if (SimulateException != null)
+                throw SimulateException;
+            return Task.FromResult(1);
+        }
+    }
+}
