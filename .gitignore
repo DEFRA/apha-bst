@@ -96,3 +96,7 @@ web.*.config
 
 # git ignored files backup
 *.orig
+
+# ignore sonar analysis folders
+.sonar/
+.sonarqube/
