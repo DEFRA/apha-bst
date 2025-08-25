@@ -17,4 +17,3 @@ jobs:
       AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
       AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
       AWS_ENV_ROLE: ${{ secrets.AWS_ENV_ROLE }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
