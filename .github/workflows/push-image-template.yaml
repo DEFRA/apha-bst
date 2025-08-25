@@ -1,5 +1,8 @@
 name: push image template
 on:
+  name: Push Image and Tag
+
+on:
   workflow_call:
     inputs:
       IMAGE_VERSION:
@@ -11,8 +14,6 @@ on:
       AWS_ENV_ACCOUNT:
         required: true
       AWS_ENV_ROLE:
-        required: true
-      GITHUB_TOKEN:
         required: true
 
 
