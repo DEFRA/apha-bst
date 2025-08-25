@@ -10,7 +10,7 @@ on:
 
 jobs:
   push-image:
-    uses: ./.github/workflows/push-image-template.yml
+    uses: ./.github/workflows/push-image-template.yaml
     with:
       IMAGE_VERSION: ${{ github.event.inputs.DEVIMAGEVERSION }}
     secrets:
