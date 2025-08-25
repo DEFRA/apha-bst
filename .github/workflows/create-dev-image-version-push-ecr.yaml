@@ -85,6 +85,7 @@ jobs:
           fi
 
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -94,40 +95,40 @@ jobs:
           body: "This PR updates the VERSION file to ${{ github.event.inputs.DEVIMAGEVERSION }}."
 
 
-  #     - name: Wait for approval (max 5 minutes)
-  #       id: wait_for_approval
-  #       shell: bash
-  #       run: |
-  #         pr_number=${{ steps.cpr.outputs.pull-request-number }}
-  #         echo "Waiting up to 5 minutes for PR #$pr_number approval..."
-  #         approved=false
-  #         for i in {1..5}; do
-  #           sleep 60
-  #           reviews=$(gh pr view $pr_number --json reviews --jq '.reviews[].state' --repo ${{ github.repository }})
-  #           echo "Current reviews: $reviews"
-  #           if echo "$reviews" | grep -q "APPROVED"; then
-  #             approved=true
-  #             break
-  #           fi
-  #         done
+      - name: Wait for approval (max 5 minutes)
+        id: wait_for_approval
+        shell: bash
+        run: |
+          pr_number=${{ steps.cpr.outputs.pull-request-number }}
+          echo "Waiting up to 5 minutes for PR #$pr_number approval..."
+          approved=false
+          for i in {1..5}; do
+            sleep 60
+            reviews=$(gh pr view $pr_number --json reviews --jq '.reviews[].state' --repo ${{ github.repository }})
+            echo "Current reviews: $reviews"
+            if echo "$reviews" | grep -q "APPROVED"; then
+              approved=true
+              break
+            fi
+          done
 
-  #         if [ "$approved" = "false" ]; then
-  #           echo "No approval after 5 minutes. Closing PR."
-  #           gh pr close $pr_number --delete-branch --repo ${{ github.repository }}
-  #           exit 1
-  #         fi
+          if [ "$approved" = "false" ]; then
+            echo "No approval after 5 minutes. Closing PR."
+            gh pr close $pr_number --delete-branch --repo ${{ github.repository }}
+            exit 1
+          fi
 
-  #         echo "PR approved, proceeding..."
-  #       env:
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "PR approved, proceeding..."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Enable Auto-Merge
-  #       if: steps.wait_for_approval.outcome == 'success'
-  #       uses: peter-evans/enable-pull-request-automerge@v3
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-  #         merge-method: squash          
+      - name: Enable Auto-Merge
+        if: steps.wait_for_approval.outcome == 'success'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash          
 
   #     - name: Start Sonar Analysis
   #       shell: pwsh
