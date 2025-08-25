@@ -1,0 +1,70 @@
+using Apha.BST.Application.DTOs;
+using Apha.BST.Application.Pagination;
+using Apha.BST.Application.Services;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using Apha.BST.Core.Pagination;
+using AutoMapper;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Apha.BST.Application.UnitTests.AuditlogServiceTest
+{
+    public abstract class AbstractAuditLogServiceTest
+    {
+        protected IAuditLogRepository AuditLogRepository { get; }
+        protected IMapper Mapper { get; }
+        protected AuditLogService AuditLogService { get; }
+
+        protected AbstractAuditLogServiceTest()
+        {
+            AuditLogRepository = Substitute.For<IAuditLogRepository>();
+            Mapper = Substitute.For<IMapper>();
+            AuditLogService = new AuditLogService(AuditLogRepository, Mapper);
+        }
+
+        public void SetupMapperForPaginationParameters(QueryParameters filter, PaginationParameters paginationParameters)
+        {
+            Mapper.Map<PaginationParameters>(filter).Returns(paginationParameters);
+        }
+
+       public void SetupRepositoryForGetAuditLogs(PaginationParameters paginationParameters, string storedProcedure, PagedData<AuditLog> repositoryResult)
+        {
+            AuditLogRepository.GetAuditLogsAsync(paginationParameters, storedProcedure).Returns(Task.FromResult(repositoryResult));
+        }
+
+       public void SetupMapperForAuditLogResult(PagedData<AuditLog> repositoryResult, PaginatedResult<AuditLogDto> mappedResult)
+        {
+            Mapper.Map<PaginatedResult<AuditLogDto>>(Arg.Is<PagedData<AuditLog>>(p => p == repositoryResult)).Returns(mappedResult);
+        }
+
+       public void SetupRepositoryToThrowException(PaginationParameters paginationParameters, string storedProcedure, Exception exception)
+        {
+            AuditLogRepository.GetAuditLogsAsync(paginationParameters, storedProcedure).Throws(exception);
+        }
+       public void SetupRepositoryForArchiveAuditLog(string username)
+        {
+            AuditLogRepository.ArchiveAuditLogAsync(username).Returns(Task.CompletedTask);
+        }
+
+       public void SetupRepositoryForArchiveAuditLogToThrowException(string username, Exception exception)
+        {
+            AuditLogRepository.ArchiveAuditLogAsync(username).Throws(exception);
+        }
+       public void SetupRepositoryForGetStoredProcedureNames(List<string> procedureNames)
+        {
+            AuditLogRepository.GetStoredProcedureNamesAsync().Returns(Task.FromResult(procedureNames));
+        }
+
+        public void SetupRepositoryForGetStoredProcedureNamesToThrowException(Exception exception)
+        {
+            AuditLogRepository.GetStoredProcedureNamesAsync().Throws(exception);
+        }
+    }
+
+}

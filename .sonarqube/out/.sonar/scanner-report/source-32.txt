@@ -1,0 +1,78 @@
+@model Apha.BST.Web.Models.SiteTraineeListViewModel
+@{
+	ViewData["Title"] = "SiteTrainee";
+}
+@{
+	var isDisabled = !Model.CanEdit ? "disabled" : null;
+}
+<div class="w-100 h-100 p-2">
+	<div class=" d-flex flex-column mb-3">
+		<div class="d-flex justify-content-between me-5  ">
+			<span class="w-70 fw-bold text-decoration-underline">Site trainees </span>
+			<span class="w-30  me-5 px-5">
+				<a href="@Url.Action("Index", "Home")" class="back-button" title="Back to home">
+					<img src="~/Images/cancel.jpeg" size="2px" alt="Back to home" />
+				</a>
+			</span>
+		</div>
+		<div class="w-100 d-flex justify-content-start">
+			<span class="w-30"><label for="ddlSiteView">Select site:</label></span>
+			<span class="w-70 ms-5 ">
+				<form method="get" asp-action="SiteTrainee" style="display:inline;">
+					<select id="siteSelect" class="search-dropdown" asp-for="SelectedSite" name="selectedSite" class="form-control" asp-items="Model.AllSites" onchange="this.form.submit()" disabled="@isDisabled">
+							<option value="0">Select Sites...</option>
+						</select>		
+					
+				</form>
+			</span>
+
+		</div>
+	</div>
+
+	<div class="w-100 d-flex justify-content-start">
+		<span class=" w-30">Trainee details</span>
+		@if (!string.IsNullOrEmpty(Model.SelectedSite) && Model.SelectedSite != "0")
+		{
+			<span class="w-70 ms-5"></span>
+			<table id="siteTable" class="grid-table">
+				<thead>
+					<tr>
+						<th>Person ID</th>
+						<th>Person</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (Model.FilteredTrainees != null)
+					{
+						@foreach (var trainee in Model.FilteredTrainees)
+						{
+							<tr>
+								<td>@trainee.PersonId</td>
+								<td>@trainee.Person</td>
+								<td>
+									<form asp-action="DeleteTrainee" asp-controller="Site" method="post">
+										<input type="hidden" name="personId" value="@trainee.PersonId" />
+										<input type="hidden" name="selectedSite" value="@Model.SelectedSite" />
+										<button type="submit" class="btn btn-link p-0 m-0 text-dark custom-underline-hover">Delete</button>
+									</form>
+								</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
+			<p class="w-10 ErrorText text-start">
+
+				@if (TempData["SiteMessage"] != null)
+				{
+					@TempData["SiteMessage"]
+				}
+			</p>
+		}
+	</div>
+
+	<div class="error-message">
+		<span id="lblExDelSite" class="text-danger"></span>
+	</div>
+</div>

@@ -1,0 +1,1 @@
+	 2jsonX#hr*src/Apha.BST/Apha.BST.Web/appsettings.json

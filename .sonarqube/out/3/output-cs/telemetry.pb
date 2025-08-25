@@ -1,0 +1,1 @@
+jRTD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application\Apha.BST.Application.csproj¢net8.0òCSharp12

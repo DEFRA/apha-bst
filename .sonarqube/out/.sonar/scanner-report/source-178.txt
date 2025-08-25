@@ -1,0 +1,175 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+using Apha.BST.DataAccess.UnitTests.Helpers;
+using Moq.Protected;
+using Moq;
+using Microsoft.Data.SqlClient;
+
+namespace Apha.BST.DataAccess.UnitTests.UserRepositoryTest
+{
+    public class UserRepositoryTests
+    {
+        [Fact]
+        public async Task UserExistsAsync_ReturnsTrue_IfUserExists()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                new User { UserId = "user1", UserName = "User One" }
+            };
+            var asyncUsers = new TestAsyncEnumerable<User>(users);
+
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractUserRepositoryTest(mockContext.Object, users: asyncUsers);
+
+            // Act
+            var exists = await repo.UserExistsAsync("user1");
+
+            // Assert
+            Assert.True(exists);
+        }
+
+        [Fact]
+        public async Task AddUserAsync_CallsExecuteSqlAsync_WithCorrectParameters()
+        {
+            // Arrange
+            var user = new User
+            {
+                UserId = "user2",
+                UserName = "User Two",
+                UserLoc = "LOC1",
+                UserLevel = 2
+            };
+            var mockContext = new Mock<BstContext>();
+            var repo = new Mock<UserRepository>(mockContext.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_User_Add")),
+                    ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1)
+                .Verifiable();
+
+            // Act
+            await repo.Object.AddUserAsync(user);
+
+            // Assert
+            repo.Protected().Verify(
+                "ExecuteSqlAsync",
+                Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_User_Add")),
+                ItExpr.Is<object[]>(p => p.Length == 4)
+            );
+        }
+
+        [Fact]
+        public async Task GetLocationsAsync_ReturnsLocations()
+        {
+            // Arrange
+            var locations = new List<VlaLocView>
+            {
+                new VlaLocView { LocId = "LOC1", VlaLocation = "Location 1" },
+                new VlaLocView { LocId = "LOC2", VlaLocation = "Location 2" }
+            }.AsQueryable();
+
+            var asyncLocations = new TestAsyncEnumerable<VlaLocView>(locations);
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractUserRepositoryTest(mockContext.Object, vlaLocViews: asyncLocations);
+
+            // Act
+            var result = await repo.GetLocationsAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+        }
+
+        [Fact]
+        public async Task GetUsersAsync_ReturnsUserViews()
+        {
+            // Arrange
+            var userViews = new List<UserView>
+            {
+                new UserView { UserId = "user1", UserName = "User One" },
+                new UserView { UserId = "user2", UserName = "User Two" }
+            }.AsQueryable();
+
+            var asyncUserViews = new TestAsyncEnumerable<UserView>(userViews);
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractUserRepositoryTest(mockContext.Object, userViews: asyncUserViews);
+
+            // Act
+            var result = await repo.GetUsersAsync("user1");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_CallsExecuteSqlAsync_WithCorrectParameter()
+        {
+            // Arrange
+            var userId = "user1";
+            var mockContext = new Mock<BstContext>();
+            var repo = new Mock<UserRepository>(mockContext.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_User_Delete")),
+                    ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1)
+                .Verifiable();
+
+            // Act
+            await repo.Object.DeleteUserAsync(userId);
+
+            // Assert
+            repo.Protected().Verify(
+                "ExecuteSqlAsync",
+                Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_User_Delete")),
+                ItExpr.Is<object[]>(p => p.Length == 1 && ((SqlParameter)p[0]).Value.Equals(userId))
+            );
+        }
+
+        [Fact]
+        public async Task UpdateUserAsync_CallsExecuteSqlAsync_WithCorrectParameters()
+        {
+            // Arrange
+            var user = new User
+            {
+                UserId = "user1",
+                UserName = "Updated Name",
+                UserLoc = "LOC1",
+                UserLevel = 3
+            };
+            var mockContext = new Mock<BstContext>();
+            var repo = new Mock<UserRepository>(mockContext.Object) { CallBase = true };
+
+            repo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.Is<string>(s => s.Contains("sp_User_Update")),
+                    ItExpr.IsAny<object[]>())
+                .ReturnsAsync(1)
+                .Verifiable();
+
+            // Act
+            await repo.Object.UpdateUserAsync(user);
+
+            // Assert
+            repo.Protected().Verify(
+                "ExecuteSqlAsync",
+                Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_User_Update")),
+                ItExpr.Is<object[]>(p => p.Length == 4)
+            );
+        }
+    }
+}

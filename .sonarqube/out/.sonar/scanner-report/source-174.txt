@@ -1,0 +1,311 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.Core.Interfaces;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+using Apha.BST.DataAccess.UnitTests.Helpers;
+using Microsoft.EntityFrameworkCore;
+using Moq.Protected;
+using Moq;
+using Microsoft.Data.SqlClient;
+using Apha.BST.DataAccess.UnitTests.SiteRepositoryTest;
+using Apha.BST.DataAccess.UnitTests.TrainingRepositoryTest;
+
+namespace Apha.BST.DataAccess.UnitTests.SiteRepositoryTest
+{
+    public class SiteRepositoryTests
+    {
+        [Fact]
+        public async Task GetAllSitesAsync_ReturnsSites()
+        {
+            // Arrange
+            var fakeSites = new List<Site>
+        {
+            new Site { PlantNo = "PLANT1", Name = "Site A" },
+            new Site { PlantNo = "PLANT1", Name = "Site B" }
+        }.AsQueryable();
+
+            var asyncFakeSites = new TestAsyncEnumerable<Site>(fakeSites);
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+            mockRepo.Protected()
+                    .Setup<IQueryable<Site>>("GetQueryableResult",
+                        ItExpr.Is<string>(s => s.Contains("sp_Sites_Select")),
+                        ItExpr.IsAny<object[]>())
+                    .Returns(asyncFakeSites);
+
+            // Act
+            var result = await mockRepo.Object.GetAllSitesAsync("PLANT1");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+        }
+
+        [Fact]
+        public async Task GetSiteTraineesAsync_ReturnsTrainees()
+        {
+            // Arrange
+            var fakeTrainees = new List<SiteTrainee>
+    {
+        new SiteTrainee { PersonId = 1, Person = "Alice" },
+        new SiteTrainee { PersonId = 2, Person = "Bob" }
+    }.AsQueryable();
+
+            var asyncFakeTrainees = new TestAsyncEnumerable<SiteTrainee>(fakeTrainees);
+
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            // Use the test subclass instead of Moq for SiteRepository
+            var repo = new AbstractSiteRepositoryTest(mockContext.Object, mockAuditLogRepo.Object, asyncFakeTrainees);
+
+            // Act
+            var result = await repo.GetSiteTraineesAsync("PLANT1");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, t => t.Person == "Alice");
+        }
+
+
+        [Fact]
+        public async Task AddSiteAsync_ReturnsSuccess_WhenSiteIsNew()
+        {
+            // Arrange
+            var site = new Site
+            {
+                PlantNo = "PLANT1",
+                Name = "New Site",
+                Ahvla = "true"
+            };
+
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+
+            // Simulate OUTPUT param being 0 (success)
+            mockRepo.Protected()
+                    .Setup<Task<int>>("ExecuteSqlAsync",
+                        ItExpr.Is<string>(s => s.Contains("sp_Sites_Add")),
+                        ItExpr.Is<object[]>(p => ((SqlParameter)p[10]).ParameterName == "@ReturnCode"))
+                    .Callback<string, object[]>((sql, parameters) =>
+                    {
+                        ((SqlParameter)parameters[10]).Value = (byte)0;
+                    })
+                    .ReturnsAsync(1);
+
+            mockAuditLogRepo.Setup(a => a.AddAuditLogAsync(
+                             It.IsAny<string>(),
+                             It.IsAny<SqlParameter[]>(),
+                             "Write",
+                             It.IsAny<string>(),
+                             null))
+                     .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await mockRepo.Object.AddSiteAsync(site, "admin");
+
+            // Assert
+            Assert.Equal(SiteRepository.Success, result);
+        }
+
+        [Fact]
+        public async Task AddSiteAsync_ReturnsExists_WhenSiteAlreadyExists()
+        {
+            // Arrange
+            var site = new Site
+            {
+                PlantNo = "PLANT1",
+                Name = "Existing Site",
+                Ahvla = "false"
+            };
+
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+
+            mockRepo.Protected()
+                    .Setup<Task<int>>("ExecuteSqlAsync",
+                        ItExpr.Is<string>(s => s.Contains("sp_Sites_Add")),
+                        ItExpr.IsAny<object[]>())
+                    .Callback<string, object[]>((sql, parameters) =>
+                    {
+                        ((SqlParameter)parameters[10]).Value = (byte)1;
+                    })
+                    .ReturnsAsync(1);
+
+            mockAuditLogRepo.Setup(a => a.AddAuditLogAsync(
+                            It.IsAny<string>(),
+                            It.IsAny<SqlParameter[]>(),
+                            "Write",
+                            It.IsAny<string>(),
+                            null))
+                    .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await mockRepo.Object.AddSiteAsync(site, "user1");
+
+            // Assert
+            Assert.Equal(SiteRepository.Exists, result);
+        }
+        [Fact]
+        public async Task GetPersonNameByIdAsync_ReturnsPersonName()
+        {
+            // Arrange
+            var personId = 123;
+            var expectedName = "John Doe";
+            var fakePersons = new List<Persons>
+    {
+        new Persons { PersonId = personId, Person = expectedName }
+    }.AsQueryable();
+
+            var asyncFakePersons = new TestAsyncEnumerable<Persons>(fakePersons);
+
+            // Dummy trainees list (not used in this test)
+            var asyncFakeTrainees = new TestAsyncEnumerable<SiteTrainee>(Enumerable.Empty<SiteTrainee>());
+
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            var repo = new AbstractSiteRepositoryTest(mockContext.Object, mockAuditLogRepo.Object, asyncFakeTrainees, asyncFakePersons);
+
+            // Act
+            var result = await repo.GetPersonNameByIdAsync(personId);
+
+            // Assert
+            Assert.Equal(expectedName, result);
+        }
+
+
+        [Fact]
+        public async Task AddSiteAsync_ThrowsException_AndLogsAudit()
+        {
+            // Arrange
+            var site = new Site
+            {
+                PlantNo = "PLANT1",
+                Name = "Site Exception"
+            };
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+
+            mockRepo.Protected()
+                .Setup<Task<int>>("ExecuteSqlAsync",
+                    ItExpr.IsAny<string>(),
+                    ItExpr.IsAny<object[]>())
+                .ThrowsAsync(new Exception("DB error"));
+
+            mockAuditLogRepo.Setup(a => a.AddAuditLogAsync(
+                It.IsAny<string>(),
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                It.IsAny<string>(),
+                It.IsAny<string>()))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => mockRepo.Object.AddSiteAsync(site, "admin"));
+            mockAuditLogRepo.Verify(a => a.AddAuditLogAsync(
+                "sp_Sites_Add",
+                It.IsAny<SqlParameter[]>(),
+                "Write",
+                "admin",
+                It.Is<string>(e => e != null && e.Contains("DB error"))), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateSiteAsync_CallsExecuteSqlAsync()
+        {
+            // Arrange
+            var siteInput = new SiteInput
+            {
+                PlantNo = "PLANT1",
+                Name = "Updated Site",
+                IsAhvla = true
+            };
+
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+            mockRepo.Protected()
+                    .Setup<Task<int>>("ExecuteSqlAsync",
+                        ItExpr.Is<string>(s => s.Contains("sp_Sites_Update")),
+                        ItExpr.IsAny<object[]>())
+                    .ReturnsAsync(1)
+                    .Verifiable();
+
+            // Act
+            var result = await mockRepo.Object.UpdateSiteAsync(siteInput);
+
+            // Assert
+            Assert.Equal("UPDATED", result);
+            mockRepo.Protected().Verify("ExecuteSqlAsync", Times.Once(),
+                ItExpr.Is<string>(s => s.Contains("sp_Sites_Update")),
+                ItExpr.IsAny<object[]>());
+        }
+
+        [Fact]
+        public async Task DeleteTraineeAsync_ReturnsFalse_IfTrainingExists()
+        {
+            // Arrange
+            var personId = 1001;
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+            mockRepo.Protected()
+                    .Setup<Task<int>>("ExecuteSqlAsync",
+                        ItExpr.Is<string>(s => s.Contains("sp_Trainee_Delete")),
+                        ItExpr.IsAny<object[]>())
+                    .Callback<string, object[]>((sql, parameters) =>
+                    {
+                        ((SqlParameter)parameters[1]).Value = (byte)1; // Has training
+                    })
+                    .ReturnsAsync(1);
+
+            // Act
+            var result = await mockRepo.Object.DeleteTraineeAsync(personId);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task DeleteTraineeAsync_ReturnsTrue_IfNoTraining()
+        {
+            // Arrange
+            var personId = 1002;
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            var mockRepo = new Mock<SiteRepository>(mockContext.Object, mockAuditLogRepo.Object) { CallBase = true };
+            mockRepo.Protected()
+                    .Setup<Task<int>>("ExecuteSqlAsync",
+                        ItExpr.Is<string>(s => s.Contains("sp_Trainee_Delete")),
+                        ItExpr.IsAny<object[]>())
+                    .Callback<string, object[]>((sql, parameters) =>
+                    {
+                        ((SqlParameter)parameters[1]).Value = (byte)0; // No training
+                    })
+                    .ReturnsAsync(1);
+
+            // Act
+            var result = await mockRepo.Object.DeleteTraineeAsync(personId);
+
+            // Assert
+            Assert.True(result);
+        }
+    }
+}

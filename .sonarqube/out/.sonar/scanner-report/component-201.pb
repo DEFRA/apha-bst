@@ -1,0 +1,1 @@
+É 2csXhr5src/Apha.BST/Apha.BST.Application/DTOs/TrainingDto.cs

@@ -1,0 +1,1 @@
+Ö 2csXhr<src/Apha.BST/Apha.BST.Application/Interfaces/ISiteService.cs

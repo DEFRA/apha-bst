@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Apha.BST.Core.Entities;
+using Apha.BST.DataAccess.Data;
+using Apha.BST.DataAccess.Repositories;
+
+namespace Apha.BST.DataAccess.UnitTests.ReportRepositoryTest
+{
+    public class AbstractReportRepositoryTest(
+        BstContext context,
+        IQueryable<AphaReport>? aphaReports = null,
+        IQueryable<PeopleReport>? peopleReports = null,
+        IQueryable<SiteReport>? siteReports = null,
+        IQueryable<TrainerReport>? trainerReports = null,
+        IQueryable<TrainingReport>? trainingReports = null
+    ) : ReportRepository(context)
+    {
+        private readonly IQueryable<AphaReport>? _aphaReports = aphaReports;
+        private readonly IQueryable<PeopleReport>? _peopleReports = peopleReports;
+        private readonly IQueryable<SiteReport>? _siteReports = siteReports;
+        private readonly IQueryable<TrainerReport>? _trainerReports = trainerReports;
+        private readonly IQueryable<TrainingReport>? _trainingReports = trainingReports;
+
+        protected override IQueryable<T> GetQueryableResultFor<T>(string sql, params object[] parameters)
+        {
+            if (typeof(T) == typeof(AphaReport) && _aphaReports != null)
+                return (IQueryable<T>)_aphaReports;
+            if (typeof(T) == typeof(PeopleReport) && _peopleReports != null)
+                return (IQueryable<T>)_peopleReports;
+            if (typeof(T) == typeof(SiteReport) && _siteReports != null)
+                return (IQueryable<T>)_siteReports;
+            if (typeof(T) == typeof(TrainerReport) && _trainerReports != null)
+                return (IQueryable<T>)_trainerReports;
+            if (typeof(T) == typeof(TrainingReport) && _trainingReports != null)
+                return (IQueryable<T>)_trainingReports;
+            throw new NotImplementedException($"No override for type {typeof(T).Name}");
+        }
+    }
+}

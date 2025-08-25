@@ -1,0 +1,106 @@
+using Apha.BST.Application.Interfaces;
+using Apha.BST.Application.Pagination;
+using Apha.BST.Core.Entities;
+using Apha.BST.Web.Models;
+using Apha.BST.Web.PresentationService;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
+
+namespace Apha.BST.Web.Controllers
+{
+    [Authorize]
+    public class AuditLogController : Controller
+    {
+        private readonly IAuditLogService _auditLogService;
+        private readonly IUserDataService _userDataService;
+        private readonly IMapper _mapper;
+        private readonly ILogService _logService;
+
+        public AuditLogController(IAuditLogService auditLogService, IMapper mapper, IUserDataService userDataService, ILogService logService)
+        {
+            _auditLogService = auditLogService ?? throw new ArgumentNullException(nameof(auditLogService));
+            _mapper = mapper;
+            _userDataService = userDataService;
+            _logService = logService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(int pageNo = 1, string column = "", bool sortOrder = false, string storedProcedure = "%")
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid parameters");
+            }
+            QueryParameters queryParameters = new QueryParameters
+            {
+                Search = storedProcedure,
+                Page = pageNo,
+                PageSize = 30,
+                SortBy = column,
+                Descending = sortOrder
+
+            };
+            var auditLogsDto = await _auditLogService.GetAuditLogsAsync(queryParameters, storedProcedure);
+            var auditLogs = _mapper.Map<IEnumerable<AuditLogViewModel>>(auditLogsDto.data);
+
+
+            List<string> storedProcedureNames = await _auditLogService.GetStoredProcedureNamesAsync();
+            var dropDownList = storedProcedureNames
+                .Select(name => new SelectListItem
+                {
+                    Value = name,
+                    Text = name
+                })
+                .ToList();
+
+
+            var model = new AuditLogListViewModel
+            {
+                AuditLogsResults = auditLogs.ToList(),
+                StoredProcedures = dropDownList,
+                StoredProcedure = storedProcedure,
+                Pagination = new PaginationModel
+                {
+                    TotalCount = auditLogsDto.TotalCount,
+                    PageNumber = queryParameters.Page,
+                    PageSize = queryParameters.PageSize,
+                    SortColumn = queryParameters.SortBy,
+                    SortDirection = queryParameters.Descending
+                }
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ArchiveAuditLog()
+        {
+            try
+            {
+                string userName = _userDataService.GetUsername() ?? "";
+                await _auditLogService.ArchiveAuditLogAsync(userName);
+               
+            }
+            catch (SqlException sqlEx)
+            {
+                _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
+                TempData["logMessage"] = "Archive Audit Log failed";
+            }
+            catch (Exception ex)
+            {
+                _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
+                TempData["logMessage"] = "Archive Audit Log failed";
+            }
+            return RedirectToAction(nameof(Index), "AuditLog");
+        }
+        [HttpPost]
+        public ActionResult ViewArchivedAuditLog()
+        {
+            return RedirectToAction(nameof(Index), "AuditLogArchived");
+        }
+    }
+}
