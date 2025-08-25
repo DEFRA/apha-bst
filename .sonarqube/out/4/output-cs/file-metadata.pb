@@ -20,9 +20,9 @@ fD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\NewsServiceT
 mD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\NewsServiceTest\AbstractNewsServiceTest.csutf-8y
 pD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\DataEntryServiceTest\DataEntryServiceTests.csutf-8Ä
 wD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\DataEntryServiceTest\AbstractDataEntryServiceTest.csutf-8w
-nD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AuditlogServiceTest\AuditLogServiceTests.csutf-8à
-D:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AccessControlServiceTest\AbstractAccessControlServiceTest.csutf-8~
+nD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AuditlogServiceTest\AuditLogServiceTests.csutf-8~
 uD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AuditlogServiceTest\AbstractAuditLogServiceTest.csutf-8á
 ~D:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AuditlogArchivedServiceTest\AuditlogArchivedServiceTests.csutf-8è
 ÖD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AuditlogArchivedServiceTest\AbstractAuditlogArchivedServiceTest.csutf-8Å
-xD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AccessControlServiceTest\AccessControlServiceTests.csutf-8
+xD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AccessControlServiceTest\AccessControlServiceTests.csutf-8à
+D:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Application.UnitTests\AccessControlServiceTest\AbstractAccessControlServiceTest.csutf-8
