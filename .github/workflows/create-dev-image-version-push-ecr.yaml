@@ -53,7 +53,57 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-  
+
+      - name: Start Sonar Analysis
+        shell: pwsh
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+            /k:"DEFRA_apha-bst" `
+            /o:"defra" `
+            /d:sonar.token="$env:SONAR_TOKEN" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /v:"${{ steps.imgtag.outputs.image_tag }}" `
+            /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
+            /d:sonar.cs.vstest.reportsPaths="src/TestResults/*.test_results.trx" `
+            /d:sonar.branch.name="${{ github.ref_name }}" `
+            /d:sonar.verbose=true `
+            /d:sonar.exclusions="**/wwwroot/**" `
+            /d:sonar.coverage.exclusions="**/wwwroot/**,**/*.cshtml"
+      - name: Restore NuGet packages
+        shell: pwsh
+        run: dotnet restore src/Apha.BST.sln
+      - name: Build Solution
+        shell: pwsh
+        run: dotnet build src/Apha.BST.sln --configuration Release
+      - name: Run Unit Tests with Coverage
+        shell: pwsh
+        run: >
+          dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj `
+            --no-build --configuration Release /p:CollectCoverage=true `
+            /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Application.coverage.opencover.xml" `
+            /p:CoverletOutputFormat=opencover `
+            /p:Deterministic=true `
+            /p:DebugType=full /p:DebugSymbols=true `
+            --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Application.test_results.trx"
+
+          dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj `
+            --no-build --configuration Release /p:CollectCoverage=true `
+            /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Web.coverage.opencover.xml" `
+            /p:CoverletOutputFormat=opencover `
+            /p:Deterministic=true `
+            /p:DebugType=full /p:DebugSymbols=true `
+            --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Web.test_results.trx"
+      - name: List coverage files
+        shell: pwsh
+        run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"; Get-ChildItem -Recurse -Filter "*.test_results.trx"
+      - name: End Sonar Analysis
+        shell: pwsh
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
+
       - name: Compose image tag
         id: imgtag
         shell: pwsh
@@ -129,56 +179,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: squash          
-
-  #     - name: Start Sonar Analysis
-  #       shell: pwsh
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #       run: |
-  #         .\.sonar\scanner\dotnet-sonarscanner begin `
-  #           /k:"DEFRA_apha-bst" `
-  #           /o:"defra" `
-  #           /d:sonar.token="$env:SONAR_TOKEN" `
-  #           /d:sonar.host.url="https://sonarcloud.io" `
-  #           /v:"${{ steps.imgtag.outputs.image_tag }}" `
-  #           /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
-  #           /d:sonar.cs.vstest.reportsPaths="src/TestResults/*.test_results.trx" `
-  #           /d:sonar.branch.name="${{ github.ref_name }}" `
-  #           /d:sonar.verbose=true `
-  #           /d:sonar.exclusions="**/wwwroot/**" `
-  #           /d:sonar.coverage.exclusions="**/wwwroot/**,**/*.cshtml"
-  #     - name: Restore NuGet packages
-  #       shell: pwsh
-  #       run: dotnet restore src/Apha.BST.sln
-  #     - name: Build Solution
-  #       shell: pwsh
-  #       run: dotnet build src/Apha.BST.sln --configuration Release
-  #     - name: Run Unit Tests with Coverage
-  #       shell: pwsh
-  #       run: >
-  #         dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj `
-  #           --no-build --configuration Release /p:CollectCoverage=true `
-  #           /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Application.coverage.opencover.xml" `
-  #           /p:CoverletOutputFormat=opencover `
-  #           /p:Deterministic=true `
-  #           /p:DebugType=full /p:DebugSymbols=true `
-  #           --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Application.test_results.trx"
-
-  #         dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj `
-  #           --no-build --configuration Release /p:CollectCoverage=true `
-  #           /p:CoverletOutput="$($PWD.Path)/src/TestResults/Apha.BST.Web.coverage.opencover.xml" `
-  #           /p:CoverletOutputFormat=opencover `
-  #           /p:Deterministic=true `
-  #           /p:DebugType=full /p:DebugSymbols=true `
-  #           --logger "trx;LogFileName=$($PWD.Path)/src/TestResults/Apha.BST.Web.test_results.trx"
-  #     - name: List coverage files
-  #       shell: pwsh
-  #       run: Get-ChildItem -Recurse -Filter "*.coverage.opencover.xml"; Get-ChildItem -Recurse -Filter "*.test_results.trx"
-  #     - name: End Sonar Analysis
-  #       shell: pwsh
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #       run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
+        
   # push-image:
   #   name: Push Docker Image
   #   needs: build-and-analyze
