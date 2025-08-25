@@ -1,1 +1,0 @@
-ê (2csXjhrVsrc/Apha.BST/Apha.BST.Application.UnitTests/UserServiceTest/AbstractUserServiceTest.cs

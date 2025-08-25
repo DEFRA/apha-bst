@@ -1,1 +1,0 @@
-Z 2csXhr9src/Apha.BST/Apha.BST.Web/Models/TrainingListViewModel.cs

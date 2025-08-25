@@ -1,1 +1,0 @@
-o 2csX!hr2src/Apha.BST/Apha.BST.DataAccess/Data/VlaLocMap.cs

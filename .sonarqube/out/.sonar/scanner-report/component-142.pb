@@ -1,1 +1,0 @@
-Ž (2csX¼hr^src/Apha.BST/Apha.BST.Application.UnitTests/TrainingServiceTest/AbstractTrainingServiceTest.cs

@@ -1,1 +1,0 @@
-ƒ (2csXahrVsrc/Apha.BST/Apha.BST.Application.UnitTests/NewsServiceTest/AbstractNewsServiceTest.cs

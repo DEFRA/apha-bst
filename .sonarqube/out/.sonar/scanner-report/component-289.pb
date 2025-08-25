@@ -1,1 +1,0 @@
-¡ 2plsqlXhr0db-scripts/04-procedures/sp_site_trainee_get.sql

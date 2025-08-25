@@ -1,1 +1,0 @@
-¦ 2plsqlX.hr.db-scripts/04-procedures/sp_user_selectall.sql

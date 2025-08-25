@@ -1,1 +1,0 @@
-™ 2csXhr2src/Apha.BST/Apha.BST.Core/Pagination/PagedData.cs

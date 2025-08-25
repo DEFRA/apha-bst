@@ -1,1 +1,0 @@
-m 2csX(hr5src/Apha.BST/Apha.BST.DataAccess/Data/TrainingsMap.cs

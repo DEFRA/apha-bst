@@ -1,1 +1,0 @@
-¯ (2csX4hrcsrc/Apha.BST/Apha.BST.DataAccess.UnitTests/TrainingRepositoryTest/AbstractTrainingRepositoryTest.cs

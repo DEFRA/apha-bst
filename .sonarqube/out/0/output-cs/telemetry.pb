@@ -1,1 +1,0 @@
-\RFD:\a\apha-bst\apha-bst\src\Apha.BST\Apha.BST.Core\Apha.BST.Core.csproj¢net8.0òCSharp12

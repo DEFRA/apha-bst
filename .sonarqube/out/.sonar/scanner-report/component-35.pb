@@ -1,1 +1,0 @@
-# 2webX„hr<src/Apha.BST/Apha.BST.Web/Views/Training/EditTraining.cshtml

@@ -1,1 +1,0 @@
-† 2csXhr6src/Apha.BST/Apha.BST.Core/Entities/TrainerTraining.cs
