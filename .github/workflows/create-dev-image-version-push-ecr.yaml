@@ -14,7 +14,8 @@ jobs:
     uses: ./.github/workflows/dev-build-and-sonar-template.yaml
     with:
       repository: apha/bst
-    secrets: inherit   # reuses all repo secrets
+    secrets: 
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
 
   # 2️⃣ Then push the image after build succeeds  
   push-image:
@@ -22,4 +23,8 @@ jobs:
     uses: ./.github/workflows/push-image-template.yaml
     with:
       IMAGE_VERSION: ${{ github.event.inputs.DEVIMAGEVERSION }}
-    secrets: inherit   # reuses all repo secrets
+    secrets:  
+      AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
+      AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
+      AWS_ENV_ROLE: ${{ secrets.AWS_ENV_ROLE }}
+        
