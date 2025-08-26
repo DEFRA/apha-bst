@@ -13,8 +13,6 @@ on:
 env:
   REPOSITORY: ${{ inputs.repository }}
 
-permissions: {}   # disables all default permissions
-
 jobs:
   build-and-sonar-analyze:
     name: build-and-sonar-analyze

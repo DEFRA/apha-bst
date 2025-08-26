@@ -8,6 +8,7 @@ on:
         type: string
         required: true
 
+permissions: {}   # disables all default permissions
 jobs:
   # 1️⃣ First run the dev build & sonar analysis
   build-and-sonar:

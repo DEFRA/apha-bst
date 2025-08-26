@@ -13,7 +13,6 @@ on:
       AWS_ENV_ROLE:
         required: true
 
-permissions: {}   # disables all default permissions
 env:
   REPOSITORY: apha/bst
 jobs:
