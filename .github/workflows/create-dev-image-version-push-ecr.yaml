@@ -9,11 +9,17 @@ on:
         required: true
 
 jobs:
+  # 1️⃣ First run the dev build & sonar analysis
+  build-and-sonar:
+    uses: ./.github/workflows/dev-build-and-sonar-template.yaml
+    with:
+      repository: apha/bst
+    secrets: inherit   # reuses all repo secrets
+
+  # 2️⃣ Then push the image after build succeeds  
   push-image:
+    needs: build-and-sonar   # ensures sonar must complete first
     uses: ./.github/workflows/push-image-template.yaml
     with:
       IMAGE_VERSION: ${{ github.event.inputs.DEVIMAGEVERSION }}
-    secrets:
-      AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
-      AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
-      AWS_ENV_ROLE: ${{ secrets.AWS_ENV_ROLE }}
+    secrets: inherit   # reuses all repo secrets
