@@ -12,9 +12,6 @@ on:
         required: true
       AWS_ENV_ROLE:
         required: true
-      GITHUB_TOKEN:
-        required: true
-
 
 env:
   REPOSITORY: apha/bst
