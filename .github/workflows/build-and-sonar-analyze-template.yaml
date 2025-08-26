@@ -8,7 +8,7 @@ on:
         type: string
       secrets:
         SONAR_TOKEN:
-        required: true
+          required: true
 
 env:
   REPOSITORY: ${{ inputs.repository }}
