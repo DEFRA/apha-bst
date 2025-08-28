@@ -2,13 +2,13 @@ name: build and sonar analyze template
 on:
   workflow_call:
      inputs:
-      repository:
-        description: "docker repository name"
-        required: true
-        type: string
-      secrets:
-        SONAR_TOKEN:
-          required: true
+       repository:
+         description: "docker repository name"
+         required: true
+         type: string
+     secrets:
+       SONAR_TOKEN:
+         required: true
 
 env:
   REPOSITORY: ${{ inputs.repository }}
