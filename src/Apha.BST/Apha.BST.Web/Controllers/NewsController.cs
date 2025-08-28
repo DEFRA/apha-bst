@@ -20,6 +20,9 @@ namespace Apha.BST.Web.Controllers
         private readonly ILogService _logService;
         private const string newsMessage = "NewsMessage";
         private const string newsLoadingMessage = "Error loading news";
+        private const string DateTimeFormat12Hour = "yyyy-MM-dd hh:mm tt";
+        private const string DateFormat = "yyyy-MM-dd";
+        private const string DateTimeFormat24HourWithSeconds = "yyyy-MM-dd HH:mm:ss";
 
         public NewsController(INewsService newsService, IUserService userService, IMapper mapper, IUserDataService userDataService,ILogService logService)
         {
@@ -36,7 +39,7 @@ namespace Apha.BST.Web.Controllers
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             var viewModel = new AddNewsViewModel
             {
-                DatePublished = DateTime.Now,
+                DatePublished = DateTime.Now.ToString(DateTimeFormat12Hour),
                 Users = (await _userService.GetUsersAsync("All users"))
                     .Select(u => new SelectListItem { Value = u.UserId, Text = u.UserName })
                     .ToList(),
@@ -56,21 +59,34 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> AddNews(AddNewsViewModel viewModel)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+            // Validate DatePublished string
+            DateTime parsedDate;
             if (viewModel.UseCurrentDateTime)
             {
-                viewModel.DatePublished = DateTime.Now;
-                ModelState.Clear();
-                TryValidateModel(viewModel);
+                parsedDate = DateTime.Now;
+                viewModel.DatePublished = parsedDate.ToString(DateTimeFormat12Hour);
             }
-            if (viewModel.DatePublished.Hour == 0 && viewModel.DatePublished.Minute == 0 && viewModel.DatePublished.Second == 0)
-            {               
-                viewModel.DatePublished = new DateTime(
-                    viewModel.DatePublished.Year,
-                    viewModel.DatePublished.Month,
-                    viewModel.DatePublished.Day,
-                    0, 0, 0, DateTimeKind.Local);                
-                ModelState.Remove("DatePublished");
-                TryValidateModel(viewModel);
+            else if (string.IsNullOrWhiteSpace(viewModel.DatePublished))
+            {
+                ModelState.AddModelError(nameof(viewModel.DatePublished), "Please enter valid date and time");
+            }
+            else
+            {
+                // Try full date+time first
+                if (!DateTime.TryParseExact(viewModel.DatePublished, DateTimeFormat12Hour, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parsedDate))
+                {
+                    // Try date only, default to midnight
+                    if (DateTime.TryParseExact(viewModel.DatePublished, DateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parsedDate))
+                    {
+                        // Set to midnight
+                        parsedDate = parsedDate.Date;
+                        viewModel.DatePublished = parsedDate.ToString(DateTimeFormat24HourWithSeconds);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(viewModel.DatePublished), "Please enter valid date and time");
+                    }
+                }
             }
 
             if (!ModelState.IsValid)
@@ -91,7 +107,8 @@ namespace Apha.BST.Web.Controllers
             try
             {
                 if (canEdit)
-                { 
+                {
+                    // Map string DatePublished to DateTime for persistence
                     var dto = _mapper.Map<NewsDto>(viewModel);
                     TempData[newsMessage] = await _newsService.AddNewsAsync(dto);
                 }

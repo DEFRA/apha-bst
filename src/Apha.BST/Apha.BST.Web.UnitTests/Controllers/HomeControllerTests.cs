@@ -66,16 +66,18 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task Index_ReturnsViewWithNewsItems_WhenNewsItemsExist()
         {
             // Arrange
+            var now = DateTime.Now;
+            var nowString = now.ToString("yyyy-MM-dd hh:mm tt");
             var newsDtos = new List<NewsDto>
 {
-new() { Title = "News 1", NewsContent = "Content 1", DatePublished = DateTime.Now, Author = "Author 1" },
-new() { Title = "News 2", NewsContent = "Content 2", DatePublished = DateTime.Now, Author = "Author 2" }
+new() { Title = "News 1", NewsContent = "Content 1", DatePublished = nowString, Author = "Author 1" },
+new() { Title = "News 2", NewsContent = "Content 2", DatePublished = nowString, Author = "Author 2" }
 };
 
             var newsViewModels = new List<NewsViewModel>
 {
-new() { Title = "News 1", NewsContent = "Content 1", DatePublished = DateTime.Now, Author = "Author 1" },
-new() { Title = "News 2", NewsContent = "Content 2", DatePublished = DateTime.Now, Author = "Author 2" }
+new() { Title = "News 1", NewsContent = "Content 1", DatePublished = nowString, Author = "Author 1" },
+new() { Title = "News 2", NewsContent = "Content 2", DatePublished = nowString, Author = "Author 2" }
 };
 
             _mockNewsService.GetLatestNewsAsync().Returns(newsDtos);

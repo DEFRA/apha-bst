@@ -42,10 +42,17 @@
                 {
                     @foreach (var news in Model.NewsList)
                     {
+                        DateTime dateValue;
+                        var hasDate = DateTime.TryParse(
+                        news.DatePublished,
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None,
+                        out dateValue
+                        );
                         <tr>
                             <td>@news.Title</td>
                             <td>@news.NewsContent</td>
-                            <td>@news.DatePublished.ToString("g")</td>
+                            <td>@(hasDate ? dateValue.ToString("g") : news.DatePublished)</td>
                             <td>@news.Author</td>
                             <td>
                                 <form asp-action="DeleteNews" method="post" style="display:inline;">

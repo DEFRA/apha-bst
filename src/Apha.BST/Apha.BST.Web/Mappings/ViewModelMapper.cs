@@ -26,7 +26,8 @@ namespace Apha.BST.Web.Mappings
             CreateMap<AddUserViewModel, UserDto>().ReverseMap();
             CreateMap<EditUserViewModel, UserDto>().ReverseMap();
             CreateMap<UserViewDto, ViewUserViewModel>().ReverseMap();
-            CreateMap<AddNewsViewModel, NewsDto>().ReverseMap();
+            CreateMap<AddNewsViewModel, NewsDto>()
+            .ForMember(dest => dest.DatePublished, opt => opt.MapFrom(src => src.DatePublished));
             CreateMap<SiteInputDto, EditSiteViewModel>().ReverseMap();
             CreateMap<AuditLogViewModel, AuditLogDto>().ReverseMap();
             CreateMap<AuditLogsArchivedViewModel, AuditLogArchivedDto>().ReverseMap();

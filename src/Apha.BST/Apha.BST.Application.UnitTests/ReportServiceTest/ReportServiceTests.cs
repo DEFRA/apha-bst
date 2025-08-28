@@ -50,6 +50,22 @@ namespace Apha.BST.Application.UnitTests.ReportServiceTest
             Assert.Contains(workbook2.Worksheets, ws => ws.Name == "Trainers");
             Assert.Contains(workbook2.Worksheets, ws => ws.Name == "Training");
             Assert.Contains(workbook2.Worksheets, ws => ws.Name == "APHA");
+            // Optional: Check for hyperlinks in "Sites" and "Trainers" sheets
+            var sitesSheet = workbook2.Worksheet("Sites");
+            var trainersSheet = workbook2.Worksheet("Trainers");
+            // Find the hyperlink in the worksheet's Hyperlinks collection
+            var nameCell = sitesSheet.Cell(2, 2);
+            Assert.True(nameCell.HasHyperlink);
+            var hyperlink = nameCell.GetHyperlink();
+            Assert.NotNull(hyperlink.InternalAddress);
+            Assert.Contains("'People'!B", hyperlink.InternalAddress);
+
+            // Check if the Trainer cell in Trainers has a hyperlink to Training
+            var trainerCell = trainersSheet.Cell(2, 2);
+            Assert.True(trainerCell.HasHyperlink);
+            var trainerHyperlink = trainerCell.GetHyperlink();
+            Assert.NotNull(trainerHyperlink.InternalAddress);
+            Assert.Contains("'Training'!A", trainerHyperlink.InternalAddress);
         }
 
         [Fact]

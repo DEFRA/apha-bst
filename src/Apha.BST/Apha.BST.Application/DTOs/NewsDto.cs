@@ -13,7 +13,7 @@ namespace Apha.BST.Application.DTOs
 
         public string? NewsContent { get; set; }
 
-        public DateTime DatePublished { get; set; }
+        public string? DatePublished { get; set; }
 
         public string? Author { get; set; }
 

@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Interfaces;
+using Apha.BST.Core.Entities;
 using Apha.BST.Core.Interfaces;
 using AutoMapper;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Office2013.Word;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
@@ -79,9 +81,9 @@ namespace Apha.BST.Application.Services
             using (var templateStream = File.OpenRead(templatePath))
             using (var workbook = new XLWorkbook(templateStream))
             {
-                FillSitesSheet(workbook, siteReports);
+                FillSitesSheet(workbook, siteReports, peopleReports);
                 FillPeopleSheet(workbook, peopleReports);
-                FillTrainersSheet(workbook, trainerReports);
+                FillTrainersSheet(workbook, trainerReports , trainingReports);
                 FillTrainingSheet(workbook, trainingReports);
                 FillLocationsSheet(workbook, aphaReports);
 
@@ -93,7 +95,7 @@ namespace Apha.BST.Application.Services
 
         #region Private helper methods for Excel generation
 
-        private static void FillSitesSheet(XLWorkbook workbook, List<SiteReportDto> sites)
+        private static void FillSitesSheet(XLWorkbook workbook, List<SiteReportDto> sites, List<PeopleReportDto> people)
         {
             var ws = workbook.Worksheets.FirstOrDefault(w => w.Name == "Sites") ?? workbook.Worksheets.Add("Sites");
             ws.Clear();
@@ -117,7 +119,12 @@ namespace Apha.BST.Application.Services
                 ws.Cell(row, 1).Value = site.PlantNo;
                 var nameCell = ws.Cell(row, 2);
                 nameCell.Value = site.Name;
-                nameCell.SetHyperlink(new XLHyperlink("'People'!A1"));
+                // Find the first person whose LocationId matches the site.Name
+                int peopleRow = 2 + people.FindIndex(p => string.Equals(p.LocationId, site.Name, StringComparison.OrdinalIgnoreCase));
+                if (peopleRow >= 2)
+                    nameCell.SetHyperlink(new XLHyperlink($"'People'!B{peopleRow}"));
+                else
+                    nameCell.SetHyperlink(new XLHyperlink("'People'!B1")); // fallback
                 ws.Cell(row, 3).Value = site.Add1;
                 ws.Cell(row, 4).Value = site.Add2;
                 ws.Cell(row, 5).Value = site.Town;
@@ -160,7 +167,7 @@ namespace Apha.BST.Application.Services
             }
         }
 
-        private static void FillTrainersSheet(XLWorkbook workbook, List<TrainerReportDto> trainers)
+        private static void FillTrainersSheet(XLWorkbook workbook, List<TrainerReportDto> trainers, List<TrainingReportDto> trainings)
         {
             var ws = workbook.Worksheets.FirstOrDefault(w => w.Name == "Trainers") ?? workbook.Worksheets.Add("Trainers");
             ws.Clear();
@@ -177,7 +184,12 @@ namespace Apha.BST.Application.Services
                 ws.Cell(row, 1).Value = trainer.ID;
                 var idCell = ws.Cell(row, 2);
                 idCell.Value = trainer.Trainer;
-                idCell.SetHyperlink(new XLHyperlink("'Training'!A1"));
+                // Find the first training where Trainer matches
+                int trainingRow = 2 + trainings.FindIndex(t => string.Equals(t.Trainer, trainer.Trainer, StringComparison.OrdinalIgnoreCase));
+                if (trainingRow >= 2)
+                    idCell.SetHyperlink(new XLHyperlink($"'Training'!A{trainingRow}"));
+                else
+                    idCell.SetHyperlink(new XLHyperlink("'Training'!A1")); // fallback
                 ws.Cell(row, 3).Value = trainer.Trained;
                 ws.Cell(row, 4).Value = trainer.RunTot;
                 ws.Cell(row, 5).Value = trainer.Excel;

@@ -75,7 +75,15 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var model = Assert.IsType<AddNewsViewModel>(viewResult.Model);
             Assert.True(model.CanEdit);
             Assert.NotEmpty(model.Users);
-            Assert.Equal(DateTime.Now.Date, model.DatePublished.Date);
+            // Parse the string to DateTime for comparison
+            DateTime datePublished;
+            Assert.True(DateTime.TryParse(
+    model.DatePublished,
+    System.Globalization.CultureInfo.InvariantCulture,
+    System.Globalization.DateTimeStyles.None,
+    out datePublished)
+);
+            Assert.Equal(DateTime.Now.Date, datePublished.Date);
             // Check the default selection item was added
             Assert.Equal("Please select user", model.Users.First().Text);
         }
@@ -138,7 +146,15 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             // Check that DatePublished was updated to the current date
-            Assert.Equal(DateTime.Now.Date, viewModel.DatePublished.Date);
+            // Parse the string to DateTime for comparison
+            DateTime datePublished;
+            Assert.True(DateTime.TryParse(
+    viewModel.DatePublished,
+    System.Globalization.CultureInfo.InvariantCulture,
+    System.Globalization.DateTimeStyles.None,
+    out datePublished)
+);
+            Assert.Equal(DateTime.Now.Date, datePublished.Date);
             // Verify we got the expected redirect
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddNews", redirectResult.ActionName);
@@ -148,7 +164,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
         {
             // Arrange
             var dateOnly = new DateTime(2025, 12, 8, 0, 0, 0, DateTimeKind.Local);
-            var viewModel = new AddNewsViewModel { DatePublished = dateOnly };
+            var dateOnlyString = dateOnly.ToString("yyyy-MM-dd hh:mm tt");
+            var viewModel = new AddNewsViewModel { DatePublished = dateOnlyString };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
 
             // Create a partial mock of the controller to bypass TryValidateModel
@@ -178,17 +195,24 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             // Verify the time remains at midnight (00:00:00)
-            Assert.Equal(0, viewModel.DatePublished.Hour);
-            Assert.Equal(0, viewModel.DatePublished.Minute);
-            Assert.Equal(0, viewModel.DatePublished.Second);
+            // Parse the string to DateTime for comparison
+            DateTime datePublished;
+            Assert.True(DateTime.TryParse(
+    viewModel.DatePublished,
+    System.Globalization.CultureInfo.InvariantCulture,
+    System.Globalization.DateTimeStyles.None,
+    out datePublished)
+);
+            Assert.Equal(0, datePublished.Hour);
+            Assert.Equal(0, datePublished.Minute);
+            Assert.Equal(0, datePublished.Second);
 
             // Verify the date is preserved
-            Assert.Equal(2025, viewModel.DatePublished.Year);
-            Assert.Equal(12, viewModel.DatePublished.Month);
-            Assert.Equal(8, viewModel.DatePublished.Day);
+            Assert.Equal(2025, datePublished.Year);
+            Assert.Equal(12, datePublished.Month);
+            Assert.Equal(8, datePublished.Day);
 
-            // Verify DateTimeKind is Local
-            Assert.Equal(DateTimeKind.Local, viewModel.DatePublished.Kind);
+            Assert.True(datePublished.Kind == DateTimeKind.Local || datePublished.Kind == DateTimeKind.Unspecified);
 
             // Verify we got the expected redirect
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -201,11 +225,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task AddNews_POST_UserHasPermission_AddsNewsSuccessfully()
         {
             // Arrange
-            var viewModel = new AddNewsViewModel();
+            var viewModel = new AddNewsViewModel{ Title = "Test Title", NewsContent = "Test Content", DatePublished = DateTime.Now.ToString("yyyy-MM-dd hh:mm tt"), Author = "1" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
-            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Returns("News added successfully");
-
+            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Returns("News added successfully");           
+            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>());
             // Act
             var result = await _controller.AddNews(viewModel);
 
@@ -220,8 +244,9 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task AddNews_POST_UserDoesNotHavePermission_ReturnsErrorMessage()
         {
             // Arrange
-            var viewModel = new AddNewsViewModel();
+            var viewModel = new AddNewsViewModel{ Title = "Test Title", NewsContent = "Test Content", DatePublished = DateTime.Now.ToString("yyyy-MM-dd hh:mm tt"), Author = "1" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
+            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>());
 
             // Act
             var result = await _controller.AddNews(viewModel);
@@ -237,10 +262,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task AddNews_POST_SqlExceptionThrown_LogsExceptionAndReturnsErrorMessage()
         {
             // Arrange
-            var viewModel = new AddNewsViewModel();
+            var viewModel = new AddNewsViewModel { Title = "Test Title", NewsContent = "Test Content", DatePublished = DateTime.Now.ToString("yyyy-MM-dd hh:mm tt"), Author = "1" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
             _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Throws(CreateSqlException());
+            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>());
 
             // Act
             var result = await _controller.AddNews(viewModel);
@@ -256,10 +282,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task AddNews_POST_GeneralExceptionThrown_LogsExceptionAndReturnsErrorMessage()
         {
             // Arrange
-            var viewModel = new AddNewsViewModel();
+            var viewModel = new AddNewsViewModel { Title = "Test Title", NewsContent = "Test Content", DatePublished = DateTime.Now.ToString("yyyy-MM-dd hh:mm tt"), Author = "1" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
             _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Throws(new Exception());
+            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>());
 
             // Act
             var result = await _controller.AddNews(viewModel);

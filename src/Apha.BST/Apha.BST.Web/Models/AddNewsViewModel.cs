@@ -13,7 +13,7 @@ namespace Apha.BST.Web.Models
 
         [Required(ErrorMessage = "Complete date and time")]
         [Display(Name = "News date and time")]
-        public DateTime DatePublished { get; set; } = DateTime.Now;
+        public string? DatePublished { get; set; }
 
         [Display(Name = "Use current date and time")]
         public bool UseCurrentDateTime { get; set; } = false;

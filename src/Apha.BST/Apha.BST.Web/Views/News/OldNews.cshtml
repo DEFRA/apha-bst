@@ -17,13 +17,20 @@
                     <ul>
                         @foreach (var news in Model.NewsList)
                         {
+                            DateTime dateValue;
+                            var hasDate = DateTime.TryParse(
+                            news.DatePublished,
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            System.Globalization.DateTimeStyles.None,
+                            out dateValue
+                            );
                             <li class="mb-3">
                                 <span class="news-title fw-bold">@news.Title</span>
                                 <span>@news.NewsContent</span>
                                 <span>
-                                    <time datetime="@news.DatePublished.ToString("o")">
-                                        @news.DatePublished.ToString("g")
-                                    </time>by @news.Author
+                                    <time datetime="@(hasDate ? dateValue.ToString("o") : news.DatePublished)">
+                                        @(hasDate ? dateValue.ToString("g") : news.DatePublished)
+                                    </time> by @news.Author
                                 </span>
                             </li>
                         }
