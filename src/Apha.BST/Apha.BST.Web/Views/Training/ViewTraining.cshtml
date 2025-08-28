@@ -1,6 +1,6 @@
 ﻿@model TrainingListViewModel
 @{
-	ViewData["Title"] = "ViewTraining";	
+	ViewData["Title"] = "ViewTraining";
 }
 @{
 	var isDisabled = !Model.CanEdit ? "disabled" : null;
@@ -38,7 +38,7 @@
 			</span>
 
 		</div>
-		
+
 	</div>
 
 	<div class="w-100 d-flex justify-content-start">
@@ -54,11 +54,14 @@
 						<th>Training Date</th>
 						<th>ID</th>
 						<th>Training type</th>
-						<th>Actions</th>
+						<th>            </th>
+						<th> </th>
+
 					</tr>
 				</thead>
 				<tbody>
-					@if (Model.FilteredTrainings != null) {
+					@if (Model.FilteredTrainings != null)
+					{
 						@foreach (var training in Model.FilteredTrainings)
 						{
 							<tr>
@@ -68,39 +71,41 @@
 								<td>@training.TrainingDateTime.ToString()</td>
 								<td>@training.PersonID</td>
 								<td>@training.TrainingType</td>
-								<td>	
+								<td>
 									@if (Model.CanEdit)
 									{
 										<a asp-action="EditTraining"
-										asp-controller="Training"
-										asp-route-traineeId="@training.TraineeId"
-										asp-route-trainerId="@training.PersonID"
-										asp-route-species="@training.TrainingAnimal"
-										asp-route-dateTrained="@training.TrainingDateTime.ToString("yyyy-MM-dd")"
-										asp-route-trainingType="@training.TrainingType"
-										class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">
+										   asp-controller="Training"
+										   asp-route-traineeId="@training.TraineeId"
+										   asp-route-trainerId="@training.PersonID"
+										   asp-route-species="@training.TrainingAnimal"
+										   asp-route-dateTrained="@training.TrainingDateTime.ToString("yyyy-MM-dd")"
+										   asp-route-trainingType="@training.TrainingType"
+										   class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">
 											Edit
 										</a>
 									}
 									else
 									{
-										<a  href="#" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">Edit</a>
+										<a href="#" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">Edit</a>
 									}
+								<td>
+									<form asp-action="DeleteTraining" method="post" style="display: inline;">
+										@Html.AntiForgeryToken()
+										<input type="hidden" name="traineeId" value="@training.TraineeId" />
+										<input type="hidden" name="species" value="@training.TrainingAnimal" />
+										<input type="hidden" name="dateTrained" value="@training.TrainingDateTime.ToString()" />
+										<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline" disabled="@isDisabled">Delete</button>
+									</form>
+								</td>
 
-							<form asp-action="DeleteTraining" method="post" style="display: inline;">
-								@Html.AntiForgeryToken()
-								<input type="hidden" name="traineeId" value="@training.TraineeId" />
-								<input type="hidden" name="species" value="@training.TrainingAnimal" />
-								<input type="hidden" name="dateTrained" value="@training.TrainingDateTime.ToString()" />
-								<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" disabled="@isDisabled">Delete</button>
-							</form>
-						</td>
-					</tr>
-				}
-				}
-			</tbody>
 
-		</table>
+							</tr>
+						}
+					}
+				</tbody>
+
+			</table>
 		}
 
 	</div>

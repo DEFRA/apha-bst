@@ -34,7 +34,7 @@
                     <th>News Content</th>
                     <th>Date Published</th>
                     <th>Author</th>
-                    <th>Action</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -51,7 +51,7 @@
                                 <form asp-action="DeleteNews" method="post" style="display:inline;">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="title" value="@news.Title" />
-                                    <button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" disabled="@isDisabled">Delete</button>
+                                    <button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline" disabled="@isDisabled">Delete</button>
                                 </form>
                             </td>
                         </tr>

@@ -32,8 +32,8 @@
                 </td>
                 <td class="w-50">
                     <select id="Name" asp-for="Name" asp-items="Model.SiteOptions" disabled="@isDisabled">
-                        </select>                  
-                   
+                    </select>
+
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </td>
             </tr>
@@ -48,10 +48,23 @@
             </tr>
 
             <tr>
-                <td class="w-25 py-3"></td>
+
+                <td class="w-25 py-3">
+                    <p class="pt-2 ErrorText">
+                        @if (TempData["PersonMessage"] != null)
+                        {
+                            @TempData["PersonMessage"]
+                        }
+                    </p>
+                </td>
                 <td class="w-50">
                     <table class="w-100">
-                        <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+                        <thead class="sr-only">
+                            <tr><th scope="col"></th></tr>
+
+
+                        </thead>
+
                         <tr>
                             <td class="w-20">
                                 <button type="submit" class="btn p-0">
@@ -64,16 +77,10 @@
                                 </a>
                             </td>
                         </tr>
+
                     </table>
                 </td>
-                <td class="w-10">
-                    <p class="pt-2 ErrorText">
-                        @if (TempData["PersonMessage"] != null)
-                        {
-                            @TempData["PersonMessage"]
-                        }
-                    </p>
-                </td>
+
             </tr>
         </tbody>
     </table>

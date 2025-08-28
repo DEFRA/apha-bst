@@ -5,7 +5,7 @@
 @{
 	var isDisabled = !Model.CanEdit ? "disabled" : null;
 }
-<form asp-action="EditTraining" method="post" id="editTrainingForm">	
+<form asp-action="EditTraining" method="post" id="editTrainingForm">
 	<table class="w-80 h-100 m-4">
 		<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
 		<tbody class="me-5">
@@ -24,7 +24,7 @@
 					<select asp-for="TraineeId" disabled="@isDisabled">
 						@foreach (var trainee in Model.TraineeList)
 						{
-						
+
 							<option value="@trainee.Value">@trainee.Text</option>
 						}
 					</select>
@@ -39,7 +39,7 @@
 					<select asp-for="TrainerId" disabled="@isDisabled">
 						@foreach (var trainer in Model.TrainerList)
 						{
-							
+
 							<option value="@trainer.Value">@trainer.Text</option>
 						}
 					</select>
@@ -79,7 +79,6 @@
 				</td>
 				<td class="pt-1 px-5">
 					<select asp-for="TrainingAnimal" asp-items="Model.TrainingAnimalList" disabled="@isDisabled">
-						<option value="">Select species...</option>
 					</select>
 					<span asp-validation-for="TrainingAnimal" class="text-danger"></span>
 				</td>
@@ -110,12 +109,12 @@
 				<td></td>
 				<td>
 					<p class="pt-2 px-5 ErrorText ">
-							
+
 						<div class="ErrorText">
-								@if (TempData["Message"] != null)
-								{
-									@TempData["Message"]
-								}
+							@if (TempData["Message"] != null)
+							{
+								@TempData["Message"]
+							}
 						</div>
 				</td>
 			</tr>
