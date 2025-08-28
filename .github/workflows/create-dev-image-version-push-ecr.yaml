@@ -17,6 +17,9 @@ jobs:
       repository: apha/bst
     secrets: 
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+    permissions:
+      id-token: write
+      contents: read  
 
   # 2️⃣ Then push the image after build succeeds  
   push-image:
@@ -28,4 +31,8 @@ jobs:
       AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
       AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
       AWS_ENV_ROLE: ${{ secrets.AWS_ENV_ROLE }}
+    permissions:
+      id-token: write
+      contents: write
+  
         
