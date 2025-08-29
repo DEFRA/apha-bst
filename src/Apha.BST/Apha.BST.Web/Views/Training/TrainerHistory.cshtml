@@ -22,8 +22,8 @@
 			</div>
 			<div class="w-100 d-flex justify-content-start mb-2">
 				<span class="width-10"><label for="ddlTrainingView">Select trainee</label></span>
-				<span class="w-auto">				
-					<select name="selectedTrainerId" class="search-dropdown" disabled="@isDisabled"  asp-items="Model.AllTrainersList" onchange="this.form.submit()">
+				<span class="w-auto">
+					<select name="selectedTrainerId" class="search-dropdown" disabled="@isDisabled" asp-items="Model.AllTrainersList" onchange="this.form.submit()">
 					</select>
 					<span>
 						<p class=" ErrorText text-start">
@@ -34,13 +34,12 @@
 
 						</p>
 					</span>
-					</span>
+				</span>
 			</div>
 			<div class="w-100 d-flex justify-content-start">
-				<span class="width-10"><label for="SelectedSpecies">Select species (Cattle by default)</label></span>				
+				<span class="width-10"><label for="SelectedSpecies">Select species (Cattle by default)</label></span>
 				<span class="w-auto">
 					<select asp-for="SelectedSpecies" asp-items="Model.TrainingAnimalList" class="search-dropdown" onchange="this.form.submit()" disabled="@isDisabled">
-						<option value="">Select species...</option>
 					</select>
 					<span asp-validation-for="SelectedSpecies" class="text-danger"></span>
 				</span>
@@ -71,23 +70,23 @@
 				<tbody>
 					@if (Model.HistoryDetails != null)
 					{
-					@foreach (var item in Model.HistoryDetails)
-					{
-						<tr>
-							<td>@item.PersonID</td>
-						<td>@item.Person</td>
-						<td>@item.Role</td>
-						<td>@item.TrainerID</td>
-						<td>@item.TrainingAnimal</td>
-						<td>@item.TrainingDateTime.ToString()</td>
-						<td>@item.Trainer</td>
-					</tr>
-				}
+						@foreach (var item in Model.HistoryDetails)
+						{
+							<tr>
+								<td>@item.PersonID</td>
+								<td>@item.Person</td>
+								<td>@item.Role</td>
+								<td>@item.TrainerID</td>
+								<td>@item.TrainingAnimal</td>
+								<td>@item.TrainingDateTime.ToString()</td>
+								<td>@item.Trainer</td>
+							</tr>
+						}
 					}
-			</tbody>
+				</tbody>
 
-		</table>
-}
+			</table>
+		}
 
 	</div>
 

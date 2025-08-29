@@ -40,7 +40,7 @@
                 </td>
 
                 <td class="pt-3 px-5"></td>
-                <td class=" pt-3">
+                <td class="pt-3">
 
                     <select id="UserLevel" asp-for="UserLevel" asp-items="Model.UserLevels" class="search-dropdown" disabled="@isDisabled">
                         <option value="0">Add user's level......</option>
@@ -54,7 +54,7 @@
                     <label for="UserLoc">Add VLA location</label>
                 </td>
                 <td class="pt-3 px-5"></td>
-                <td class="pt-3">
+                <td class="pt-3" px-5>
 
                     <select id="UserLoc" asp-for="UserLoc" asp-items="Model.Locations" class="search-dropdown" disabled="@isDisabled">
                             <option value="">Add user location...</option>
@@ -81,8 +81,20 @@
                                 </a>
                             </td>
                         </tr>
+                       
                     </table>
-                    <div class="pt-3 ErrorText text-danger">
+                    
+                </td>
+            </tr>
+            <tr>
+                <td>
+                  
+                </td>
+                <td>
+                   
+                </td>
+                <td>
+                    <div class="pt-3 ErrorText text-danger" style="max-width: 300px; word-wrap: break-word;">
                         @if (TempData["UserMessage"] != null)
                         {
                             @TempData["UserMessage"]

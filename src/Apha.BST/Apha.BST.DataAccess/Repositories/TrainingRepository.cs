@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Apha.BST.Core.Entities;
 using Apha.BST.Core;
 using Apha.BST.Core.Interfaces;
@@ -87,19 +84,13 @@ namespace Apha.BST.DataAccess.Repositories
             new SqlParameter("@TrainerOld", editTraining.TrainerIdOld),
             new SqlParameter("@TrainingType", editTraining.TrainingType)           
             };            
-            try
-            {
-                await ExecuteSqlAsync(
+              await ExecuteSqlAsync(
                     "EXEC sp_Training_Update @TraineeID, @DateTrained, @DateTrainedOld, @Species, @SpeciesOld, @Trainer, @TrainerOld, @TrainingType",
                     parameters);
                 return Success;
 
-            }
-            catch
-            {
-                               
-                return Fail;
-            }
+          
+          
 
         }
 
@@ -146,16 +137,10 @@ namespace Apha.BST.DataAccess.Repositories
                  new SqlParameter("@DateTrained", dateTrained)
             };
 
-            try
-            {
+           
                 await ExecuteSqlAsync("EXEC sp_Training_Delete @TraineeID, @Species, @DateTrained", parameters);
                 return Success;
-            }
-            catch 
-            {
-                           
-                return Fail;
-            }          
+                 
         }
 
 

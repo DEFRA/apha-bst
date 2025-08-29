@@ -27,57 +27,57 @@
 		</div>
 	</div>
 	<div class="w-100 d-flex justify-content-start">
+
 		<span class="w-30">Person details</span>
 		<span class="w-70 ms-5"></span>
+		
 		<table id="peopleTable" class="grid-table">
-			<thead>
-				<tr>
-					<th>PersonId</th>
-					<th>Person</th>
-					<th>PlantNo</th>
-					<th>Name</th>
-					<th>       </th>
-					<th>       </th>
-				</tr>
-			</thead>
-			<tbody id="personTableBody">
-				@foreach (var person in Model.FilteredPerson)
-				{
+			@if (Model.FilteredPerson.Any())
+			{
+				<thead>
 					<tr>
-						<td>@person.PersonId</td>
-						<td>@person.Person</td>
-						<td>@person.PlantNo</td>
-						<td>@person.Name</td>
-						<td>
-							<a href="@(!Model.CanEdit ? "#" :Url.Action("EditPerson", "Persons", new { id = @person.PersonId }))" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover">Edit</a>
-						</td>
-						<td>
-							<form asp-action="DeletePerson" method="post" style="display: inline;">
-								@Html.AntiForgeryToken()
-								<input type="hidden" name="PersonId" value="@person.PersonId" />
-								<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" disabled="@isDisabled">Delete</button>
-							</form>
-						</td>
+						<th>PersonId</th>
+						<th>Person</th>
+						<th>PlantNo</th>
+						<th>Name</th>
+						<th></th>
+						<th></th>
 					</tr>
-				}
-			</tbody>
+				</thead>
+				<tbody id="personTableBody">
+					@foreach (var person in Model.FilteredPerson)
+					{
+						<tr>
+							<td>@person.PersonId</td>
+							<td>@person.Person</td>
+							<td>@person.PlantNo</td>
+							<td>@person.Name</td>
+							<td>
+								<a href="@(!Model.CanEdit ? "#" : Url.Action("EditPerson", "Persons", new { id = @person.PersonId }))" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">Edit</a>
+							</td>
+							<td>
+								<form asp-action="DeletePerson" method="post" style="display: inline;">
+									@Html.AntiForgeryToken()
+									<input type="hidden" name="PersonId" value="@person.PersonId" />
+									<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline"
+											disabled="@isDisabled">
+										Delete
+									</button>
+								</form>
+							</td>
+						</tr>
+					}
+				</tbody>
+			}
 		</table>
-		<table>
-			<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
-			<tbody>
-			<tr>
-				<td class="w-10">
-					<div class="pt-3 px-5 ErrorText">
-						@if (TempData["PersonMessage"] != null)
-						{
-							@TempData["PersonMessage"]
-						}
-					</div>
-				</td>
-			</tr>
-			</tbody>
-		</table>
-		<div id="deleteErrorMessage" class="alert alert-danger" style="display: none;"></div>
+		<div class="pt-3 px-5 ErrorText">
+			@if (TempData["PersonMessage"] != null)
+			{
+				@TempData["PersonMessage"]
+			}
+		</div>
+	
+		
 	</div>
 </div>
 

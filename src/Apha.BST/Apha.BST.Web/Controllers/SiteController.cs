@@ -23,7 +23,7 @@ namespace Apha.BST.Web.Controllers
 
         private readonly IMapper _mapper;
         private const string siteAll = "All";
-        private const string status = "Save failed";
+        private const string status = "Save failed: ";
         private const string siteMessage = "SiteMessage";
         public SiteController(ISiteService siteService, IMapper mapper, IUserDataService userDataService, ILogService logService)
         {
@@ -143,12 +143,12 @@ namespace Apha.BST.Web.Controllers
                 catch (SqlException sqlEx)
                 {
                     _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                    TempData[siteMessage] = status;
+                    TempData[siteMessage] = status +sqlEx.Message.ToString();
                 }
                 catch (Exception ex)
                 {
                     _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                    TempData[siteMessage] = status;
+                    TempData[siteMessage] = status + ex.Message.ToString();
                 }
 
 
@@ -178,12 +178,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[siteMessage] = status;
+                TempData[siteMessage] = status + sqlEx.Message.ToString(); 
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[siteMessage] = status;
+                TempData[siteMessage] = status + ex.Message.ToString(); 
             }
 
             return RedirectToAction("SiteTrainee", new { selectedSite });
@@ -221,9 +221,6 @@ namespace Apha.BST.Web.Controllers
                 IsAhvla = siteDto.Ahvla?.Trim().Equals("AHVLA") ?? false,
 
             };
-
-
-
             return View(viewModel);
         }
 
@@ -249,12 +246,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[siteMessage] = status;
+                TempData[siteMessage] = status + sqlEx.Message.ToString(); 
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[siteMessage] = status;
+                TempData[siteMessage] = status + ex.Message.ToString(); 
             }
 
             return View(editSiteViewModel);
