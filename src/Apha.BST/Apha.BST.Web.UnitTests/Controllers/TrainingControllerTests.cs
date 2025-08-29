@@ -1317,7 +1317,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert            
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
-            Assert.Equal("Delete failed", _controller.TempData["Message"]);
+            Assert.Equal("Delete failed: "+ "Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["Message"]);
         }
         [Fact]
         public async Task DeleteTraining_WhenGeneralExceptionThrown_LogsError()
@@ -1341,7 +1341,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
-            Assert.Equal("Delete failed", _controller.TempData["Message"]);
+            Assert.Equal("Delete failed: " + "Test general exception", _controller.TempData["Message"]);
         }
 
     }

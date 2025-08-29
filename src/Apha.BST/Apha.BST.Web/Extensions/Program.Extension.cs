@@ -49,16 +49,8 @@ namespace Apha.BST.Web.Extensions
                 Predicate = _ => false
             });
 
-            // Error handling
-            if (env.IsDevelopment() || env.IsEnvironment("local"))
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
+            //// Error handling            
+            app.UseExceptionHandler("/Error");
             app.UseHsts();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

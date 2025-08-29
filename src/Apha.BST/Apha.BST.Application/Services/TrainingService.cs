@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,7 +68,7 @@ namespace Apha.BST.Application.Services
                 return $"Save failed.";
             }
 
-            return $"{traineeName} has been trained in {dto.TrainingAnimal} brainstem removal on {dto.TrainingDateTime:dd/MM/yyyy} by {trainerName}";
+            return $"{traineeName} has been trained in {dto.TrainingAnimal} brainstem removal on {dto.TrainingDateTime.ToString("d", CultureInfo.CurrentCulture)} by {trainerName}";
 
         }
 
@@ -105,7 +106,7 @@ namespace Apha.BST.Application.Services
                 return $"{traineeName} has already trained for {trainingDto.TrainingType} brainstem removal: Cannot save record";
             }
 
-            return $"{traineeName} has been trained in {trainingDto.TrainingType} brainstem removal on {trainingDto.TrainingDateTime:dd/MM/yyyy} by {trainerName}";
+            return $"{traineeName} has been trained in {trainingDto.TrainingType} brainstem removal on {trainingDto.TrainingDateTime.ToString("d", CultureInfo.CurrentCulture)} by {trainerName}";
            
         }
         public async Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained)

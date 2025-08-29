@@ -19,6 +19,7 @@ using NSubstitute.ExceptionExtensions;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Apha.BST.Web.UnitTests.Controllers
 {
@@ -210,7 +211,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddSite", redirectResult.ActionName);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+ ": Test exception", _controller.TempData["SiteMessage"]);
         }
 
         [Fact]
@@ -327,7 +328,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddSite", redirectResult.ActionName);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+ ": Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["SiteMessage"]);
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
         [Fact]
@@ -351,7 +352,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddSite", redirectResult.ActionName);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+": General error", _controller.TempData["SiteMessage"]);
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
         [Fact]
@@ -589,7 +590,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.NotNull(redirectResult.RouteValues);
             Assert.True(redirectResult.RouteValues.ContainsKey("selectedSite"));
             Assert.Equal(selectedSite, redirectResult.RouteValues["selectedSite"]);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+ ": Some error", _controller.TempData["SiteMessage"]);
         }
 
 
@@ -633,7 +634,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("SiteTrainee", redirectResult.ActionName);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+ ": Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["SiteMessage"]);
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
         }
@@ -655,7 +656,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("SiteTrainee", redirectResult.ActionName);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+ ": General error", _controller.TempData["SiteMessage"]);
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
         }
@@ -743,7 +744,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             Assert.Equal(editSiteViewModel, result.Model);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+ ": Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["SiteMessage"]);
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
         [Fact]
@@ -774,7 +775,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(result);
             Assert.Equal(editSiteViewModel, result.Model);
-            Assert.Equal(status, _controller.TempData["SiteMessage"]);
+            Assert.Equal(status+ ": General error", _controller.TempData["SiteMessage"]);
 
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 

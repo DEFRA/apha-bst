@@ -79,12 +79,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[userMessage] = "Save failed";
+                TempData[userMessage] = "Save failed: "+sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[userMessage] = "Save failed";
+                TempData[userMessage] = "Save failed: " + ex.Message.ToString();
             }
             return RedirectToAction(nameof(AddUser));
         }
@@ -153,12 +153,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[userMessage] = "Update failed";
+                TempData[userMessage] = "Update failed: " + sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[userMessage] = "Update failed";
+                TempData[userMessage] = "Update failed: " + ex.Message.ToString();
             }
             return RedirectToAction(nameof(ViewUser));
         }
@@ -179,12 +179,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[userMessage] = "Delete failed";
+                TempData[userMessage] = "Delete failed: "+sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[userMessage] = "Delete failed";
+                TempData[userMessage] = "Delete failed: " + ex.Message.ToString();
             }
             return RedirectToAction(nameof(ViewUser));
         }

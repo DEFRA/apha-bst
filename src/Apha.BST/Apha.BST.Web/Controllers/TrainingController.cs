@@ -94,12 +94,12 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: "+sqlEx.Message;
+                TempData[trainingMessage] = "Save failed: "+sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: " + ex.Message;
+                TempData[trainingMessage] = "Save failed: " + ex.Message.ToString();
             }
 
             return RedirectToAction(nameof(AddTraining));
@@ -201,12 +201,12 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: "+ sqlEx.Message;
+                TempData[trainingMessage] = "Save failed: "+ sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: " + ex.Message;
+                TempData[trainingMessage] = "Save failed: " + ex.Message.ToString();
             }
 
             // Repopulate dropdown with updated selected values
@@ -385,12 +385,12 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName); 
-                TempData[trainingMessage] = "Delete failed";
+                TempData[trainingMessage] = "Delete failed: " + sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Delete failed";
+                TempData[trainingMessage] = "Delete failed: "+ex.Message.ToString();
             }
 
             return RedirectToAction(nameof(ViewTraining), new { selectedTraineeId = traineeId });

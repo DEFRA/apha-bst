@@ -147,7 +147,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddUser", redirectResult.ActionName);
-            _controller.TempData.Received()["UserMessage"] = "Save failed";
+            _controller.TempData.Received()["UserMessage"] = "Save failed: Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.";
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
 
@@ -166,7 +166,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddUser", redirectResult.ActionName);
-            _controller.TempData.Received()["UserMessage"] = "Save failed";
+            _controller.TempData.Received()["UserMessage"] = "Save failed: Exception of type 'System.Exception' was thrown.";
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
         #endregion
@@ -366,7 +366,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("ViewUser", redirectResult.ActionName);
-            _controller.TempData.Received()["UserMessage"] = "Update failed";
+            _controller.TempData.Received()["UserMessage"] = "Update failed: Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.";
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
 
@@ -385,7 +385,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("ViewUser", redirectResult.ActionName);
-            _controller.TempData.Received()["UserMessage"] = "Update failed";
+            _controller.TempData.Received()["UserMessage"] = "Update failed: Exception of type 'System.Exception' was thrown.";
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
 
@@ -513,7 +513,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("ViewUser", redirectResult.ActionName);
-            _controller.TempData.Received()["UserMessage"] = "Delete failed";
+            _controller.TempData.Received()["UserMessage"] = "Delete failed: Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.";
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
 
@@ -531,7 +531,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("ViewUser", redirectResult.ActionName);
-            _controller.TempData.Received()["UserMessage"] = "Delete failed";
+            _controller.TempData.Received()["UserMessage"] = "Delete failed: Exception of type 'System.Exception' was thrown.";
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
 

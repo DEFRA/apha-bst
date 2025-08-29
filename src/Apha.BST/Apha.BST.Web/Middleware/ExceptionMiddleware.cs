@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Amazon.Runtime;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Data.SqlClient;
 
 namespace Apha.BST.Web.Middleware
 {
@@ -17,12 +19,19 @@ namespace Apha.BST.Web.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
+            if (context.Items.ContainsKey("ExceptionHandled"))
+            {
+                // Avoid recursive re-entry
+                await _next(context);
+                return;
+            }
             try
             {
                 await _next(context); // Continue down the pipeline
             }
             catch (Exception ex)
             {
+                context.Items["ExceptionHandled"] = true; // Flag it as handled
                 string errorCode;
                 string ErrorType = _configuration["ExceptionTypes:General"] ?? "BSTDefaultGeneralException";              
                
@@ -47,10 +56,35 @@ namespace Apha.BST.Web.Middleware
                 _logger.LogError(ex, "[{ErrorType:l}] Error type [{ErrorCode:l}]: {Message}", ErrorType, errorCode, ex.Message);
 
 
-                // Redirect to generic error page (no code in query string)
-                context.Response.Redirect("/Error");
+                await HandleExceptionAsync(context, ex, "/Error", errorCode);
 
             }
+
         }
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception, string errorPath, string errorCode)
+        {
+            context.Response.StatusCode = errorCode.StartsWith("403") ? 403 : 500;
+
+            context.Features.Set<IExceptionHandlerFeature>(new ExceptionHandlerFeature
+            {
+                Error = exception,
+                Path = context.Request.Path
+            });
+
+            var originalPath = context.Request.Path;
+            context.Request.Path = errorPath;
+
+            try
+            {
+                // Just re-run the middleware pipeline again
+                await _next(context);
+            }
+            finally
+            {
+                context.Request.Path = originalPath;
+            }
+        }
+
+
     }
 }
