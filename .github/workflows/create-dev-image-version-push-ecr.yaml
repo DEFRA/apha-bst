@@ -12,11 +12,14 @@ permissions: {}   # disables all default permissions
 jobs:
   # 1️⃣ First run the dev build & sonar analysis
   build-and-sonar:
-    uses: ./.github/workflows/dev-build-and-sonar-template.yaml
+    uses: ./.github/workflows/build-and-sonar-analyze-template.yaml
     with:
-      repository: apha/bst
+      dotnet_application_solution_name: Apha.BST
     secrets: 
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+    permissions:
+      id-token: write
+      contents: read  
 
   # 2️⃣ Then push the image after build succeeds  
   push-image:
@@ -24,8 +27,14 @@ jobs:
     uses: ./.github/workflows/push-image-template.yaml
     with:
       IMAGE_VERSION: ${{ github.event.inputs.DEVIMAGEVERSION }}
+      repository: apha/bst
+      dev_image_version_release: true
     secrets:  
       AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
       AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
       AWS_ENV_ROLE: ${{ secrets.AWS_ENV_ROLE }}
+    permissions:
+      id-token: write
+      contents: write
+  
         

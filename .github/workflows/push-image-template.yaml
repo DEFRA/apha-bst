@@ -3,8 +3,17 @@ on:
   workflow_call:
     inputs:
       IMAGE_VERSION:
-        required: true
+        required: false
         type: string
+      repository:
+         description: "docker repository name"
+         required: true
+         type: string
+      dev_image_version_release:
+        description: "dev image version release"
+        required: true
+        type: boolean
+  
     secrets:
       AWS_ENV_REGION:
         required: true
@@ -14,7 +23,7 @@ on:
         required: true
 
 env:
-  REPOSITORY: apha/bst
+  REPOSITORY: ${{ inputs.repository }}
 jobs:
   push-image:
     name: Push Docker Image
@@ -25,23 +34,55 @@ jobs:
       contents: write
     
     steps:
-      - name: Compose image tag
-        id: imgtag
-        shell: pwsh
-        run: |
-          $imageTag = "v${{ github.event.inputs.DEVIMAGEVERSION }}"
-          "image_tag=$imageTag" >> $env:GITHUB_OUTPUT
-
-      - name: Print Docker image tag
-        shell: pwsh
-        run: |
-          echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"    
 
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
+
+      - name: Check last commit message for 'ecrpush'
+        id: check_commit
+        shell: bash
+        if: ${{ inputs.dev_image_version_release == false }}
+        run: |
+          COMMIT_MSG="$(git log -1 --pretty=%B)"
+          echo "Last commit message: $COMMIT_MSG"
+          if [[ "$COMMIT_MSG" == *"ecrpush"* ]]; then
+            echo "Commit message contains 'ecrpush'. Proceeding with ECR push..."
+          else
+            echo "Skipping ECR push because commit message does not contain 'ecrpush'."
+            exit 78
+          fi
+
+      - name: Compose image tag
+        id: imgtag
+        shell: bash
+        run: |
+          if [ "${{ inputs.dev_image_version_release }}" = "false" ]; then
+             # Fetch tags
+            git fetch --tags
+            # get latest tag
+            latest_tag=$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo "")
+
+            # Default if no tag found
+            if [ -z "$latest_tag" ]; then
+              latest_tag="v0.0.0"
+            fi
+            echo "Latest Git Tag: $latest_tag"
+            sha="${GITHUB_SHA::8}"
+            echo "sha = $sha"
+            image_tag="${latest_tag}-dev-${sha}"
+            echo "image_tag = $image_tag"
+          else
+            image_tag="v${{ github.event.inputs.DEVIMAGEVERSION }}"
+          fi
+          echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
+      - name: Print Docker image tag
+        shell: bash
+        run: |
+          echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"
+      
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -146,6 +187,7 @@ jobs:
 
 
       - name: Create and push git tag
+        if: ${{ inputs.dev_image_version_release == true }}
         env:
           IMAGE_TAG: ${{ steps.imgtag.outputs.image_tag }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
