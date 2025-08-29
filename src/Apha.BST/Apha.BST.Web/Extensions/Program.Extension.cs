@@ -41,8 +41,6 @@ namespace Apha.BST.Web.Extensions
 
         public static void ConfigureMiddleware(this WebApplication app)
         {
-            var env = app.Environment;
-
             // Health checks endpoint
             app.MapHealthChecks("/health", new HealthCheckOptions
             {

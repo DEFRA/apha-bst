@@ -24,6 +24,7 @@ namespace Apha.BST.Web.Controllers
         private readonly IStaticDropdownService _staticDropdownService;
         private const string traineeAll = "All";
         private const string trainingMessage = "Message";
+        private const string status = "Save failed: ";
 
         public TrainingController(ILogService logService, ITrainingService trainingService, IMapper mapper, IStaticDropdownService staticDropdownService, IUserDataService userDataService)
         {
@@ -94,12 +95,12 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: "+sqlEx.Message.ToString();
+                TempData[trainingMessage] = status + sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: " + ex.Message.ToString();
+                TempData[trainingMessage] = status + ex.Message.ToString();
             }
 
             return RedirectToAction(nameof(AddTraining));
@@ -201,12 +202,12 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: "+ sqlEx.Message.ToString();
+                TempData[trainingMessage] = status + sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed: " + ex.Message.ToString();
+                TempData[trainingMessage] = status + ex.Message.ToString();
             }
 
             // Repopulate dropdown with updated selected values

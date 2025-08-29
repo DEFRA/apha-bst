@@ -17,7 +17,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
 {
     public class ErrorControllerTests
     {
-        private ErrorController SetupController()
+        private static ErrorController SetupController()
         {
             var services = new ServiceCollection();
 
