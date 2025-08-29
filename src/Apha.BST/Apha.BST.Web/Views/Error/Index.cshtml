@@ -1,7 +1,32 @@
-﻿@{
+﻿@model ErrorViewModel
+@{
     Layout = null;
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "Oops! Something went wrong";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+   
+</head>
+<body>
+    <div id="pageFrame">
+
+
+        <div id="content">
+            <h1>Oops! Something went wrong.</h1>
+            <h2>Error :  @Model.ErrorMessage</h2>
+            <h3>Please contact the system admistrator and inform them of your problem</h3>
+        </div>
+      
+        <div id="footer">
+            <div id="innerFooter">
+                <label for="footer" id="lblCopyright" class="bottomnavtext">Copyright © 2011 AHVLA</label>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

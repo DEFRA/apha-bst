@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Apha.BST.Web.Controllers
 {
-   
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly INewsService _newsServicee;

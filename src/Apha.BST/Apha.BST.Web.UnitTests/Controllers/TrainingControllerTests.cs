@@ -94,7 +94,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.NotNull(model.Persons);
             Assert.NotNull(model.TrainingTypesList);
             Assert.NotNull(model.TrainingAnimalList);
-            Assert.Equal(DateTime.Today, model.TrainingDateTime);
+           
         }
 
         [Fact]
@@ -175,8 +175,9 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal(nameof(TrainingController.AddTraining), redirectResult.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["Message"]);
+            Assert.Equal("Save failed: Test exception", _controller.TempData["Message"]);
         }
+        
         [Fact]
         public async Task AddTraining_WhenSqlExceptionThrown_LogsSqlError()
         {
@@ -202,7 +203,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["Message"]);
+            Assert.Equal("Save failed: Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["Message"]);
         }
         [Fact]
         public async Task AddTraining_WhenGeneralExceptionThrown_LogsError()
@@ -229,8 +230,9 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
-            Assert.Equal("Save failed", _controller.TempData["Message"]);
+            Assert.Equal("Save failed: Test general exception", _controller.TempData["Message"]);
         }
+        
 
 
         [Fact]
@@ -306,7 +308,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("ViewTraining", redirectResult.ActionName);
-            Assert.Equal("Invalid data provided for deletion.", _controller.TempData["Message"]);
+            Assert.Equal("Invalid data provided.", _controller.TempData["Message"]);
         }
 
         [Fact]
@@ -346,19 +348,56 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = viewModel.TrainingDateTimeOld
             };
 
+            // Mock all required services to prevent null exceptions
+            var persons = new List<TraineeDto>
+    {
+        new TraineeDto { PersonId = 1, Person = "Person 1" },
+        new TraineeDto { PersonId = 2, Person = "Person 2" }
+    };
+            var trainingTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Basic", Text = "Basic Training" }
+    };
+            var trainingAnimals = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Cattle", Text = "Cattle" }
+    };
+
+            _trainingService.GetTraineesAsync().Returns(persons);
+            _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
+            _staticDropdownService.GetTrainingAnimal().Returns(trainingAnimals);
             _mapper.Map<EditTrainingDto>(viewModel).Returns(editTrainingDto);
             _trainingService.UpdateTrainingAsync(editTrainingDto).Returns("Training updated successfully");
+
+            // Ensure ModelState is valid
+            _controller.ModelState.Clear();
 
             // Act
             var result = await _controller.EditTraining(viewModel);
 
             // Assert
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewTraining", redirectResult.ActionName);
+            // The controller returns a View, not a redirect
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+
+            // Check that the service was called for update
+            await _trainingService.Received(1).UpdateTrainingAsync(editTrainingDto);
+
+            // Check that the success message was set to ViewBag
             Assert.Equal("Training updated successfully", _controller.TempData["Message"]);
-            Assert.NotNull(redirectResult.RouteValues);
-            Assert.True(redirectResult.RouteValues.ContainsKey("selectedTraineeId"));
-            Assert.Equal(viewModel.TraineeIdOld, redirectResult.RouteValues["selectedTraineeId"]);
+
+            // Verify dropdown lists are populated
+            Assert.NotNull(returnedViewModel.TraineeList);
+            Assert.NotNull(returnedViewModel.TrainerList);
+            Assert.NotNull(returnedViewModel.TrainingTypesList);
+            Assert.NotNull(returnedViewModel.TrainingAnimalList);
+
+            // Verify that the "Old" values were updated after successful save
+            Assert.Equal(viewModel.TraineeId, returnedViewModel.TraineeIdOld);
+            Assert.Equal(viewModel.TrainerId, returnedViewModel.TrainerIdOld);
+            Assert.Equal(viewModel.TrainingAnimal, returnedViewModel.TrainingAnimalOld);
+            Assert.Equal(viewModel.TrainingType, returnedViewModel.TrainingTypeOld);
+            Assert.Equal(viewModel.TrainingDateTime, returnedViewModel.TrainingDateTimeOld);
         }
 
         [Fact]
@@ -385,28 +424,45 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = DateTime.Now
             };
 
-            var editTrainingDto = new EditTrainingDto
-            {
-                TraineeId = viewModel.TraineeId,
-                TrainerId = viewModel.TrainerId,
-                TrainingType = viewModel.TrainingType,
-                TrainingAnimal = viewModel.TrainingAnimal,
-                TrainingDateTime = viewModel.TrainingDateTime,
-                TraineeIdOld = viewModel.TraineeIdOld,
-                TrainerIdOld = viewModel.TrainerIdOld,
-                TrainingAnimalOld = viewModel.TrainingAnimalOld,
-                TrainingDateTimeOld = viewModel.TrainingDateTimeOld
-            };
+            // Mock the dropdown data
+            var persons = new List<TraineeDto>
+    {
+        new TraineeDto { PersonId = 1, Person = "Person 1" },
+        new TraineeDto { PersonId = 2, Person = "Person 2" }
+    };
+            var trainingTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Basic", Text = "Basic Training" }
+    };
+            var trainingAnimals = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Cattle", Text = "Cattle" }
+    };
 
-            _mapper.Map<EditTrainingDto>(viewModel).Returns(editTrainingDto);
+            _trainingService.GetTraineesAsync().Returns(persons);
+            _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
+            _staticDropdownService.GetTrainingAnimal().Returns(trainingAnimals);
 
             // Act
             var result = await _controller.EditTraining(viewModel);
 
             // Assert
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewTraining", redirectResult.ActionName);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+
             await _trainingService.DidNotReceive().UpdateTrainingAsync(Arg.Any<EditTrainingDto>());
+
+            // Verify dropdown lists are populated
+            Assert.NotNull(returnedViewModel.TraineeList);
+            Assert.NotNull(returnedViewModel.TrainerList);
+            Assert.NotNull(returnedViewModel.TrainingTypesList);
+            Assert.NotNull(returnedViewModel.TrainingAnimalList);
+
+            // Verify dropdown lists contain expected data
+            Assert.Equal(2, returnedViewModel.TraineeList.Count());
+            Assert.Equal(2, returnedViewModel.TrainerList.Count());
+            Assert.Single(returnedViewModel.TrainingTypesList);
+            Assert.Single(returnedViewModel.TrainingAnimalList);
         }
 
         [Fact]
@@ -559,13 +615,39 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = viewModel.TrainingDateTimeOld
             };
 
+            // Mock all services to prevent ArgumentNullException
+            var persons = new List<TraineeDto>
+    {
+        new TraineeDto { PersonId = 1, Person = "Person 1" },
+        new TraineeDto { PersonId = 2, Person = "Person 2" }
+    };
+            var trainingTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Basic", Text = "Basic Training" }
+    };
+            var trainingAnimals = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Cattle", Text = "Cattle" }
+    };
+
+            _trainingService.GetTraineesAsync().Returns(persons);
+            _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
+            _staticDropdownService.GetTrainingAnimal().Returns(trainingAnimals);
             _mapper.Map<EditTrainingDto>(viewModel).Returns(editTrainingDto);
+            _trainingService.UpdateTrainingAsync(editTrainingDto).Returns("Training updated successfully");
+
+            // Ensure ModelState is valid
+            _controller.ModelState.Clear();
 
             // Act
-            await _controller.EditTraining(viewModel);
+            var result = await _controller.EditTraining(viewModel);
 
             // Assert
             await _trainingService.Received(1).UpdateTrainingAsync(editTrainingDto);
+
+            // Verify the controller returns a view (not redirect based on your controller code)
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.NotNull(viewResult.Model);
         }
 
         [Fact]
@@ -593,7 +675,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("ViewTraining", redirectResult.ActionName);
-            Assert.Equal("Invalid data provided for deletion.", _controller.TempData["Message"]);
+            Assert.Equal("Invalid data provided.", _controller.TempData["Message"]);
         }
 
 
@@ -645,10 +727,9 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task EditTraining_ModelStateValid_UpdateSuccessful_RedirectsToViewTraining()
+        public async Task EditTraining_ModelStateValid_UpdateSuccessful_StaysOnEditPage()
         {
             // Arrange
-            // Set the action name for this specific test
             var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
             controllerActionDescriptor.ActionName = "EditTraining";
             bool canEdit = true;
@@ -681,18 +762,46 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = viewModel.TrainingDateTimeOld
             };
 
+            // Mock the dropdown data
+            var persons = new List<TraineeDto>
+    {
+        new TraineeDto { PersonId = 1, Person = "Person 1" },
+        new TraineeDto { PersonId = 2, Person = "Person 2" }
+    };
+            var trainingTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Basic", Text = "Basic Training" }
+    };
+            var trainingAnimals = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Cattle", Text = "Cattle" }
+    };
+
             _mapper.Map<EditTrainingDto>(viewModel).Returns(editTrainingDto);
             _trainingService.UpdateTrainingAsync(editTrainingDto).Returns("Update successful");
+            _trainingService.GetTraineesAsync().Returns(persons);
+            _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
+            _staticDropdownService.GetTrainingAnimal().Returns(trainingAnimals);
 
             // Act
             var result = await _controller.EditTraining(viewModel);
 
             // Assert
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewTraining", redirectResult.ActionName!);
-            Assert.NotNull(redirectResult.RouteValues);
-            Assert.True(redirectResult.RouteValues!.ContainsKey("selectedTraineeId"));
-            Assert.Equal(viewModel.TraineeIdOld, redirectResult.RouteValues["selectedTraineeId"]);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+
+            // Verify the old values were updated after successful update
+            Assert.Equal(viewModel.TraineeId, returnedViewModel.TraineeIdOld);
+            Assert.Equal(viewModel.TrainerId, returnedViewModel.TrainerIdOld);
+            Assert.Equal(viewModel.TrainingAnimal, returnedViewModel.TrainingAnimalOld);
+            Assert.Equal(viewModel.TrainingType, returnedViewModel.TrainingTypeOld);
+            Assert.Equal(viewModel.TrainingDateTime, returnedViewModel.TrainingDateTimeOld);
+
+            // Verify dropdown lists are populated
+            Assert.NotNull(returnedViewModel.TraineeList);
+            Assert.NotNull(returnedViewModel.TrainerList);
+            Assert.NotNull(returnedViewModel.TrainingTypesList);
+            Assert.NotNull(returnedViewModel.TrainingAnimalList);
         }
         [Fact]
         public async Task EditTraining_WhenSqlExceptionThrown_LogsSqlError()
@@ -717,6 +826,21 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = DateTime.Now
             };
 
+            // Mock the dropdown data
+            var persons = new List<TraineeDto>
+    {
+        new TraineeDto { PersonId = 1, Person = "Person 1" },
+        new TraineeDto { PersonId = 2, Person = "Person 2" }
+    };
+            var trainingTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Basic", Text = "Basic Training" }
+    };
+            var trainingAnimals = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Cattle", Text = "Cattle" }
+    };
+
             var sqlException = CreateSqlException();
             _mapper.Map<EditTrainingDto>(viewModel).Returns(new EditTrainingDto
             {
@@ -731,14 +855,23 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = viewModel.TrainingDateTimeOld
             });
             _trainingService.UpdateTrainingAsync(Arg.Any<EditTrainingDto>()).Throws(sqlException);
+            _trainingService.GetTraineesAsync().Returns(persons);
+            _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
+            _staticDropdownService.GetTrainingAnimal().Returns(trainingAnimals);
 
             // Act
-            await _controller.EditTraining(viewModel);
+            var result = await _controller.EditTraining(viewModel);
 
             // Assert
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
-            Assert.Equal("Error updating training", _controller.TempData["Message"]);
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+
+            // Verify error message is in ViewBag instead of TempData
+            Assert.Equal("Save failed: Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["Message"]);
         }
+
         [Fact]
         public async Task EditTraining_WhenGeneralExceptionThrown_LogsError()
         {
@@ -762,6 +895,21 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = DateTime.Now
             };
 
+            // Mock the dropdown data
+            var persons = new List<TraineeDto>
+    {
+        new TraineeDto { PersonId = 1, Person = "Person 1" },
+        new TraineeDto { PersonId = 2, Person = "Person 2" }
+    };
+            var trainingTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Basic", Text = "Basic Training" }
+    };
+            var trainingAnimals = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Cattle", Text = "Cattle" }
+    };
+
             var generalException = new Exception("Test general exception");
             _mapper.Map<EditTrainingDto>(viewModel).Returns(new EditTrainingDto
             {
@@ -776,14 +924,21 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 TrainingDateTimeOld = viewModel.TrainingDateTimeOld
             });
             _trainingService.UpdateTrainingAsync(Arg.Any<EditTrainingDto>()).Throws(generalException);
+            _trainingService.GetTraineesAsync().Returns(persons);
+            _staticDropdownService.GetTrainingTypes().Returns(trainingTypes);
+            _staticDropdownService.GetTrainingAnimal().Returns(trainingAnimals);
 
             // Act
-            await _controller.EditTraining(viewModel);
+            var result = await _controller.EditTraining(viewModel);
 
             // Assert
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
-            Assert.Equal("Error updating training", _controller.TempData["Message"]);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<EditTrainingViewModel>(viewResult.Model);
+
+
+            Assert.Equal("Save failed: Test general exception", _controller.TempData["Message"]);
         }
 
         [Fact]
@@ -1162,7 +1317,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert            
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
-            Assert.Equal("Delete failed", _controller.TempData["Message"]);
+            Assert.Equal("Delete failed: "+ "Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["Message"]);
         }
         [Fact]
         public async Task DeleteTraining_WhenGeneralExceptionThrown_LogsError()
@@ -1186,7 +1341,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
-            Assert.Equal("Delete failed", _controller.TempData["Message"]);
+            Assert.Equal("Delete failed: " + "Test general exception", _controller.TempData["Message"]);
         }
 
     }

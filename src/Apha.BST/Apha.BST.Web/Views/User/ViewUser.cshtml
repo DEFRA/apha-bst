@@ -61,13 +61,13 @@
                             <td>@user.UserLevelName</td>
                             <td>
                                 <a asp-action="EditUser" asp-controller="User" asp-route-userId="@user.UserId"
-                                   class="btn btn-link p-0 m-0 fw-bold custom-underline-hover">Alter record</a>
+                                   class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline">Alter record</a>
                             </td>
                             <td>
                                 <form asp-action="DeleteUser" method="post" style="display: inline;">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="userId" value="@user.UserId" />
-                                    <button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" disabled="@isDisabled">Delete</button>
+                                    <button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline" disabled="@isDisabled">Delete</button>
                                 </form>
                             </td>
                         </tr>

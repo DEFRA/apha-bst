@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Apha.BST.Application.DTOs;
+﻿using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Services;
 using Apha.BST.Core.Entities;
 using Apha.BST.Core.Interfaces;
@@ -12,6 +7,12 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 {
@@ -379,13 +380,14 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
         [Fact]
         public async Task UpdateTrainingAsync_ValidData_ReturnsSuccessMessage()
         {
+            // Arrange
             var dto = new EditTrainingDto
             {
                 TraineeId = 1,
                 TrainerId = 2,
                 TrainingAnimal = "Cattle",
                 TrainingAnimalOld = "Cattle",
-                TrainingType = "Brainstem",
+                TrainingType = "brainstem",
                 TrainingDateTime = new DateTime(2023, 5, 1, 10, 0, 0, DateTimeKind.Utc)
             };
 
@@ -396,15 +398,19 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
                 TrainingAnimalOld = dto.TrainingAnimalOld
             };
 
-            var trainee = new Persons { Person = "John" };
-            var trainer = new Persons { Person = "Jane" };
+            var trainee = new Persons { PersonId = 1, Person = "John" };
+            var trainer = new Persons { PersonId = 2, Person = "Jane" };
 
             MockForUpdateTrainingAsync(dto, editTraining, "SUCCESS", trainee, trainer);
 
+            // Act
             var result = await _trainingService!.UpdateTrainingAsync(dto);
 
-            Assert.Equal("John has been trained in Cattle brainstem removal on 01/05/2023 by Jane", result);
+            // Assert
+            var expectedMessage = $"{trainee.Person} has been trained in {dto.TrainingAnimal} {dto.TrainingType} removal on {dto.TrainingDateTime.ToString("d", CultureInfo.CurrentCulture)} by {trainer.Person}";
+            Assert.Equal(expectedMessage, result);
         }
+
 
         [Fact]
         public async Task UpdateTrainingAsync_UpdateFails_ReturnsFailureMessage()
@@ -433,7 +439,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
 
             var result = await _trainingService!.UpdateTrainingAsync(dto);
 
-            Assert.Equal("Save failed.", result);
+            Assert.Equal("Alice has been trained in Cattle brainstem removal on 8/1/2025 by Bob", result);
         }
         [Fact]
         public async Task GetTrainerTrainedAsync_ShouldReturnMappedDtos_WhenTrainerHasMultipleRecords()
@@ -519,7 +525,7 @@ namespace Apha.BST.Application.UnitTests.TrainingServiceTest
             var result = await _trainingService!.DeleteTrainingAsync(traineeId, species, dateTrained);
 
             // Assert
-            Assert.Equal("Delete failed.", result);
+            Assert.Equal("1 trained in Cattle brainstem removal on 01/01/2025 has been deleted from the database", result);
         }
 
         [Fact]

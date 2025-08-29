@@ -24,6 +24,7 @@ namespace Apha.BST.Web.Controllers
         private readonly IStaticDropdownService _staticDropdownService;
         private const string traineeAll = "All";
         private const string trainingMessage = "Message";
+        private const string status = "Save failed: ";
 
         public TrainingController(ILogService logService, ITrainingService trainingService, IMapper mapper, IStaticDropdownService staticDropdownService, IUserDataService userDataService)
         {
@@ -56,7 +57,7 @@ namespace Apha.BST.Web.Controllers
             viewModel.TrainingAnimalList = _staticDropdownService.GetTrainingAnimal()
                .Select(t => new SelectListItem { Value = t.Value, Text = t.Text })
                .ToList();
-            viewModel.TrainingDateTime = DateTime.Today; // Set default date to now
+            
             return View(viewModel);
         }
 
@@ -94,12 +95,12 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed";
+                TempData[trainingMessage] = status + sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Save failed";
+                TempData[trainingMessage] = status + ex.Message.ToString();
             }
 
             return RedirectToAction(nameof(AddTraining));
@@ -116,7 +117,7 @@ namespace Apha.BST.Web.Controllers
             var dto = await _trainingService.GetTrainingByKeysAsync(traineeId, trainerId, species, dateTrained, trainingType);
             if (dto == null)
             {
-                TempData[trainingMessage] = "Invalid data provided for deletion.";
+                TempData[trainingMessage] = "Invalid data provided.";
                 return RedirectToAction(nameof(ViewTraining));
             }
             var persons = await _trainingService.GetTraineesAsync();
@@ -156,6 +157,7 @@ namespace Apha.BST.Web.Controllers
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             viewModel.CanEdit = canEdit;
+
             if (!ModelState.IsValid)
             {
                 var persons = await _trainingService.GetTraineesAsync();
@@ -184,6 +186,15 @@ namespace Apha.BST.Web.Controllers
                 if (canEdit)
                 {
                     var message = await _trainingService.UpdateTrainingAsync(editTraining);
+
+                    // Update the old values with current values
+                  
+                    viewModel.TrainerIdOld = viewModel.TrainerId;
+                    viewModel.TrainingAnimalOld = viewModel.TrainingAnimal;
+                    viewModel.TrainingTypeOld = viewModel.TrainingType;
+                    viewModel.TrainingDateTimeOld = viewModel.TrainingDateTime;
+
+                   
                     TempData[trainingMessage] = message;
                 }
             }
@@ -191,15 +202,32 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Error updating training";
+                TempData[trainingMessage] = status + sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Error updating training";
+                TempData[trainingMessage] = status + ex.Message.ToString();
             }
 
-            return RedirectToAction("ViewTraining", new { selectedTraineeId = viewModel.TraineeIdOld });
+            // Repopulate dropdown with updated selected values
+            var person = await _trainingService.GetTraineesAsync();
+
+            viewModel.TraineeList = person
+                .Select(p => new SelectListItem { Value = p.PersonId.ToString(), Text = p.Person, Selected = p.PersonId == viewModel.TraineeId })
+                .ToList();
+            viewModel.TrainerList = person
+               .Select(p => new SelectListItem { Value = p.PersonId.ToString(), Text = p.Person, Selected = p.PersonId == viewModel.TrainerId })
+               .ToList();
+            viewModel.TrainingTypesList = _staticDropdownService.GetTrainingTypes()
+              .Select(t => new SelectListItem { Value = t.Value, Text = t.Text, Selected = t.Value == viewModel.TrainingType })
+              .ToList();
+            viewModel.TrainingAnimalList = _staticDropdownService.GetTrainingAnimal()
+               .Select(t => new SelectListItem { Value = t.Value, Text = t.Text, Selected = t.Value == viewModel.TrainingAnimal })
+               .ToList();
+
+        
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -358,12 +386,12 @@ namespace Apha.BST.Web.Controllers
             {
                 // Log SQL Exception with identifier (CloudWatch will receive this)
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName); 
-                TempData[trainingMessage] = "Delete failed";
+                TempData[trainingMessage] = "Delete failed: " + sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[trainingMessage] = "Delete failed";
+                TempData[trainingMessage] = "Delete failed: "+ex.Message.ToString();
             }
 
             return RedirectToAction(nameof(ViewTraining), new { selectedTraineeId = traineeId });

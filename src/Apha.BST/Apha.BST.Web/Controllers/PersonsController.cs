@@ -64,7 +64,7 @@ namespace Apha.BST.Web.Controllers
         public async Task<IActionResult> DeletePerson(int personId)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
-            string failmessage = "Delete failed";
+            string failmessage = "Delete failed: ";
             if (!ModelState.IsValid)
             {
                 return RedirectToAction(nameof(ViewPerson)); // Redirect if ModelState is invalid
@@ -81,12 +81,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[personMessage] = failmessage;
+                TempData[personMessage] = failmessage+sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[personMessage] = failmessage;
+                TempData[personMessage] = failmessage+ex.Message.ToString();
             }
 
             return RedirectToAction("ViewPerson");
@@ -131,12 +131,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);               
-                TempData[personMessage] = "Save failed";
+                TempData[personMessage] = "Save failed: "+sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);               
-                TempData[personMessage] = "Save failed";
+                TempData[personMessage] = "Save failed: "+ex.Message.ToString();
             }
            
             return RedirectToAction(nameof(AddPerson));
@@ -199,12 +199,12 @@ namespace Apha.BST.Web.Controllers
             catch (SqlException sqlEx)
             {
                 _logService.LogSqlException(sqlEx, ControllerContext.ActionDescriptor.ActionName);
-                TempData[personMessage] = "Update failed";
+                TempData[personMessage] = "Update failed: "+sqlEx.Message.ToString();
             }
             catch (Exception ex)
             {
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
-                TempData[personMessage] = "Update failed";
+                TempData[personMessage] = "Update failed: "+ex.Message.ToString();
             }
 
             return RedirectToAction(nameof(EditPerson));
