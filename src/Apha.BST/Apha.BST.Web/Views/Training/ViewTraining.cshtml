@@ -43,7 +43,7 @@
 
 	<div class="w-100 d-flex justify-content-start">
 		<p class="w-30 me-5">Details</p>
-		@if (!string.IsNullOrEmpty(Model.SelectedTraineeId))
+		@if (!string.IsNullOrEmpty(Model.SelectedTraineeId) && Model.FilteredTrainings != null && Model.FilteredTrainings.Any())
 		{
 			<table id="siteTable" class="w-60 mx-5 grid-table">
 				<thead>
@@ -60,35 +60,33 @@
 					</tr>
 				</thead>
 				<tbody>
-					@if (Model.FilteredTrainings != null)
+					@foreach (var training in Model.FilteredTrainings)
 					{
-						@foreach (var training in Model.FilteredTrainings)
-						{
-							<tr>
-								<td>@training.Person</td>
-								<td>@training.TrainingAnimal</td>
-								<td>@training.Name</td>
-								<td>@training.TrainingDateTime.ToString()</td>
-								<td>@training.PersonID</td>
-								<td>@training.TrainingType</td>
-								<td>
-									@if (Model.CanEdit)
-									{
-										<a asp-action="EditTraining"
-										   asp-controller="Training"
-										   asp-route-traineeId="@training.TraineeId"
-										   asp-route-trainerId="@training.PersonID"
-										   asp-route-species="@training.TrainingAnimal"
-										   asp-route-dateTrained="@training.TrainingDateTime.ToString("yyyy-MM-dd")"
-										   asp-route-trainingType="@training.TrainingType"
-										   class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">
-											Edit
-										</a>
-									}
-									else
-									{
-										<a href="#" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">Edit</a>
-									}
+						<tr>
+							<td>@training.Person</td>
+							<td>@training.TrainingAnimal</td>
+							<td>@training.Name</td>
+							<td class="w-25">@training.TrainingDateTime.ToString()</td>
+							<td>@training.PersonID</td>
+							<td>@training.TrainingType</td>
+							<td>
+								@if (Model.CanEdit)
+								{
+									<a asp-action="EditTraining"
+									   asp-controller="Training"
+									   asp-route-traineeId="@training.TraineeId"
+									   asp-route-trainerId="@training.PersonID"
+									   asp-route-species="@training.TrainingAnimal"
+									   asp-route-dateTrained="@training.TrainingDateTime.ToString("yyyy-MM-dd")"
+									   asp-route-trainingType="@training.TrainingType"
+									   class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">
+										Edit
+									</a>
+								}
+								else
+								{
+									<a href="#" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">Edit</a>
+								}
 								<td>
 									<form asp-action="DeleteTraining" method="post" style="display: inline;">
 										@Html.AntiForgeryToken()
@@ -101,8 +99,9 @@
 
 
 							</tr>
-						}
+						
 					}
+					
 				</tbody>
 
 			</table>
