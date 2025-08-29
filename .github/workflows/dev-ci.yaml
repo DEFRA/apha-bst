@@ -24,7 +24,7 @@ jobs:
     uses: ./.github/workflows/push-image-template.yaml
     with:
       repository: apha/bst
-      dev_image_version_release: true
+      dev_image_version_release: false
     secrets:  
       AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
       AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}

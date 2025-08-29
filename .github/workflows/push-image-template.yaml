@@ -44,7 +44,7 @@ jobs:
         id: imgtag
         shell: bash
         run: |
-          if [ "${{ inputs.dev_image_version_release }}" = "true" ]; then
+          if [ "${{ inputs.dev_image_version_release }}" = "false" ]; then
              # Fetch tags
             git fetch --tags
             # get latest tag
