@@ -49,10 +49,10 @@ jobs:
           COMMIT_MSG="$(git log -1 --pretty=%B)"
           echo "Last commit message: $COMMIT_MSG"
           if [[ "$COMMIT_MSG" == *"ecrpush"* ]]; then
-            echo "image will be pushed in ecr..."
+            echo "Commit message contains 'ecrpush'. Proceeding with ECR push..."
           else
-            echo "skipping ecr push..."
-            exit 0
+            echo "Skipping ECR push because commit message does not contain 'ecrpush'."
+            exit 78
           fi
 
       - name: Compose image tag
