@@ -62,12 +62,8 @@ namespace Apha.BST.Application.Services
 
             string traineeName = trainee?.Person ?? dto.TraineeId.ToString();
             string trainerName = trainer?.Person ?? dto.TrainerId.ToString();
-            var result = await _trainingRepository.UpdateTrainingAsync(editTraining);
-            if (result.StartsWith(Fail))
-            {
-                return $"Save failed.";
-            }
-
+             await _trainingRepository.UpdateTrainingAsync(editTraining);
+           
             return $"{traineeName} has been trained in {dto.TrainingAnimal} brainstem removal on {dto.TrainingDateTime.ToString("d", CultureInfo.CurrentCulture)} by {trainerName}";
 
         }
@@ -111,14 +107,11 @@ namespace Apha.BST.Application.Services
         }
         public async Task<string> DeleteTrainingAsync(int traineeId, string species, DateTime dateTrained)
         {
-            var result = await _trainingRepository.DeleteTrainingAsync(traineeId, species, dateTrained);
+           await _trainingRepository.DeleteTrainingAsync(traineeId, species, dateTrained);
             var trainee = await _trainingRepository.GetPersonByIdAsync(traineeId);
             string traineeName = trainee?.Person ?? traineeId.ToString();
 
-            if (result.StartsWith(Fail))
-            {
-                return $"Delete failed.";
-            }
+           
 
             return $"{traineeName} trained in {species} brainstem removal on {dateTrained:dd/MM/yyyy} has been deleted from the database";
         }

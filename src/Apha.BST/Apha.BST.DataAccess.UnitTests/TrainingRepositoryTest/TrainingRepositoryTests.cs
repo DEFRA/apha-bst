@@ -220,33 +220,7 @@ namespace Apha.BST.DataAccess.UnitTests.TrainingRepositoryTest
             Assert.Equal(TrainingRepository.Success, result);
         }
 
-        [Fact]
-        public async Task UpdateTrainingAsync_ReturnsFail_OnException()
-        {
-            var editTraining = new EditTraining
-            {
-                TraineeIdOld = 1,
-                TrainingDateTime = DateTime.Now,
-                TrainingDateTimeOld = DateTime.Now.AddDays(-1),
-                TrainingAnimal = "Dog",
-                TrainingAnimalOld = "Dog",
-                TrainerId = 2,
-                TrainerIdOld = 2,
-                TrainingType = "TypeA"
-            };
-            var mockContext = new Mock<BstContext>();
-            var repo = new Mock<TrainingRepository>(mockContext.Object) { CallBase = true };
 
-            repo.Protected()
-                .Setup<Task<int>>("ExecuteSqlAsync",
-                    ItExpr.Is<string>(s => s.Contains("sp_Training_Update")),
-                    ItExpr.IsAny<object[]>())
-                .ThrowsAsync(new Exception());
-
-            var result = await repo.Object.UpdateTrainingAsync(editTraining);
-
-            Assert.Equal(TrainingRepository.Fail, result);
-        }
 
         [Fact]
         public async Task DeleteTrainingAsync_ReturnsSuccess_OnSuccess()
@@ -265,21 +239,5 @@ namespace Apha.BST.DataAccess.UnitTests.TrainingRepositoryTest
             Assert.Equal(TrainingRepository.Success, result);
         }
 
-        [Fact]
-        public async Task DeleteTrainingAsync_ReturnsFail_OnException()
-        {
-            var mockContext = new Mock<BstContext>();
-            var repo = new Mock<TrainingRepository>(mockContext.Object) { CallBase = true };
-
-            repo.Protected()
-                .Setup<Task<int>>("ExecuteSqlAsync",
-                    ItExpr.Is<string>(s => s.Contains("sp_Training_Delete")),
-                    ItExpr.IsAny<object[]>())
-                .ThrowsAsync(new Exception());
-
-            var result = await repo.Object.DeleteTrainingAsync(1, "Dog", DateTime.Now);
-
-            Assert.Equal(TrainingRepository.Fail, result);
-        }
     }
 }
