@@ -34,6 +34,12 @@ jobs:
       contents: write
     
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
       - name: Compose image tag
         id: imgtag
         shell: bash
@@ -62,11 +68,6 @@ jobs:
         run: |
           echo "Image Tag: ${{ steps.imgtag.outputs.image_tag }}"
       
-      # - name: Checkout code
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      #     ref: ${{ github.ref_name }}
       # - name: Configure AWS Credentials
       #   uses: aws-actions/configure-aws-credentials@v4
       #   with:
