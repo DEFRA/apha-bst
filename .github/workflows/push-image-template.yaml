@@ -34,6 +34,13 @@ jobs:
       contents: write
     
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
       - name: Check last commit message for 'ecrpush'
         id: check_commit
         shell: bash
@@ -47,12 +54,6 @@ jobs:
             echo "skipping ecr push..."
             exit 0
           fi
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.ref_name }}
 
       - name: Compose image tag
         id: imgtag
