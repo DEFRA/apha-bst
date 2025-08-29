@@ -12,7 +12,7 @@ on:
       dev_image_version_release:
         description: "dev image version release"
         required: true
-        type: bool
+        type: boolean
   
     secrets:
       AWS_ENV_REGION:
