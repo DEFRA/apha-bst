@@ -52,12 +52,12 @@ jobs:
 
             # Default if no tag found
             if [ -z "$latest_tag" ]; then
-              latest_tag="0.0.0"
+              latest_tag="v0.0.0"
             fi
             echo "Latest Git Tag: $latest_tag"
             sha="${GITHUB_SHA::8}"
             echo "sha = $sha"
-            image_tag="v${latest_tag}-dev-${sha}"
+            image_tag="${latest_tag}-dev-${sha}"
             echo "image_tag = $image_tag"
           else
             image_tag="v${{ github.event.inputs.DEVIMAGEVERSION }}"
