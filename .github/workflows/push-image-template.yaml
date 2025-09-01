@@ -13,6 +13,10 @@ on:
         description: "dev image version release"
         required: true
         type: boolean
+      environment:  
+        description: "Optional environment name"
+        required: false
+        type: string  
   
     secrets:
       AWS_ENV_REGION:
@@ -28,7 +32,7 @@ jobs:
   push-image:
     name: Push Docker Image
     runs-on: ubuntu-latest
-    environment: DEV   # 👈 restrict this job to DEV environment
+    environment: ${{ inputs.environment || '' }} 
     permissions:
       id-token: write
       contents: write
@@ -40,20 +44,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
-
-      - name: Check last commit message for 'ecrpush'
-        id: check_commit
-        shell: bash
-        if: ${{ inputs.dev_image_version_release == false }}
-        run: |
-          COMMIT_MSG="$(git log -1 --pretty=%B)"
-          echo "Last commit message: $COMMIT_MSG"
-          if [[ "$COMMIT_MSG" == *"ecrpush"* ]]; then
-            echo "Commit message contains 'ecrpush'. Proceeding with ECR push..."
-          else
-            echo "Skipping ECR push because commit message does not contain 'ecrpush'."
-            exit 78
-          fi
 
       - name: Compose image tag
         id: imgtag
