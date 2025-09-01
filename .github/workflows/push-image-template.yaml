@@ -17,6 +17,10 @@ on:
         description: "Optional environment name"
         required: false
         type: string  
+      tag_short_description:   
+        description: "Short description for the git tag"
+        required: true
+        type: string  
   
     secrets:
       AWS_ENV_REGION:
@@ -180,6 +184,7 @@ jobs:
         if: ${{ inputs.dev_image_version_release == true }}
         env:
           IMAGE_TAG: ${{ steps.imgtag.outputs.image_tag }}
+          TAG_MESSAGE: ${{ inputs.tag_short_description }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
@@ -191,6 +196,6 @@ jobs:
             exit 1
           else
             echo "Creating and pushing tag $IMAGE_TAG"
-            git tag "$IMAGE_TAG"
+            git tag -a "$IMAGE_TAG" -m "$TAG_MESSAGE"
             git push origin "$IMAGE_TAG"
           fi    
