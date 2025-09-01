@@ -34,6 +34,7 @@ jobs:
       IMAGE_VERSION: ${{ github.event.inputs.DEVIMAGEVERSION }}
       repository: apha/bst
       dev_image_version_release: true
+      tag_short_description: ${{ github.event.inputs.tag_short_description }}
     secrets:  
       AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
       AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
