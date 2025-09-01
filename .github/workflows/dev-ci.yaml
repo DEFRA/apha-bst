@@ -6,7 +6,9 @@ on:
       - 'fix/*'
       - 'docs/*'
       - main
+
 permissions: {}   # disables all default permissions           
+
 jobs:
   # 1️⃣ First run the dev build & sonar analysis
   build-and-sonar:
@@ -18,13 +20,39 @@ jobs:
     permissions:
       id-token: write
       contents: read  
-  # 2️⃣ Then push the image after build succeeds  
+
+  # 2️⃣ Check commit message for 'ecrpush'
+  check-commit:
+    needs: build-and-sonar
+    runs-on: ubuntu-latest
+    outputs:
+      should_push: ${{ steps.check_commit.outputs.should_push }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check last commit message for 'ecrpush'
+        id: check_commit
+        run: |
+          COMMIT_MSG="$(git log -1 --pretty=%B)"
+          echo "Last commit message: $COMMIT_MSG"
+          if [[ "$COMMIT_MSG" == *"ecrpush"* ]]; then
+            echo "should_push=true"
+            echo "should_push=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_push=false"
+            echo "should_push=false" >> $GITHUB_OUTPUT
+          fi
+
+  # 3️⃣ Push image (only if commit contains 'ecrpush')
   push-image:
-    needs: build-and-sonar   # ensures sonar must complete first
+    needs: check-commit
+    if: needs.check-commit.outputs.should_push == 'true'
     uses: ./.github/workflows/push-image-template.yaml
     with:
       repository: apha/bst
       dev_image_version_release: false
+      tag_short_description: ""
     secrets:  
       AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
       AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
