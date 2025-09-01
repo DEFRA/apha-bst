@@ -41,24 +41,14 @@ namespace Apha.BST.Web.Extensions
 
         public static void ConfigureMiddleware(this WebApplication app)
         {
-            var env = app.Environment;
-
             // Health checks endpoint
             app.MapHealthChecks("/health", new HealthCheckOptions
             {
                 Predicate = _ => false
             });
 
-            // Error handling
-            if (env.IsDevelopment() || env.IsEnvironment("local"))
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
+            //// Error handling            
+            app.UseExceptionHandler("/Error");
             app.UseHsts();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -1,4 +1,4 @@
-﻿name: Dev Build and Sonar Analysis
+name: Dev Build and Sonar Analysis
 on:
   push:
     branches:
