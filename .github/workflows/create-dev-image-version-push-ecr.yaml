@@ -20,6 +20,7 @@ jobs:
     uses: ./.github/workflows/build-and-sonar-analyze-template.yaml
     with:
       dotnet_application_solution_name: Apha.BST
+      environment: dev
     secrets: 
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
     permissions:
@@ -35,6 +36,7 @@ jobs:
       repository: apha/bst
       dev_image_version_release: true
       tag_short_description: ${{ github.event.inputs.tag_short_description }}
+      environment: dev
     secrets:  
       AWS_ENV_REGION: ${{ secrets.AWS_ENV_REGION }}
       AWS_ENV_ACCOUNT: ${{ secrets.AWS_ENV_ACCOUNT }}
