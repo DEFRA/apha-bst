@@ -39,7 +39,7 @@
                 <td class="pt-2">
                     <label for="UserName">User name (surname, first)</label>
                 </td>
-                <td class="px-5">
+                <td class="px-5 pt-3">
                     <input asp-for="UserName" disabled="@isDisabled" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </td>
@@ -64,18 +64,18 @@
                         <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
                         <tr>
                             <td>
-                                <button type="submit" class="btn">
-                                    <img src="~/Images/tick.gif" alt="Save user" />
+                                <button type="submit" class="btn" title="Save changes">
+                                    <img src="~/Images/tick.gif" alt="Save changes" />
                                 </button>
                             </td>
                             <td>
-                                <a href="@Url.Action("ViewUser")" class="btn">
+                                <a href="@Url.Action("Index", "Home")" class="btn" title="Cancel action">
                                     <img src="~/Images/cancel.jpeg" alt="Cancel action" />
                                 </a>
                             </td>
                         </tr>
                     </table>
-                    <div class="pt-3 ErrorText text-danger">
+                    <div class="message-wrap pt-3 ErrorText text-danger">
                         @if (TempData["UserMessage"] != null)
                         {
                             @TempData["UserMessage"]

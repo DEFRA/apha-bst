@@ -71,12 +71,12 @@
                         <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
                         <tr>
                             <td>
-                                <button type="submit" class="btn">
+                                <button type="submit" class="btn" title="Save user">
                                     <img src="~/Images/tick.gif" alt="Save user" />
                                 </button>
                             </td>
                             <td>
-                                <a href="@Url.Action("Index", "Home")" class="btn">
+                                <a href="@Url.Action("Index", "Home")" class="btn" title="Cancel action">
                                     <img src="~/Images/cancel.jpeg" alt="Cancel action" />
                                 </a>
                             </td>
@@ -94,7 +94,7 @@
                    
                 </td>
                 <td>
-                    <div class="pt-3 ErrorText text-danger" style="max-width: 300px; word-wrap: break-word;">
+                    <div class="message-wrap pt-3 ErrorText ">
                         @if (TempData["UserMessage"] != null)
                         {
                             @TempData["UserMessage"]

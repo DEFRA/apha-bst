@@ -13,14 +13,16 @@
 
         public void LogGeneralException(Exception ex, string context)
         {
+            string errorCode= "500 - Internal Server Error";
             string generalErrorType = _configuration["ExceptionTypes:General"] ?? "BSTDefaultGeneralException";
-            _logger.LogError(ex, "[{ErrorType:l}] Error in [{Context:l}]: {Message}", generalErrorType, context, ex.Message);
+            _logger.LogError(ex, "[{ErrorType:l}] Error [{ErrorCode:l} - {Context:l}]: {Message}", generalErrorType,errorCode ,context, ex.Message);
         }
 
         public void LogSqlException(Exception ex, string context)
         {
+            string errorCode= "500 - SQL Server Error";
             string sqlErrorType = _configuration["ExceptionTypes:Sql"] ?? "BSTDefaultGeneralException";
-            _logger.LogError(ex, "[{ErrorType:l}] Error in [{Context:l}]: {Message}", sqlErrorType,context, ex.Message);
+            _logger.LogError(ex, "[{ErrorType:l}] Error [{ErrorCode:l} - {Context:l}]: {Message}", sqlErrorType,errorCode,context, ex.Message);
         }
     }
 }

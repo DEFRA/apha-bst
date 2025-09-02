@@ -20,7 +20,7 @@
             <span class="w-30">
                 <label for="selectedUserId">Select user:</label>
             </span>
-            <span class="w-70 mx-5">
+            <span class="w-70 mx-3">
                 <form method="get" asp-action="ViewUser">
                     <select asp-for="SelectedUserId" asp-items="Model.Users" class="search-dropdown" onchange="this.form.submit()" disabled="@isDisabled">
                         <option value="All users">All users</option>
@@ -29,25 +29,20 @@
             </span>
         </div>
 
-        <div class="pt-3 px-5 ErrorText text-danger">
-            @if (TempData["UserMessage"] != null)
-            {
-                @TempData["UserMessage"]
-            }
-        </div>
+        
     </div>
 
     <div class="w-100 d-flex justify-content-start">
         <p class="w-30 me-5">Details</p>
         @if (Model.UserList.Any())
         {
-            <table class="w-60 mx-5 grid-table">
+            <table class="grid-table" style="width:70%">
                 <thead>
                     <tr>
                         <th>User Email</th>
-                        <th>User Name</th>
-                        <th>VLA Location</th>
-                        <th>User Level</th>
+                        <th style="width:35%">User Name</th>
+                        <th style="width:40%">VLA Location</th>
+                        <th style="width:25%">User Level</th>
                         <th colspan="2"></th>
                     </tr>
                 </thead>
@@ -61,7 +56,7 @@
                             <td>@user.UserLevelName</td>
                             <td>
                                 <a asp-action="EditUser" asp-controller="User" asp-route-userId="@user.UserId"
-                                   class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline">Alter record</a>
+                                   class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline; white-space:nowrap;">Alter record</a>
                             </td>
                             <td>
                                 <form asp-action="DeleteUser" method="post" style="display: inline;">
@@ -74,6 +69,12 @@
                     }
                 </tbody>
             </table>
+            <div class="pt-3 px-5 ErrorText text-danger">
+                @if (TempData["UserMessage"] != null)
+                {
+                    @TempData["UserMessage"]
+                }
+            </div>
         }
         else
         {

@@ -24,17 +24,17 @@
 					<label class="pt-2" for='PlantNo'>Plant / site No.</label>
 				</td>
 				<td>
-					<input asp-for="PlantNo" disabled="@isDisabled">
+					<input asp-for="PlantNo" class="w-25" disabled="@isDisabled">
 					<span asp-validation-for="PlantNo" class="text-danger">*</span>
 				</td>
 				<td class="px-5"></td>
 			</tr>
 			<tr>
-				<td class="pt-2 ">
+				<td class="pt-2">
 					<label for="Name">Plant name</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="Name" disabled="@isDisabled" />
+					<input asp-for="Name" class="w-50" disabled="@isDisabled" />
 					<span asp-validation-for="Name" class="text-danger">**</span>
 				</td>
 				<td class="px-5"></td>
@@ -44,7 +44,7 @@
 					<label for="AddressLine1">Address 1</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="AddressLine1" disabled="@isDisabled" />
+					<input asp-for="AddressLine1" class="w-50"disabled="@isDisabled" />
 				</td>
 				<td class="px-5"></td>
 			</tr>
@@ -53,7 +53,7 @@
 					<label for="AddressLine2">Address 2</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="AddressLine2" disabled="@isDisabled" />
+					<input asp-for="AddressLine2" class="w-50" disabled="@isDisabled" />
 				</td>
 				<td class="px-5"></td>
 			</tr>
@@ -62,7 +62,7 @@
 					<label for="AddressTown">Town</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="AddressTown" disabled="@isDisabled" />
+					<input asp-for="AddressTown" class="w-50" disabled="@isDisabled" />
 				</td>
 				<td class="px-5"></td>
 			</tr>
@@ -71,7 +71,7 @@
 					<label for="AddressCounty">County</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="AddressCounty" disabled="@isDisabled" />
+					<input asp-for="AddressCounty" class="w-50" disabled="@isDisabled" />
 				</td>
 				<td class="px-5"></td>
 			</tr>
@@ -80,7 +80,7 @@
 					<label for="AddressPostCode">Postcode</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="AddressPostCode" disabled="@isDisabled" />
+					<input asp-for="AddressPostCode" class="w-25" disabled="@isDisabled" />
 				</td>
 				<td class="px-5"></td>
 			</tr>
@@ -89,7 +89,7 @@
 					<label for="Telephone">Telephone</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="Telephone" disabled="@isDisabled" />
+					<input asp-for="Telephone" class="w-25" disabled="@isDisabled" />
 				</td>
 				<td class="px-5"></td>
 			</tr>
@@ -98,44 +98,53 @@
 					<label for="Fax">Fax</label>
 				</td>
 				<td class="pt-2">
-					<input asp-for="Fax" disabled="@isDisabled" />
+					<input asp-for="Fax" class="w-25" disabled="@isDisabled" />
 				</td>
 				<td class="px-5"></td>
 			</tr>
 			<tr>
-				<td class="pt-2">
+				<td class="pt-3">
 					<label for="Ahvla">AHVLA Site</label>
 				</td>
-				<td class="pt-2">
+				<td class="pt-3">
 					<input asp-for="Ahvla" type="checkbox" /> AHVLA Site
 				</td>
 				<td class="px-5"></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<div class="button-container" style="display: flex; gap: 4rem;">
-						<button type="submit" class="btn">
-							<img src="~/Images/tick.gif" alt="Save site" />
-						</button>
-						<a href="@Url.Action("Index", "Home")" class="btn">
-							<img src="~/Images/cancel.jpeg" alt="Cancel action" />
-						</a>
-					</div>
+				<td class="w-25 "></td>
+				<td class="w-50">
+					<table class="w-100">
+						<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
+						<tr>
+							<td class="w-20">
+								<button type="submit" class="btn p-0" title="Save site">
+									<img src="~/Images/tick.gif" alt="Save site" />
+								</button>
+							</td>
+							<td>
+								<a href="@Url.Action("Index", "Home")" class="btn" title="Cancel action">
+									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
+								</a>
+							</td>
+							<td>
+								
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3">
+								<div class="pt-3 ErrorText">
+									@if (TempData["SiteMessage"] != null)
+									{
+										@TempData["SiteMessage"]
+									}
+								</div>
+							</td>
+							
+						</tr>
+					</table>
 				</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<div class="pt-3 px-5 ErrorText">
-						@if (TempData["SiteMessage"] != null)
-						{
-							@TempData["SiteMessage"]
-						}
-					</div>
-				</td>
-				<td></td>
+			
 			</tr>
 			<tr>
 				<td class="pt-5">
@@ -164,10 +173,6 @@
 		</tbody>
 	</table>
 </form>
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-}
+
 
 
