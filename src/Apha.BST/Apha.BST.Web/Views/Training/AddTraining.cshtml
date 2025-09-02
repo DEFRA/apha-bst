@@ -62,7 +62,7 @@
 						<img src="~/Images/asp-calendar.gif" alt="img" id="calenderImage" />
 					</button>
 
-					<span asp-validation-for="TrainingDateTime" class="text-danger"></span>
+					
 				</td>
 			</tr>
 			<tr>
@@ -101,7 +101,7 @@
 			<tr>
 				<td></td>
 				<td>
-					<div class="pt-3 px-5 ErrorText">
+					<div class="message-wrap pt-3 px-5 ErrorText">
 							@if (TempData["Message"] != null)
 							{
 								@TempData["Message"]
@@ -113,15 +113,14 @@
 			<tr>
 				<td class="pt-3 text-danger">
 					<p>** All fields are required to add new training</p>
+
+					<div asp-validation-summary="All" class="text-danger" style="list-style-type: none;"></div>
+
 					<div asp-Validation-Summary="ModelOnly">
 					</div>
 
 
-					<td class="ErrorText">
-						
-							<div asp-validation-summary="All" class="text-danger" style="list-style-type: none;"></div>
-						
-					</td>
+				
 				
 			</tr>
 		</tbody>

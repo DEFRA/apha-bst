@@ -521,4 +521,13 @@ input[type="date"].custom-date-input {
         color: #E3EAEB;
         text-decoration: none;
     }
+
+
+/* For the message wrapping */
+.message-wrap {
+    max-width: 300px;
+    word-wrap: break-word;
+    overflow-wrap: break-word; /* more reliable */
+}
+
     

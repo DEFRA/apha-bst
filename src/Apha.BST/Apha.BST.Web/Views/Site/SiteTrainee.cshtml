@@ -20,9 +20,9 @@
 			<span class="w-70 ms-5 ">
 				<form method="get" asp-action="SiteTrainee" style="display:inline;">
 					<select id="siteSelect" class="search-dropdown" asp-for="SelectedSite" name="selectedSite" class="form-control" asp-items="Model.AllSites" onchange="this.form.submit()" disabled="@isDisabled">
-							<option value="0">Select Sites...</option>
-						</select>		
-					
+						<option value="0">Select site</option>
+					</select>
+
 				</form>
 			</span>
 
@@ -30,20 +30,23 @@
 	</div>
 
 	<div class="w-100 d-flex justify-content-start">
-		<span class=" w-30">Trainee details</span>
-		@if (!string.IsNullOrEmpty(Model.SelectedSite) && Model.SelectedSite != "0")
+		<span class="w-30 me-0">Trainee details</span>
+		<span class="w-70 ms-4"></span>
+		@if (!string.IsNullOrEmpty(Model.SelectedSite))
 		{
-			<span class="w-70 ms-5"></span>
-			<table id="siteTable" class="grid-table">
+			<table id="siteTable" class="w-60 mx-1 grid-table">
 				<thead>
-					<tr>
-						<th>Person ID</th>
-						<th>Person</th>
-						<th>Action</th>
-					</tr>
+					@if (Model.FilteredTrainees != null && Model.FilteredTrainees.Any())
+					{
+						<tr>
+							<th>Person ID</th>
+							<th>Person</th>
+							<th></th>
+						</tr>
+					}
 				</thead>
 				<tbody>
-					@if (Model.FilteredTrainees != null)
+					@if (Model.FilteredTrainees != null && Model.FilteredTrainees.Any())
 					{
 						@foreach (var trainee in Model.FilteredTrainees)
 						{
@@ -62,14 +65,19 @@
 					}
 				</tbody>
 			</table>
-			<p class="w-10 ErrorText text-start">
+		}
+		<div class="message-wrap pt-3 px-5 ErrorText">
+
 
 				@if (TempData["SiteMessage"] != null)
 				{
 					@TempData["SiteMessage"]
 				}
-			</p>
-		}
+
+			</div>
+
+		
+
 	</div>
 
 	<div class="ErrorText">
