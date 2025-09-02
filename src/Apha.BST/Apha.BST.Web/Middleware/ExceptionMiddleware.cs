@@ -41,7 +41,7 @@ namespace Apha.BST.Web.Middleware
                 if (ex is UnauthorizedAccessException)
                 {
                     errorCode = "403 - Forbidden";
-                    errorType = _configuration["ExceptionTypes:Authentication"] ?? defaultErrorType;
+                    errorType = _configuration["ExceptionTypes:Authorization"] ?? defaultErrorType;
                     _logger.LogError(ex, "[{ErrorType:l}] Error [{ErrorCode:l}]: {Message}", errorType, errorCode, ex.Message);
                     context.Response.Redirect("/Error/AccessDenied");
                     return;
