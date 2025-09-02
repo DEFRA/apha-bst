@@ -113,8 +113,9 @@
 				</td>
 				<td class="pt-4">
 					<div class="form-check">
-						<input asp-for="IsAhvla" type="checkbox" class="form-check-input" />
-						<label for="IsAhvla">AHVLA Site</label>
+						<input asp-for="IsAhvla" class="form-check-input" type="checkbox" style="width:18px; height:18px; border:1px solid; cursor:pointer;" />
+
+						<label class=" ms-2 pt-1" for="IsAhvla">AHVLA Site</label>
 					</div>
 				</td>
 				<td class="px-5"></td>
@@ -131,7 +132,7 @@
 								</button>
 							</td>
 							<td class="pt-3 px-5">
-								<a href="@Url.Action("ViewSite", "Site")" class="btn" title="Cancel action">
+								<a href="@Url.Action("Index", "Home")" class="btn" title="Cancel action">
 									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
 								</a>
 							</td>
