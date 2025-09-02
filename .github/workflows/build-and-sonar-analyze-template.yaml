@@ -6,6 +6,11 @@ on:
          description: "dotnet application solution name"
          required: true
          type: string
+       environment:  
+        description: "Optional environment name"
+        required: false
+        type: string  
+   
      secrets:
        SONAR_TOKEN:
          required: true
@@ -14,6 +19,7 @@ jobs:
   build-and-sonar-analyze:
     name: build-and-sonar-analyze
     runs-on: windows-latest
+    environment: ${{ inputs.environment || '' }} 
     permissions:
       id-token: write
       contents: read
