@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Data.SqlClient;
 
@@ -33,17 +34,22 @@ namespace Apha.BST.Web.Middleware
             {
                 context.Items["ExceptionHandled"] = true; // Flag it as handled
                 string errorCode;
-                string ErrorType = _configuration["ExceptionTypes:General"] ?? "BSTDefaultGeneralException";              
-               
+                string ErrorType = _configuration["ExceptionTypes:General"] ?? "BSTDefaultGeneralException";
+
 
                 if (ex is UnauthorizedAccessException)
-                { 
+                {
                     errorCode = "403 - Forbidden";
-                    _logger.LogError(ex, "[{ErrorType:l}] Error type [{ErrorCode:l}]: {Message}", ErrorType, errorCode, ex.Message);                    
+                    ErrorType = _configuration["ExceptionTypes:Authentication"] ?? "BSTDefaultGeneralException";
+                    _logger.LogError(ex, "[{ErrorType:l}] Error [{ErrorCode:l}]: {Message}", ErrorType, errorCode, ex.Message);
                     context.Response.Redirect("/Error/AccessDenied");
                     return;
                 }
-
+                else if (ex is AuthenticationFailureException)
+                {
+                    ErrorType = _configuration["ExceptionTypes:Authentication"] ?? "BSTDefaultGeneralException";
+                    errorCode = "403 - Forbidden";
+                }
                 else if (ex is SqlException)
                 {
                     ErrorType = _configuration["ExceptionTypes:Sql"] ?? "BSTDefaultGeneralException";
@@ -53,7 +59,7 @@ namespace Apha.BST.Web.Middleware
                 {
                     errorCode = "500 - Internal Server Error";
                 }
-                _logger.LogError(ex, "[{ErrorType:l}] Error type [{ErrorCode:l}]: {Message}", ErrorType, errorCode, ex.Message);
+                _logger.LogError(ex, "[{ErrorType:l}] Error [{ErrorCode:l}]: {Message}", ErrorType, errorCode, ex.Message);
 
 
                 await HandleExceptionAsync(context, ex, "/Error", errorCode);

@@ -14,13 +14,13 @@
         public void LogGeneralException(Exception ex, string context)
         {
             string generalErrorType = _configuration["ExceptionTypes:General"] ?? "BSTDefaultGeneralException";
-            _logger.LogError(ex, "[{ErrorType:l}] Error in [{Context:l}]: {Message}", generalErrorType, context, ex.Message);
+            _logger.LogError(ex, "[{ErrorType:l}] Error [{Context:l}]: {Message}", generalErrorType, context, ex.Message);
         }
 
         public void LogSqlException(Exception ex, string context)
         {
             string sqlErrorType = _configuration["ExceptionTypes:Sql"] ?? "BSTDefaultGeneralException";
-            _logger.LogError(ex, "[{ErrorType:l}] Error in [{Context:l}]: {Message}", sqlErrorType,context, ex.Message);
+            _logger.LogError(ex, "[{ErrorType:l}] Error [{Context:l}]: {Message}", sqlErrorType,context, ex.Message);
         }
     }
 }
