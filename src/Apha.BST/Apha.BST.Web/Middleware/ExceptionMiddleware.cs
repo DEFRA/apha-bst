@@ -48,7 +48,7 @@ namespace Apha.BST.Web.Middleware
                 }
                 else if (ex is AuthenticationFailureException)
                 {
-                    errorType = _configuration["ExceptionTypes:Authentication"] ?? defaultErrorType;
+                    errorType = _configuration["ExceptionTypes:Authorization"] ?? defaultErrorType;
                     errorCode = "403 - Forbidden";
                 }
                 else if (ex is SqlException)
