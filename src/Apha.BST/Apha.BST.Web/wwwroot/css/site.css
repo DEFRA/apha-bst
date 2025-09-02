@@ -501,3 +501,24 @@ input[type="date"].custom-date-input {
     margin: 0;
     padding: 11px 0 0.2em 14px;
 }
+/*Audit log*/
+.audit-log-table {
+    width: 100%;
+    height: fit-content;
+    border-collapse: collapse;
+}
+
+    .audit-log-table tr th {
+        border: 1px solid #333333;
+    }
+
+    .audit-log-table tr td {
+        border: 1px solid #333333;
+        word-break: break-all;
+    }
+
+    .audit-log-table tr th a:link {
+        color: #E3EAEB;
+        text-decoration: none;
+    }
+    
