@@ -118,23 +118,29 @@
 						<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
 						<tr>
 							<td class="w-20">
-								<button type="submit" class="btn p-0">
-									<img src="~/Images/tick.gif" alt="Save Person" />
+								<button type="submit" class="btn p-0" title="Save site">
+									<img src="~/Images/tick.gif" alt="Save site" />
 								</button>
 							</td>
 							<td>
-								<a href="@Url.Action("Index", "Home")" class="btn">
+								<a href="@Url.Action("Index", "Home")" class="btn" title="Cancel action">
 									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
 								</a>
 							</td>
 							<td>
-								<div class="message-wrap pt-3 px-5 ErrorText">
+								
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3">
+								<div class="pt-3 ErrorText">
 									@if (TempData["SiteMessage"] != null)
 									{
 										@TempData["SiteMessage"]
 									}
 								</div>
 							</td>
+							
 						</tr>
 					</table>
 				</td>
@@ -167,10 +173,6 @@
 		</tbody>
 	</table>
 </form>
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-}
+
 
 

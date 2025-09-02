@@ -125,13 +125,13 @@
 					<table>
 						<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
 						<tr>
-							<td class="pt-3 px-5">
-								<button type="submit" class="btn">
+							<td class="pt-3">
+								<button type="submit" class="btn" title="Save site">
 									<img src="~/Images/tick.gif" alt="Save site" />
 								</button>
 							</td>
 							<td class="pt-3 px-5">
-								<a href="@Url.Action("ViewSite", "Site")" class="btn">
+								<a href="@Url.Action("ViewSite", "Site")" class="btn" title="Cancel action">
 									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
 								</a>
 							</td>
@@ -142,7 +142,7 @@
 			<tr>
 				<td></td>
 				<td>
-					<div class="message-wrap pt-3 px-5 ErrorText">
+					<div class="message-wrap pt-3 ErrorText">
 						@if (TempData["SiteMessage"] != null)
 						{
 							@TempData["SiteMessage"]
@@ -154,10 +154,5 @@
 	</table>
 </form>
 
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-}
 
 
