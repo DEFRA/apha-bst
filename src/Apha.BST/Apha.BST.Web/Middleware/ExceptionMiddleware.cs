@@ -34,7 +34,7 @@ namespace Apha.BST.Web.Middleware
             {
                 context.Items["ExceptionHandled"] = true; // Flag it as handled
                 string errorCode;
-                string defaultErrorType = "BSTDefaultGeneralException";
+                string defaultErrorType = "BST.GENERAL_EXCEPTION";
                 string errorType = _configuration["ExceptionTypes:General"] ?? defaultErrorType;
                
 
