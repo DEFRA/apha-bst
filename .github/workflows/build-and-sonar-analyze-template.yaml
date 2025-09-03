@@ -91,8 +91,8 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths="src/TestResults/*.coverage.opencover.xml" `
             /d:sonar.cs.vstest.reportsPaths="src/TestResults/*.test_results.trx" `
             /d:sonar.branch.name="${{ github.ref_name }}" `
-            /d:sonar.verbose=true"
-
+            /d:sonar.verbose=true
+            
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/${{ inputs.dotnet_application_solution_name }}.sln
