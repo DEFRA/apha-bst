@@ -56,14 +56,6 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      
-      - name: Read version from VERSION file
-        id: versioning
-        shell: pwsh
-        run: |
-          $version = Get-Content VERSION -Raw
-          $version = $version.Trim()
-          "version=v$version" >> $env:GITHUB_OUTPUT
           
       - name: Extract short SHA
         id: shortsha
@@ -100,8 +92,7 @@ jobs:
             /d:sonar.cs.vstest.reportsPaths="src/TestResults/*.test_results.trx" `
             /d:sonar.branch.name="${{ github.ref_name }}" `
             /d:sonar.verbose=true `
-            /d:sonar.exclusions="**/wwwroot/**" `
-            /d:sonar.coverage.exclusions="**/wwwroot/**,**/*.cshtml,**/Interfaces/*.cs,**/*Map.cs,**/*Mapper.cs,**/Program.cs,**/Startup.cs,**/DTOs/*.cs,**/Entities/*.cs,**/Models/*.cs"
+            /s:"sonar-project.properties"
       - name: Restore NuGet packages
         shell: pwsh
         run: dotnet restore src/${{ inputs.dotnet_application_solution_name }}.sln
