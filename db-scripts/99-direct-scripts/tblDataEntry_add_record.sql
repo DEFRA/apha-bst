@@ -46,7 +46,7 @@ INSERT [dbo].[tblDataEntry] ([ActiveView], [ActiveViewName], [CanWrite]) VALUES 
 GO
 INSERT [dbo].[tblDataEntry] ([ActiveView], [ActiveViewName], [CanWrite]) VALUES (46, N'DeleteNews', N'S')
 GO
-INSERT [dbo].[tblDataEntry] ([ActiveView], [ActiveViewName], [CanWrite]) VALUES (47, N'EditSite', N'D')
+INSERT [dbo].[tblDataEntry] ([ActiveView], [ActiveViewName], [CanWrite]) VALUES (47, N'EditSite', N'S')
 GO
 INSERT [dbo].[tblDataEntry] ([ActiveView], [ActiveViewName], [CanWrite]) VALUES (48, N'GenerateExcel', N'S')
 GO
