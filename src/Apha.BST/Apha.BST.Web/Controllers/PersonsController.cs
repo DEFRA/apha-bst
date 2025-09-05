@@ -87,7 +87,7 @@ namespace Apha.BST.Web.Controllers
                            Text = persons.Person,
                        })
                         .ToList();
-                    if(dropdownDto.Count(x => x.PersonID == personId) == 0)
+                    if (!dropdownDto.Any(x => x.PersonID == personId))
                     {
                         personSelectedList.Add(new SelectListItem
                         {
