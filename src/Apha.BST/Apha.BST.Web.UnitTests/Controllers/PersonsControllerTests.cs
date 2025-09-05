@@ -160,11 +160,14 @@ namespace Apha.BST.Web.UnitTests.Controllers
         {
             // Arrange
             int personId = 1;
+            string personName = "John Doe";
+            int selectedPerson = 0;
+
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _personService.DeletePersonAsync(personId).Returns("Person deleted successfully");
 
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId,personName,selectedPerson);
 
             // Assert
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
@@ -173,19 +176,41 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task DeletePerson_UserDoesNotHaveEditPermissions_ReturnsRedirectToActionResult()
+        public async Task DeletePerson_UserDoesNotHaveEditPermissions_ReturnsViewResult()
         {
             // Arrange
             int personId = 1;
+            string personName = "John Doe";
+            int selectedPerson = 1;
+
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
 
+            // Mock the person service to return data for the view
+            var mockPersonDto = new List<PersonDetailDto>
+    {
+        new PersonDetailDto { PersonID = selectedPerson, Person = "Test Person" }
+    };
+            _personService.GetAllPersonByNameAsync(selectedPerson).Returns(mockPersonDto);
+
+            var mockDropdownDto = new List<PersonLookupDto>
+    {
+        new PersonLookupDto { PersonID = 1, Person = "Person 1" }
+    };
+            _personService.GetPersonsForDropdownAsync().Returns(mockDropdownDto);
+
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewPerson", redirectToActionResult.ActionName);
-            Assert.Null(_controller.TempData["PersonMessage"]);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("ViewPerson", viewResult.ViewName);
+
+            var model = Assert.IsType<PersonListViewModel>(viewResult.Model);
+            Assert.False(model.CanEdit); // Verify user cannot edit
+            Assert.Equal(selectedPerson, model.SelectedPerson);
+
+            // Verify that DeletePersonAsync was NOT called since user can't edit
+            await _personService.DidNotReceive().DeletePersonAsync(Arg.Any<int>());
         }
 
         [Fact]
@@ -193,13 +218,15 @@ namespace Apha.BST.Web.UnitTests.Controllers
         {
             // Arrange
             int personId = 1;
-           
+            string personName = "John Doe";
+            int selectedPerson = 0;
+
             var sqlException = CreateSqlException();
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _personService.DeletePersonAsync(personId).Throws(sqlException);
 
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
@@ -212,13 +239,15 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task DeletePerson_GeneralExceptionOccurs_LogsExceptionAndReturnsRedirectToActionResult()
         {
             // Arrange
-           
+
             int personId = 1;
+            string personName = "John Doe";
+            int selectedPerson = 0;
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _personService.DeletePersonAsync(personId).Throws(new Exception());
 
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
@@ -232,10 +261,12 @@ namespace Apha.BST.Web.UnitTests.Controllers
         {
             // Arrange
             int personId = 1;
+            string personName = "John Doe";
+            int selectedPerson = 0;
             _controller.ModelState.AddModelError("Error", "Model state is invalid");
 
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);

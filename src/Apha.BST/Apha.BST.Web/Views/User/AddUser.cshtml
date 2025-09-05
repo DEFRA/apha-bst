@@ -21,6 +21,14 @@
                 <td class="pt-3 px-5"></td>
                 <td class="pt-3">
                     <input id="UserId" asp-for="UserId" disabled="@isDisabled" type="email" />
+                   
+                </td>
+                
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
                     <span asp-validation-for="UserId" class="text-danger"></span>
                 </td>
             </tr>
@@ -31,9 +39,17 @@
                 <td class="pt-3 px-5"></td>
                 <td class=" pt-3">
                     <input id="UserName" asp-for="UserName" disabled="@isDisabled" />
+                  
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </td>
             </tr>
+
             <tr>
                 <td class="pt-3">
                     <label for="UserLevel" id="UserLevel">Add user level</label>
@@ -49,6 +65,7 @@
                     <span asp-validation-for="UserLevel" class="text-danger"></span>
                 </td>
             </tr>
+
             <tr>
                 <td class="pt-3">
                     <label for="UserLoc">Add VLA location</label>
@@ -60,6 +77,12 @@
                             <option value="">Add user location...</option>
                         </select>
                   
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
                     <span asp-validation-for="UserLoc" class="text-danger"></span>
                 </td>
             </tr>

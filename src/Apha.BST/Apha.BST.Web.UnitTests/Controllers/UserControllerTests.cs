@@ -300,7 +300,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditUser_POST_InvalidModelState_ReturnsViewWithModel()
         {
             // Arrange
-            var viewModel = new EditUserViewModel();
+            var viewModel = new EditUserViewModel { UserId = "testUserId" };
             _controller.ModelState.AddModelError("Error", "Invalid");
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _userService.GetLocationsAsync().Returns(new List<VlaLocDto>());
@@ -318,7 +318,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditUser_POST_UserHasPermission_UpdatesUserSuccessfully()
         {
             // Arrange
-            var viewModel = new EditUserViewModel();
+            var viewModel = new EditUserViewModel { UserId = "testUserId" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<UserDto>(viewModel).Returns(new UserDto());
             _userService.UpdateUserAsync(Arg.Any<UserDto>()).Returns("User updated successfully");
@@ -328,7 +328,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewUser", redirectResult.ActionName);
+            Assert.Equal("EditUser", redirectResult.ActionName);
+            Assert.Equal("testUserId", redirectResult.RouteValues?["userId"]);
             _controller.TempData.Received()["UserMessage"] = "User updated successfully";
             await _userService.Received(1).UpdateUserAsync(Arg.Any<UserDto>());
         }
@@ -337,7 +338,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditUser_POST_UserDoesNotHavePermission_ReturnsErrorMessage()
         {
             // Arrange
-            var viewModel = new EditUserViewModel();
+            var viewModel = new EditUserViewModel { UserId = "testUserId" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
 
             // Act
@@ -345,18 +346,17 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewUser", redirectResult.ActionName);
+            Assert.Equal("EditUser", redirectResult.ActionName);
+            Assert.Equal("testUserId", redirectResult.RouteValues?["userId"]);
             _controller.TempData.Received()["UserMessage"] = "You do not have permission to perform this action.";
             await _userService.DidNotReceive().UpdateUserAsync(Arg.Any<UserDto>());
         }
-
         [Fact]
         public async Task EditUser_POST_SqlExceptionThrown_LogsExceptionAndReturnsErrorMessage()
         {
             // Arrange
-            var viewModel = new EditUserViewModel();
+            var viewModel = new EditUserViewModel { UserId = "testUserId" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-            // EditUser POST SqlException test
             _mapper.Map<UserDto>(viewModel).Returns(new UserDto());
             _userService.UpdateUserAsync(Arg.Any<UserDto>()).Throws(CreateSqlException());
 
@@ -365,7 +365,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewUser", redirectResult.ActionName);
+            Assert.Equal("EditUser", redirectResult.ActionName);
+            Assert.Equal("testUserId", redirectResult.RouteValues?["userId"]);
             _controller.TempData.Received()["UserMessage"] = "Update failed: Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.";
             _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
@@ -374,7 +375,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditUser_POST_GeneralExceptionThrown_LogsExceptionAndReturnsErrorMessage()
         {
             // Arrange
-            var viewModel = new EditUserViewModel();
+            var viewModel = new EditUserViewModel { UserId = "testUserId" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<UserDto>(viewModel).Returns(new UserDto());
             _userService.UpdateUserAsync(Arg.Any<UserDto>()).Throws(new Exception());
@@ -384,7 +385,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewUser", redirectResult.ActionName);
+            Assert.Equal("EditUser", redirectResult.ActionName);
+            Assert.Equal("testUserId", redirectResult.RouteValues?["userId"]);
             _controller.TempData.Received()["UserMessage"] = "Update failed: Exception of type 'System.Exception' was thrown.";
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
         }
@@ -444,7 +446,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task EditUser_ValidInput_SuccessfulUpdate()
+        public async Task EditUser_POST_ValidInput_SuccessfulUpdate()
         {
             // Arrange
             var viewModel = new EditUserViewModel { UserId = "123" };
@@ -458,7 +460,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewUser", redirectResult.ActionName);
+            Assert.Equal("EditUser", redirectResult.ActionName);
+            Assert.Equal("123", redirectResult.RouteValues?["userId"]);
             _controller.TempData.Received()["UserMessage"] = "User updated successfully";
             await _userService.Received(1).UpdateUserAsync(userDto);
         }
