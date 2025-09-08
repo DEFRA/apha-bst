@@ -59,7 +59,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Setup default permissions
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _userDataService.GetUsername().Returns("testUser");
-        }      
+        }
 
         [Fact]
         public async Task ViewPerson_InvalidModelState_RedirectsToViewPerson()
@@ -156,97 +156,251 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.IsType<List<PersonViewModel>>(model.FilteredPerson);
         }
         [Fact]
-        public async Task DeletePerson_UserHasEditPermissions_ReturnsRedirectToActionResult()
+        public async Task DeletePerson_InvalidModelState_RedirectsToViewPerson()
         {
             // Arrange
             int personId = 1;
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            string personName = "John Doe";
+            int selectedPerson = 1;
+
+            _controller.ControllerContext.ActionDescriptor.ActionName = "DeletePerson";
+            _controller.ModelState.AddModelError("PersonId", "PersonId is required");
+            _userDataService.CanEditPage("DeletePerson").Returns(true);
+
+            // Act
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("ViewPerson", redirectResult.ActionName);
+
+            // Verify that delete service was not called due to invalid model state
+            await _personService.DidNotReceive().DeletePersonAsync(Arg.Any<int>());
+        }
+
+        [Fact]
+        public async Task DeletePerson_CannotEdit_ReturnsViewWithCanEditFalse()
+        {
+            // Arrange
+            int personId = 1;
+            string personName = "John Doe";
+            int selectedPerson = 1;
+
+            _controller.ControllerContext.ActionDescriptor.ActionName = "DeletePerson";
+            _userDataService.CanEditPage("DeletePerson").Returns(false);
+
+            var mockPersonDto = new List<PersonDetailDto>
+    {
+        new PersonDetailDto { PersonID = 1, Person = "John Doe" },
+        new PersonDetailDto { PersonID = 2, Person = "Jane Smith" }
+    };
+
+            _personService.GetAllPersonByNameAsync(selectedPerson).Returns(mockPersonDto);
+            _mapper.Map<IEnumerable<PersonViewModel>>(mockPersonDto).Returns(new List<PersonViewModel>
+    {
+        new PersonViewModel { PersonId = 1, Person = "John Doe" },
+        new PersonViewModel { PersonId = 2, Person = "Jane Smith" }
+    });
+
+            // Act
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("ViewPerson", viewResult.ViewName);
+
+            var model = Assert.IsType<PersonListViewModel>(viewResult.Model);
+            Assert.False(model.CanEdit);
+            Assert.Equal(selectedPerson, model.SelectedPerson);
+            Assert.Empty(model.AllPerson); // No dropdown items when canEdit is false
+
+            // Verify that delete service was not called
+            await _personService.DidNotReceive().DeletePersonAsync(Arg.Any<int>());
+        }
+
+        [Fact]
+        public async Task DeletePerson_SuccessfulDelete_PersonExistsInDropdown_ReturnsViewWithUpdatedModel()
+        {
+            // Arrange
+            int personId = 1;
+            string personName = "John Doe";
+            int selectedPerson = 1;
+
+            _controller.ControllerContext.ActionDescriptor.ActionName = "DeletePerson";
+            _userDataService.CanEditPage("DeletePerson").Returns(true);
             _personService.DeletePersonAsync(personId).Returns("Person deleted successfully");
 
+            var dropdownDto = new List<PersonLookupDto>
+    {
+        new PersonLookupDto { PersonID = 1, Person = "John Doe" },
+        new PersonLookupDto { PersonID = 2, Person = "Jane Smith" }
+    };
+
+            var allPersonDto = new List<PersonDetailDto>
+    {
+        new PersonDetailDto { PersonID = 1, Person = "John Doe" },
+        new PersonDetailDto { PersonID = 2, Person = "Jane Smith" }
+    };
+
+            _personService.GetPersonsForDropdownAsync().Returns(dropdownDto);
+            _personService.GetAllPersonByNameAsync(selectedPerson).Returns(allPersonDto);
+            _mapper.Map<IEnumerable<PersonViewModel>>(allPersonDto).Returns(new List<PersonViewModel>
+    {
+        new PersonViewModel { PersonId = 1, Person = "John Doe" },
+        new PersonViewModel { PersonId = 2, Person = "Jane Smith" }
+    });
+
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewPerson", redirectToActionResult.ActionName);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("ViewPerson", viewResult.ViewName);
+
+            var model = Assert.IsType<PersonListViewModel>(viewResult.Model);
+            Assert.True(model.CanEdit);
+            Assert.Equal(selectedPerson, model.SelectedPerson);
+
+            var allPersonList = model.AllPerson.ToList();
+            Assert.Equal(2, allPersonList.Count);
+            Assert.Equal("1", allPersonList[0].Value);
+            Assert.Equal("John Doe", allPersonList[0].Text);
+
+            // Check TempData directly instead of using NSubstitute Received
             Assert.Equal("Person deleted successfully", _controller.TempData["PersonMessage"]);
+            await _personService.Received(1).DeletePersonAsync(personId);
         }
 
         [Fact]
-        public async Task DeletePerson_UserDoesNotHaveEditPermissions_ReturnsRedirectToActionResult()
+        public async Task DeletePerson_SuccessfulDelete_PersonNotInDropdown_AddsPersonToDropdown()
         {
             // Arrange
-            int personId = 1;
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
+            int personId = 3;
+            string personName = "Bob Wilson";
+            int selectedPerson = 1;
+
+            _controller.ControllerContext.ActionDescriptor.ActionName = "DeletePerson";
+            _userDataService.CanEditPage("DeletePerson").Returns(true);
+            _personService.DeletePersonAsync(personId).Returns("Person deleted successfully");
+
+            var dropdownDto = new List<PersonLookupDto>
+    {
+        new PersonLookupDto { PersonID = 1, Person = "John Doe" },
+        new PersonLookupDto { PersonID = 2, Person = "Jane Smith" }
+    };
+
+            var allPersonDto = new List<PersonDetailDto>
+    {
+        new PersonDetailDto { PersonID = 1, Person = "John Doe" },
+        new PersonDetailDto { PersonID = 2, Person = "Jane Smith" }
+    };
+
+            _personService.GetPersonsForDropdownAsync().Returns(dropdownDto);
+            _personService.GetAllPersonByNameAsync(selectedPerson).Returns(allPersonDto);
+            _mapper.Map<IEnumerable<PersonViewModel>>(allPersonDto).Returns(new List<PersonViewModel>
+    {
+        new PersonViewModel { PersonId = 1, Person = "John Doe" },
+        new PersonViewModel { PersonId = 2, Person = "Jane Smith" }
+    });
 
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewPerson", redirectToActionResult.ActionName);
-            Assert.Null(_controller.TempData["PersonMessage"]);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<PersonListViewModel>(viewResult.Model);
+
+            var allPersonList = model.AllPerson.ToList();
+            Assert.Equal(3, allPersonList.Count); // Original 2 + 1 added
+            Assert.Contains(allPersonList, item => item.Value == "3" && item.Text == "Bob Wilson");
+
+            await _personService.Received(1).DeletePersonAsync(personId);
         }
 
         [Fact]
-        public async Task DeletePerson_SqlExceptionOccurs_LogsExceptionAndReturnsRedirectToActionResult()
+        public async Task DeletePerson_SelectedPersonIsZero_RedirectsToViewPersonWithSelectedPerson()
         {
             // Arrange
             int personId = 1;
-           
+            string personName = "John Doe";
+            int selectedPerson = 0;
+
+            _controller.ControllerContext.ActionDescriptor.ActionName = "DeletePerson";
+            _userDataService.CanEditPage("DeletePerson").Returns(true);
+            _personService.DeletePersonAsync(personId).Returns("Person deleted successfully");
+            _personService.GetPersonsForDropdownAsync().Returns(new List<PersonLookupDto>());
+
+            // Act
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("ViewPerson", redirectResult.ActionName);
+            Assert.Equal(0, redirectResult.RouteValues?["selectedPerson"]);
+        }
+
+        [Fact]
+        public async Task DeletePerson_SqlExceptionThrown_LogsExceptionAndSetsErrorMessage()
+        {
+            // Arrange
+            int personId = 1;
+            string personName = "John Doe";
+            int selectedPerson = 1;
             var sqlException = CreateSqlException();
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+
+            _controller.ControllerContext.ActionDescriptor.ActionName = "DeletePerson";
+            _userDataService.CanEditPage("DeletePerson").Returns(true);
             _personService.DeletePersonAsync(personId).Throws(sqlException);
 
+            var allPersonDto = new List<PersonDetailDto>();
+            _personService.GetAllPersonByNameAsync(selectedPerson).Returns(allPersonDto);
+            _mapper.Map<IEnumerable<PersonViewModel>>(allPersonDto).Returns(new List<PersonViewModel>());
+
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewPerson", redirectToActionResult.ActionName);
-            Assert.Equal("Delete failed: Exception of type 'Microsoft.Data.SqlClient.SqlException' was thrown.", _controller.TempData["PersonMessage"]);
-            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<PersonListViewModel>(viewResult.Model);
+
+            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), "DeletePerson");
+            Assert.Contains("Delete failed:", _controller.TempData["PersonMessage"]?.ToString());
         }
 
         [Fact]
-        public async Task DeletePerson_GeneralExceptionOccurs_LogsExceptionAndReturnsRedirectToActionResult()
-        {
-            // Arrange
-           
-            int personId = 1;
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-            _personService.DeletePersonAsync(personId).Throws(new Exception());
-
-            // Act
-            var result = await _controller.DeletePerson(personId);
-
-            // Assert
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewPerson", redirectToActionResult.ActionName);
-            Assert.Equal("Delete failed: Exception of type 'System.Exception' was thrown.", _controller.TempData["PersonMessage"]);
-            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
-        }
-
-        [Fact]
-        public async Task DeletePerson_InvalidModelState_ReturnsRedirectToActionResult()
+        public async Task DeletePerson_GeneralExceptionThrown_LogsExceptionAndSetsErrorMessage()
         {
             // Arrange
             int personId = 1;
-            _controller.ModelState.AddModelError("Error", "Model state is invalid");
+            string personName = "John Doe";
+            int selectedPerson = 1;
+
+            _controller.ControllerContext.ActionDescriptor.ActionName = "DeletePerson";
+            _userDataService.CanEditPage("DeletePerson").Returns(true);
+            _personService.DeletePersonAsync(personId).Throws(new Exception("General error"));
+
+            var allPersonDto = new List<PersonDetailDto>();
+            _personService.GetAllPersonByNameAsync(selectedPerson).Returns(allPersonDto);
+            _mapper.Map<IEnumerable<PersonViewModel>>(allPersonDto).Returns(new List<PersonViewModel>());
 
             // Act
-            var result = await _controller.DeletePerson(personId);
+            var result = await _controller.DeletePerson(personId, personName, selectedPerson);
 
             // Assert
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("ViewPerson", redirectToActionResult.ActionName);
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<PersonListViewModel>(viewResult.Model);
+
+            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), "DeletePerson");
+            Assert.Contains("Delete failed: General error", _controller.TempData["PersonMessage"]?.ToString());
         }
+
+      
         [Fact]
         public async Task AddPerson_ValidModelAndUserHasEditPermissions_ReturnsRedirectToActionResult()
         {
             // Arrange
-            var viewModel = new AddPersonViewModel {Name = "John Doe", PlantNo = "Plant001" };
-            var dto = new AddPersonDto {Name = "John Doe", PlantNo = "Plant001" };
+            var viewModel = new AddPersonViewModel { Name = "John Doe", PlantNo = "Plant001" };
+            var dto = new AddPersonDto { Name = "John Doe", PlantNo = "Plant001" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _userDataService.GetUsername().Returns("testuser");
             _mapper.Map<AddPersonDto>(viewModel).Returns(dto);
@@ -282,7 +436,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task AddPerson_SqlException_LogsExceptionAndReturnsRedirectToActionResult()
         {
             // Arrange
-         
+
             var viewModel = new AddPersonViewModel {Name = "John Doe", PlantNo = "Plant001" };
             var dto = new AddPersonDto {Name = "John Doe", PlantNo = "Plant001" };
             var sqlException = CreateSqlException();
@@ -305,7 +459,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task AddPerson_GeneralException_LogsExceptionAndReturnsRedirectToActionResult()
         {
             // Arrange
-          
+
             var viewModel = new AddPersonViewModel { Name = "John Doe", PlantNo = "Plant001" };
             var dto = new AddPersonDto { Name = "John Doe", PlantNo = "Plant001" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
@@ -374,13 +528,13 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Null(_controller.TempData["PersonMessage"]);
         }
 
-      
+
 
         [Fact]
         public async Task AddPerson_SqlException_LogsAndReturnsRedirectToActionResult()
         {
             // Arrange
-           
+
             var viewModel = new AddPersonViewModel {Name="Abc",PlantNo= "Site1"  };
             var sqlException = CreateSqlException();
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
@@ -402,8 +556,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task AddPerson_GeneralException_LogsAndReturnsRedirectToActionResult()
         {
             // Arrange
-         
-          
+
+
 
             var viewModel = new AddPersonViewModel {Name = "John Doe", PlantNo = "Plant001" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
@@ -436,7 +590,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             _personService.GetSiteByIdAsync(id).Returns(Task.FromResult<string?>(siteName));
             _personService.GetAllSitesAsync("All").Returns(sites);
 
-           
+
 
             // Act
             var result = await _controller.EditPerson(id) as ViewResult;
@@ -481,7 +635,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal("ViewPerson", result.ActionName);
         }
 
-      
+
 
         [Fact]
         public async Task EditPerson_HandlesCanEditFlagCorrectly()
@@ -562,7 +716,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         [Fact]
         public async Task EditPerson_SqlException_LogsAndRedirectsToEditPerson()
         {
-           
+
             var viewModel = new EditPersonViewModel { PersonId = 1 };
             var sqlException = CreateSqlException();
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
@@ -583,11 +737,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
         public async Task EditPerson_GeneralException_LogsAndRedirectsToEditPerson()
         {
             // Arrange
-            var expectedActionName = _controller.ControllerContext.ActionDescriptor.ActionName;
-            var viewModel = new EditPersonViewModel { PersonId = 1 };
+            var viewModel = new EditPersonViewModel { PersonId = 1, Person = "Test", Name = "Test Site" };
+            var exception = new Exception("Test error");
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<EditPersonDto>(viewModel).Returns(new EditPersonDto());
-            _personService.UpdatePersonAsync(Arg.Any<EditPersonDto>()).Throws(new Exception());
+            _personService.UpdatePersonAsync(Arg.Any<EditPersonDto>()).Throws(exception);
 
             // Act
             var result = await _controller.EditPerson(viewModel);
@@ -595,10 +749,240 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("EditPerson", redirectResult.ActionName);
-            Assert.Equal("Update failed: Exception of type 'System.Exception' was thrown.", _controller.TempData["PersonMessage"]);
-            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(),expectedActionName);
+            Assert.Equal("Update failed: Test error", _controller.TempData["PersonMessage"]);
+            _logService.Received(1).LogGeneralException(exception, _controller.ControllerContext.ActionDescriptor.ActionName);
+        }
+
+        [Fact]
+        public async Task AddPerson_Get_ReturnsViewWithModel()
+        {
+            // Arrange
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _personService.GetAllSitesAsync(Arg.Any<string>()).Returns(new List<PersonSiteLookupDto>());
+
+            // Act
+            var result = await _controller.AddPerson();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<AddPersonViewModel>(viewResult.Model);
+            Assert.True(model.CanEdit);
+            Assert.NotNull(model.Sites);
+        }
+
+        [Fact]
+        public async Task AddPerson_Post_ValidModel_UserCanEdit_RedirectsToAddPerson()
+        {
+            // Arrange
+            var viewModel = new AddPersonViewModel { Name = "John Doe", PlantNo = "P1" };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _userDataService.GetUsername().Returns("testuser");
+            _mapper.Map<AddPersonDto>(Arg.Any<AddPersonViewModel>()).Returns(new AddPersonDto());
+            _personService.AddPersonAsync(Arg.Any<AddPersonDto>(), Arg.Any<string>()).Returns("Person added successfully");
+
+            // Act
+            var result = await _controller.AddPerson(viewModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AddPerson", redirectResult.ActionName);
+           _controller.TempData["PersonMessage"] = "Person added successfully";
+        }
+
+        [Fact]
+        public async Task AddPerson_Post_InvalidModel_ReturnsViewWithModel()
+        {
+            // Arrange
+            var viewModel = new AddPersonViewModel();
+            _controller.ModelState.AddModelError("Person", "Required");
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _personService.GetAllSitesAsync(Arg.Any<string>()).Returns(new List<PersonSiteLookupDto>());
+
+            // Act
+            var result = await _controller.AddPerson(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<AddPersonViewModel>(viewResult.Model);
+            Assert.False(_controller.ModelState.IsValid);
+            Assert.True(model.CanEdit);
+            Assert.NotNull(model.Sites);
+        }
+        [Fact]
+        public async Task AddPerson_InvalidModelState_GetUsernameReturnsNull_PopulatesSitesAndReturnsView()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "AddPerson";
+            _controller.ModelState.AddModelError("Name", "Name is required");
+
+            var viewModel = new AddPersonViewModel { Name = "" };
+
+            bool canEdit = true;
+            _userDataService.CanEditPage("AddPerson").Returns(canEdit);
+            _userDataService.GetUsername().Returns("");
+
+            var mockSites = new List<PersonSiteLookupDto>
+    {
+        new PersonSiteLookupDto { PlantNo = "001", Name = "Site 1" },
+        new PersonSiteLookupDto { PlantNo = "002", Name = "Site 2" }
+    };
+
+            _personService.GetAllSitesAsync(Arg.Any<string>()).Returns(mockSites);
+
+            // Act
+            var result = await _controller.AddPerson(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<AddPersonViewModel>(viewResult.Model);
+
+          
+            Assert.NotNull(returnedViewModel.Sites);
+            var sitesList = returnedViewModel.Sites.ToList();
+            Assert.Equal(2, sitesList.Count);
+            Assert.Equal("001", sitesList[0].Value);
+            Assert.Equal("Site 1", sitesList[0].Text);
+            Assert.Equal("002", sitesList[1].Value);
+            Assert.Equal("Site 2", sitesList[1].Text);
+
+            Assert.True(returnedViewModel.CanEdit);
+
+            // Verify GetUsername was called (line 5)
+            _userDataService.Received(1).GetUsername();
+
+            // Verify AddPersonAsync was not called due to invalid ModelState
+            await _personService.DidNotReceive().AddPersonAsync(Arg.Any<AddPersonDto>(), Arg.Any<string>());
+        }
+
+        [Fact]
+        public async Task AddPerson_InvalidModelState_GetUsernameReturnsValue_PopulatesSitesAndReturnsView()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "AddPerson";
+            _controller.ModelState.AddModelError("Name", "Name is required");
+
+            var viewModel = new AddPersonViewModel { Name = "" };
+
+            bool canEdit = false;
+            _userDataService.CanEditPage("AddPerson").Returns(canEdit);
+            _userDataService.GetUsername().Returns("testuser@domain.com"); 
+
+            var mockSites = new List<PersonSiteLookupDto>
+    {
+        new PersonSiteLookupDto { PlantNo = "003", Name = "Site 3" }
+    };
+
+            _personService.GetAllSitesAsync(Arg.Any<string>()).Returns(mockSites);
+
+            // Act
+            var result = await _controller.AddPerson(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<AddPersonViewModel>(viewResult.Model);
+
+            // Sites dropdown population with single item
+            Assert.NotNull(returnedViewModel.Sites);
+            var sitesList = returnedViewModel.Sites.ToList();
+            Assert.Single(sitesList);
+            Assert.Equal("003", sitesList[0].Value);
+            Assert.Equal("Site 3", sitesList[0].Text);
+
+            Assert.False(returnedViewModel.CanEdit);
+
+            // Verify GetUsername was called (line 5)
+            _userDataService.Received(1).GetUsername();
+        }
+        [Fact]
+        public async Task EditPerson_InvalidModelState_PopulatesSiteOptions()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "EditPerson";
+            _controller.ModelState.AddModelError("Name", "Name is required");
+
+            var viewModel = new EditPersonViewModel { PersonId = 1 };
+
+            _userDataService.CanEditPage("EditPerson").Returns(true);
+
+            var mockSites = new List<PersonSiteLookupDto>
+    {
+        new PersonSiteLookupDto { PlantNo = "001", Name = "Site 1" },
+        new PersonSiteLookupDto { PlantNo = "002", Name = "Site 2" }
+    };
+
+            _personService.GetAllSitesAsync(Arg.Any<string>()).Returns(mockSites);
+
+            // Act
+            var result = await _controller.EditPerson(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<EditPersonViewModel>(viewResult.Model);
+
+            // This covers lines 9-10: Select + ToList operations
+            Assert.NotNull(returnedViewModel.SiteOptions);
+            var siteOptions = returnedViewModel.SiteOptions.ToList();
+            Assert.Equal(2, siteOptions.Count);
+            Assert.Equal("001", siteOptions[0].Value);
+            Assert.Equal("Site 1", siteOptions[0].Text);
+        }
+
+        [Fact]
+        public async Task EditPerson_InvalidModelState_EmptySitesList_CreatesEmptySelectList()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "EditPerson";
+            _controller.ModelState.AddModelError("Name", "Name is required");
+
+            var viewModel = new EditPersonViewModel { PersonId = 1 };
+
+            _userDataService.CanEditPage("EditPerson").Returns(false);
+            _personService.GetAllSitesAsync(Arg.Any<string>()).Returns(new List<PersonSiteLookupDto>());
+
+            // Act
+            var result = await _controller.EditPerson(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<EditPersonViewModel>(viewResult.Model);
+
+            // This covers lines 9-10 with empty collection
+            Assert.NotNull(returnedViewModel.SiteOptions);
+            Assert.Empty(returnedViewModel.SiteOptions);
+        }
+        [Fact]
+        public async Task AddPerson_Post_GeneralException_LogsAndSetsErrorMessage()
+        {
+            // Arrange
+            var viewModel = new AddPersonViewModel {Name = "John Doe", PlantNo = "P1" };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _userDataService.GetUsername().Returns("testuser");
+            _mapper.Map<AddPersonDto>(Arg.Any<AddPersonViewModel>()).Returns(new AddPersonDto());
+            _personService.AddPersonAsync(Arg.Any<AddPersonDto>(), Arg.Any<string>())
+            .Throws(new Exception("Test exception"));
+
+            // Act
+            var result = await _controller.AddPerson(viewModel);
+
+            // Assert
+            _logService.Received().LogGeneralException(Arg.Any<Exception>(), Arg.Any<string>());
+            Assert.StartsWith("Save failed:", _controller.TempData["PersonMessage"] as string);
+        }
+
+        [Fact]
+        public async Task AddPerson_Post_UserCannotEdit_DoesNotCallAddPersonAsync()
+        {
+            // Arrange
+            var viewModel = new AddPersonViewModel {Name = "John Doe", PlantNo = "P1" };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
+
+            // Act
+            var result = await _controller.AddPerson(viewModel);
+
+            // Assert
+            await _personService.DidNotReceive().AddPersonAsync(Arg.Any<AddPersonDto>(), Arg.Any<string>());
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AddPerson", redirectResult.ActionName);
         }
     }
-}
-
-
+    }

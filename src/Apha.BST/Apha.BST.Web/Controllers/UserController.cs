@@ -160,7 +160,7 @@ namespace Apha.BST.Web.Controllers
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
                 TempData[userMessage] = "Update failed: " + ex.Message.ToString();
             }
-            return RedirectToAction(nameof(ViewUser));
+            return RedirectToAction(nameof(EditUser), new {userId=viewModel.UserId});
         }
 
 

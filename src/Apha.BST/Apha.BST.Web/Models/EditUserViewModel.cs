@@ -7,7 +7,7 @@ namespace Apha.BST.Web.Models
     {
         public string UserId { get; set; } = null!;
 
-        [Required(ErrorMessage = "User Name is required")]
+        [Required(ErrorMessage = "Give user name (surname, first)")]
         public string UserName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please select a user location.")]
