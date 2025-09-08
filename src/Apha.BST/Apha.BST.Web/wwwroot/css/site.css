@@ -150,8 +150,7 @@ nav .menu-bar {
     }
 
 /* Keyboard focus styles */
-.menu-bar ul li a:focus {
-    outline: 2px solid #0066cc;
+.menu-bar ul li a:focus {   
     outline-offset: 2px;
     color: #E3EAEB;
     background-color: #666666;
@@ -187,8 +186,7 @@ nav .menu-bar {
     .dropdown-menu a:hover,
     .dropdown-menu a:focus {
         background-color: #f5f5f5;
-        color: #0b2677;
-        outline: 2px solid #0066cc;
+        color: #0b2677;      
         outline-offset: -2px;
     }
 
@@ -373,9 +371,8 @@ nav .menu-bar {
     }
 
 .custom-underline-hover {
-    text-decoration: none;
     font-size: small;
-    color: #000040;
+    color: #0b2677;    
 }
 
     .custom-underline-hover:hover {
@@ -518,7 +515,7 @@ input[type="date"].custom-date-input {
     }
 
     .audit-log-table tr th a:link {
-        color: #E3EAEB;
+        
         text-decoration: none;
     }
 
@@ -529,5 +526,27 @@ input[type="date"].custom-date-input {
     word-wrap: break-word;
     overflow-wrap: break-word; /* more reliable */
 }
+/*---- General Links ----*/
+a {
+    color: #0b2677;
+}
 
-    
+    a:link {
+        color: #0b2677;
+        text-decoration: none;
+    }
+
+    a:visited {
+        color: #0b2677;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: #0b2677;
+        text-decoration: underline !important;
+    }
+
+    a:active {
+        color: #0b2677;
+        text-decoration: underline;
+    }
