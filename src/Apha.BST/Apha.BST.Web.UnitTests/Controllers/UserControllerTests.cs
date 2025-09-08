@@ -58,7 +58,74 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         #region AddUser Tests
+        [Fact]
+        public async Task AddUser_InvalidModelState_PopulatesLocationsDropdown()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "AddUser";
+            _controller.ModelState.AddModelError("UserName", "UserName is required");
 
+            var viewModel = new AddUserViewModel { UserName = "" };
+
+            _userDataService.CanEditPage("AddUser").Returns(true);
+
+            // Mock locations data to trigger the Select operation
+            var mockLocations = new List<VlaLocDto>
+    {
+        new VlaLocDto { LocId = "LOC001", VlaLocation = "Location 1" },
+        new VlaLocDto { LocId = "LOC002", VlaLocation = "Location 2" }
+    };
+
+            _userService.GetLocationsAsync().Returns(mockLocations);
+            _roleMappingService.GetUserLevels().Returns(new List<SelectListItem>());
+
+            // Act
+            var result = await _controller.AddUser(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<AddUserViewModel>(viewResult.Model);
+
+            // Verify the Select + ToList operation created the dropdown items correctly
+            Assert.NotNull(returnedViewModel.Locations);
+            var locationsList = returnedViewModel.Locations.ToList();
+            Assert.Equal(2, locationsList.Count);
+            Assert.Equal("LOC001", locationsList[0].Value);
+            Assert.Equal("Location 1", locationsList[0].Text);
+            Assert.Equal("LOC002", locationsList[1].Value);
+            Assert.Equal("Location 2", locationsList[1].Text);
+
+            await _userService.Received(1).GetLocationsAsync();
+        }
+
+        [Fact]
+        public async Task AddUser_InvalidModelState_EmptyLocations_CreatesEmptyDropdown()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "AddUser";
+            _controller.ModelState.AddModelError("UserName", "UserName is required");
+
+            var viewModel = new AddUserViewModel { UserName = "" };
+
+            _userDataService.CanEditPage("AddUser").Returns(false);
+
+            // Mock empty locations to test Select operation with empty collection
+            _userService.GetLocationsAsync().Returns(new List<VlaLocDto>());
+            _roleMappingService.GetUserLevels().Returns(new List<SelectListItem>());
+
+            // Act
+            var result = await _controller.AddUser(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<AddUserViewModel>(viewResult.Model);
+
+            // Verify the Select + ToList operation works with empty collection
+            Assert.NotNull(returnedViewModel.Locations);
+            Assert.Empty(returnedViewModel.Locations);
+
+            await _userService.Received(1).GetLocationsAsync();
+        }
         [Fact]
         public async Task AddUser_GET_ReturnsViewWithModel()
         {
