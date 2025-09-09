@@ -37,14 +37,14 @@ namespace Apha.BST.Web.Controllers
                 return RedirectToAction(nameof(ViewPerson)); // Redirect if ModelState is invalid
             }
             // Get dropdown list
-            var dropdownDto = await _personService.GetPersonsForDropdownAsync();          
+            var dropdownDto = await _personService.GetPersonsForDropdownAsync();
             var personSelectedList = dropdownDto
                .Select(persons => new SelectListItem
-               {
+                {
                    Value = persons.PersonID.ToString(),
                    Text = persons.Person,
-               })
-               .ToList();
+                })
+                .ToList();
             // Get full list for grid
             var allPersonDto = await _personService.GetAllPersonByNameAsync(selectedPerson);
             var allPerson = _mapper.Map<IEnumerable<PersonViewModel>>(allPersonDto);
@@ -55,13 +55,15 @@ namespace Apha.BST.Web.Controllers
                 AllPerson = personSelectedList,
                 FilteredPerson = allPerson,
                 SelectedPerson = selectedPerson,
-                CanEdit = canEdit 
+                CanEdit = canEdit
             };
 
             return View(model);
         }
+        
+
         [HttpPost]
-        public async Task<IActionResult> DeletePerson(int personId)
+        public async Task<IActionResult> DeletePerson(int personId,string personName,int selectedPerson)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             string failmessage = "Delete failed: ";
@@ -69,13 +71,30 @@ namespace Apha.BST.Web.Controllers
             {
                 return RedirectToAction(nameof(ViewPerson)); // Redirect if ModelState is invalid
             }
-           
+            var personSelectedList = new List<SelectListItem>();
             try
-            {               
-                if (canEdit) 
-                { 
+            {
+                if (canEdit)
+                {
+                    
                     var message = await _personService.DeletePersonAsync(personId);
                     TempData[personMessage] = message;
+                    var dropdownDto = await _personService.GetPersonsForDropdownAsync();
+                    personSelectedList = dropdownDto
+                       .Select(persons => new SelectListItem
+                       {
+                           Value = persons.PersonID.ToString(),
+                           Text = persons.Person,
+                       })
+                        .ToList();
+                    if (!dropdownDto.Any(x => x.PersonID == personId))
+                    {
+                        personSelectedList.Add(new SelectListItem
+                        {
+                            Value = personId.ToString(),
+                            Text = personName
+                        });
+                    }
                 }
             }
             catch (SqlException sqlEx)
@@ -88,9 +107,25 @@ namespace Apha.BST.Web.Controllers
                 _logService.LogGeneralException(ex, ControllerContext.ActionDescriptor.ActionName);
                 TempData[personMessage] = failmessage+ex.Message.ToString();
             }
-
-            return RedirectToAction("ViewPerson");
+          
+            if(selectedPerson==0)
+            {
+                return RedirectToAction("ViewPerson", new { selectedPerson });
+            }
+            
+            var allPersonDto = await _personService.GetAllPersonByNameAsync(selectedPerson);
+            var allPerson = _mapper.Map<IEnumerable<PersonViewModel>>(allPersonDto);
+            var model = new PersonListViewModel
+            {
+                AllPerson = personSelectedList,
+                FilteredPerson = allPerson,
+                SelectedPerson = selectedPerson,
+                CanEdit = canEdit
+            };
+            return View("ViewPerson", model);
+           
         }
+
         [HttpGet]
         public async Task<IActionResult> AddPerson()
         {

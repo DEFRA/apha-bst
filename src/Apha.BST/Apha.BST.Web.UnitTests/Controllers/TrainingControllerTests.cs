@@ -127,6 +127,79 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal(nameof(TrainingController.AddTraining), redirectResult.ActionName);
             Assert.Equal("Training added successfully", _controller.TempData["Message"]);
         }
+        [Fact]
+        public async Task AddTraining_InvalidModelState_ReturnsViewWithPopulatedDropdowns()
+        {
+            // Arrange
+            var controllerActionDescriptor = _controller.ControllerContext.ActionDescriptor;
+            controllerActionDescriptor.ActionName = "AddTraining";
+
+            bool canEdit = true;
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(canEdit);
+
+            // Add model state error to make ModelState.IsValid return false
+            _controller.ModelState.AddModelError("PersonId", "PersonId is required");
+
+            var viewModel = new AddTrainingViewModel
+            {
+                PersonId = 0, // Invalid PersonId
+                TrainingAnimal = "Cattle",
+                TrainingDateTime = DateTime.Now
+            };
+
+            // Mock the dropdown data
+            var mockPersons = new List<TraineeDto>
+    {
+        new TraineeDto { PersonId = 1, Person = "John Doe" },
+        new TraineeDto { PersonId = 2, Person = "Jane Smith" }
+    };
+
+            var mockTrainingTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Type1", Text = "Training Type 1" },
+        new SelectListItem { Value = "Type2", Text = "Training Type 2" }
+    };
+
+            var mockTrainingAnimals = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Cattle", Text = "Cattle" },
+        new SelectListItem { Value = "Sheep", Text = "Sheep" }
+    };
+
+            _trainingService.GetTraineesAsync().Returns(mockPersons);
+            _staticDropdownService.GetTrainingTypes().Returns(mockTrainingTypes);
+            _staticDropdownService.GetTrainingAnimal().Returns(mockTrainingAnimals);
+
+            // Act
+            var result = await _controller.AddTraining(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var returnedViewModel = Assert.IsType<AddTrainingViewModel>(viewResult.Model);
+
+            // Verify that dropdown lists are populated
+            Assert.NotNull(returnedViewModel.Persons);
+            var personsList = returnedViewModel.Persons.ToList();
+            Assert.Equal(2, personsList.Count);
+            Assert.Equal("1", personsList[0].Value);
+            Assert.Equal("John Doe", personsList[0].Text);
+
+            Assert.NotNull(returnedViewModel.TrainingTypesList);
+            var trainingTypesList = returnedViewModel.TrainingTypesList.ToList();
+            Assert.Equal(2, trainingTypesList.Count);
+            Assert.Equal("Type1", trainingTypesList[0].Value);
+
+            Assert.NotNull(returnedViewModel.TrainingAnimalList);
+            var trainingAnimalList = returnedViewModel.TrainingAnimalList.ToList();
+            Assert.Equal(2, trainingAnimalList.Count);
+            Assert.Equal("Cattle", trainingAnimalList[0].Value);
+
+            // Verify that canEdit is set
+            Assert.True(returnedViewModel.CanEdit);
+
+            // Verify that AddTrainingAsync was not called due to invalid model state
+            await _trainingService.DidNotReceive().AddTrainingAsync(Arg.Any<TrainingDto>());
+        }
 
         [Fact]
         public async Task AddTraining_CannotEdit_DoesNotCallAddTrainingAsync()

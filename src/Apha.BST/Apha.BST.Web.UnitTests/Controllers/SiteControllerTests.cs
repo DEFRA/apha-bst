@@ -935,7 +935,48 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal("098-765-4321", model.Fax);
             Assert.True(model.IsAhvla);
         }
+        //new
 
+        [Fact]
+        public async Task AddSite_GET_ReturnsViewWithEmptyModel()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "AddSite";
+            _userDataService.CanEditPage("AddSite").Returns(true);
 
+            // Act
+            var result = await _controller.AddSite();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<SiteViewModel>(viewResult.Model);
+
+            Assert.Equal(string.Empty, model.PlantNo);
+            Assert.Equal(string.Empty, model.Name);
+            Assert.True(model.CanEdit);
+
+            await _userDataService.Received(1).CanEditPage("AddSite");
+        }
+
+        [Fact]
+        public async Task AddSite_GET_UserCannotEdit_ReturnsViewWithCanEditFalse()
+        {
+            // Arrange
+            _controller.ControllerContext.ActionDescriptor.ActionName = "AddSite";
+            _userDataService.CanEditPage("AddSite").Returns(false);
+
+            // Act
+            var result = await _controller.AddSite();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<SiteViewModel>(viewResult.Model);
+
+            Assert.Equal(string.Empty, model.PlantNo);
+            Assert.Equal(string.Empty, model.Name);
+            Assert.False(model.CanEdit);
+
+            await _userDataService.Received(1).CanEditPage("AddSite");
+        }
     }
 }

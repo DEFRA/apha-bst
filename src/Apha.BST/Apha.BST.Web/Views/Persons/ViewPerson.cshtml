@@ -20,7 +20,8 @@
 			<span class="w-70 ms-5 ">
 				<form method="get" asp-action="ViewPerson" style="display:inline;">
 					<select id="personSelect" class="search-dropdown" name="selectedPerson" asp-for="SelectedPerson" asp-items="Model.AllPerson" disabled="@isDisabled" onchange="this.form.submit()">
-						<option value="All">All people</option>
+						<option value="0">All people</option>
+						
 					</select>
 				</form>
 			</span>
@@ -59,6 +60,8 @@
 								<form asp-action="DeletePerson" method="post" style="display: inline;">
 									@Html.AntiForgeryToken()
 									<input type="hidden" name="PersonId" value="@person.PersonId" />
+									<input type="hidden" name="selectedPerson" value="@Model.SelectedPerson" />
+									<input type="hidden" name="personName" value="@person.Person" />
 									<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline"
 											disabled="@isDisabled">
 										Delete
@@ -70,13 +73,15 @@
 				</tbody>
 			}
 		</table>
-		<div class="pt-3 px-5 ErrorText">
+		
+		<div class="message-wrap pt-3 px-5 ErrorText">
+
 			@if (TempData["PersonMessage"] != null)
 			{
 				@TempData["PersonMessage"]
 			}
 		</div>
-	
+
 		
 	</div>
 </div>

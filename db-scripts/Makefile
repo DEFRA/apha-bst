@@ -22,7 +22,7 @@ post-deploy:
 	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_trainer_trainedby_trained.sql
 	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_training_select.sql
 	@$(SQLCMD) -d $(DB_NAME) -i 04-procedures/sp_user_selectall.sql
-	@$(SQLCMD) -d $(DB_NAME) -i 99-direct-scripts/tblDataEntry_add_record.sql
+	@$(SQLCMD) -d $(DB_NAME) -i 99-direct-scripts/tblDataEntry_add_record.sql	
 	@echo "Post-deploy scripts completed."
 
 # Help
