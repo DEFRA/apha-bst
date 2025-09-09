@@ -1,4 +1,4 @@
-name: Create DEV Image Version and Push ECR
+name: Create rollout Image Version and Push ECR
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/build-and-sonar-analyze-template.yaml
     with:
       dotnet_application_solution_name: Apha.BST
-      environment: dev
+      environment: rollout
     secrets: 
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
     permissions:
