@@ -17,5 +17,6 @@ namespace Apha.BST.Core.Interfaces
         Task<string> AddPersonAsync(AddPerson persons, string userName);
         Task<string> UpdatePersonAsync(EditPerson editPerson);
         Task<string?> GetSiteByIdAsync(int personId);
+        Task<string?> GetSiteNameById(int personId);
     }
 }

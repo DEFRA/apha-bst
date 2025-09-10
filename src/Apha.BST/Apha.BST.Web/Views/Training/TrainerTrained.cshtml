@@ -41,8 +41,8 @@
 
 	<div class="w-100 d-flex justify-content-start">
 		<p class="w-30 me-5">Details</p>
-		@if (Model.SelectedTrainerId != 0)
-{
+	@if (Model.TraineeTrainingDetails != null && Model.TraineeTrainingDetails.Any())
+	{
 		<table id="siteTable" class="w-60 mx-5 grid-table">
 			<thead>
 				<tr>
@@ -54,8 +54,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				@if (Model.TraineeTrainingDetails != null)
-				{
+				
 				@foreach (var item in Model.TraineeTrainingDetails)
 				{
 					<tr>
@@ -66,12 +65,12 @@
 							<td>@item.DateTrained.ToShortDateString()</td>
 					</tr>
 				}
-					}
+					
 			</tbody>
 
 		</table>
 
-}
+		}
 	</div>
 
 

@@ -372,11 +372,20 @@ nav .menu-bar {
 
 .custom-underline-hover {
     font-size: small;
-    color: #0b2677;    
+    color: #000040 !important;
+    text-decoration: underline !important;
 }
 
-    .custom-underline-hover:hover {
+    .custom-underline-hover:hover,
+    .custom-underline-hover:disabled:hover {
         text-decoration: underline
+    }
+    .custom-underline-hover:disabled {
+        opacity: 1 !important; /* Prevent graying out */
+        pointer-events: auto !important; /* Allow hover */
+        color: #000040 !important; /* Keep original color */
+        text-decoration: underline !important; /* Ensure underline stays */
+        cursor: default; /* Optional: set appropriate cursor */
     }
 
 /*input calender */

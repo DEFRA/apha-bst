@@ -34,7 +34,7 @@
 
     <div class="w-100 d-flex justify-content-start">
         <p class="w-30 me-5">Details</p>
-        @if (Model.UserList.Any())
+        @if (Model.UserList != null && Model.UserList.Any())
         {
             <table class="grid-table" style="width:70%">
                 <thead>
@@ -57,9 +57,8 @@
                             <td>
 
                                 <a  href="@(!Model.CanEdit ? "#" : Url.Action("EditUser","User",new {@user.UserId}))"
-                                  
-                                   class="btn btn-link p-0 m-0 fw-bold custom-underline-hover"
-                                   style="text-decoration:underline; white-space:nowrap;">
+                                   class="custom-underline-hover btn btn-link p-0 m-0 fw-bold"
+                                   style="white-space:nowrap;">
                                     Alter record
                                 </a>
 
@@ -68,7 +67,7 @@
                                 <form asp-action="DeleteUser" method="post" style="display: inline;">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="userId" value="@user.UserId" />
-                                    <button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline" @(isDisabled == "true" ? "onclick='return #;'" : "")>Delete</button>
+                                    <button type="submit" class="custom-underline-hover btn btn-link p-0 m-0 fw-bold" disabled="@isDisabled">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -82,9 +81,6 @@
                 }
             </div>
         }
-        else
-        {
-            <p class="text-muted mx-5">No user records found.</p>
-        }
+       
     </div>
 </div>

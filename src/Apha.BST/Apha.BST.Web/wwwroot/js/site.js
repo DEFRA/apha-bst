@@ -13,24 +13,13 @@ function openDateCalender() {
 document.addEventListener('DOMContentLoaded', function () {
     const checkbox = document.getElementById('news-date-checkbox');
     const dateInput = document.getElementById('news-date-published');
+    const currentDate = document.getElementById('CurrentDateTime').value;
 
     if (checkbox && dateInput) {
         checkbox.addEventListener('change', function () {
-            if (this.checked) {
-                const now = new Date();
-
-                // Format date as: YYYY-MM-DD hh:mm AM/PM
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = now.getHours();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                const hour12 = hours % 12 || 12;
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-
-                const formatted = `${year}-${month}-${day} ${hour12}:${minutes} ${ampm}`;
-                dateInput.value = formatted;
-
+            if (this.checked)
+            {
+                dateInput.value = currentDate;
                 // This updates the UseCurrentDateTime model property
                 const useCurrent = document.getElementById('UseCurrentDateTime');
                 if (useCurrent) useCurrent.value = 'true';

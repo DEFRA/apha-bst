@@ -18,5 +18,6 @@ namespace Apha.BST.Application.Interfaces
         Task<string> UpdatePersonAsync(EditPersonDto dto);
         Task<string?> GetPersonNameByIdAsync(int personId);
         Task<string?> GetSiteByIdAsync(int personId);
+        Task<string?> GetSiteNameById(int personId);
     }
 }

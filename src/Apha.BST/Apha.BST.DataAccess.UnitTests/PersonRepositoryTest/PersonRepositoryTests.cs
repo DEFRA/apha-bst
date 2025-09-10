@@ -31,6 +31,43 @@ namespace Apha.BST.DataAccess.UnitTests.PersonRepositoryTest
 
             Assert.Equal("LOC1", result);
         }
+        [Fact]
+        public async Task GetSiteByIdAsync_ReturnsSiteName()
+        {
+            // Arrange: Person with LocationId "LOC1", Site with PlantNo "LOC1" and Name "Site1"
+            var persons = new TestAsyncEnumerable<Persons>(new[]
+            {
+    new Persons { PersonId = 1, Person = "John", LocationId = "LOC1" }
+});
+            var sites = new TestAsyncEnumerable<Site>(new[]
+            {
+    new Site { Name = "Site1" }
+});
+            // Set PlantNo property for Site 
+            foreach (var site in sites)
+            {
+                // If Site.PlantNo exists, set it; otherwise, add PlantNo to Site class
+                site.GetType().GetProperty("PlantNo")?.SetValue(site, "LOC1");
+            }
+
+            var mockContext = new Mock<BstContext>();
+            var mockAudit = new Mock<IAuditLogRepository>();
+            var repo = new AbstractPersonRepositoryTest(
+                mockContext.Object,
+                mockAudit.Object,
+                persons: persons,
+                personSiteLookups: null
+            );
+
+            // Mock GetDbSetFor<Site> to return our test sites
+            repo.SetDbSetFor<Site>(sites);
+
+            // Act
+            var result = await repo.GetSiteNameById(1);
+
+            // Assert
+            Assert.Equal("Site1", result);
+        }
 
         [Fact]
         public async Task GetPersonNameByIdAsync_ReturnsPersonName()

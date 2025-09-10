@@ -26,7 +26,8 @@
         <div id="lblException" class="text-danger"></div>
     </div>
 </div>
-
+@if (Model.AuditLogsResults != null && Model.AuditLogsResults.Any())
+ {
 <div class="row" id="gridAuditLogResult">
     <div class="col-md-12">
         <table id="gvAudit" border="1" class="audit-log-table">
@@ -83,8 +84,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.AuditLogsResults != null)
-                {
+               
                     @foreach (var item in Model.AuditLogsResults)
                     {
                         <tr>
@@ -95,7 +95,7 @@
                             <td>@item.TransactionType</td>
                         </tr>
                     }
-                }
+                
 
             </tbody>
         </table>
@@ -128,3 +128,4 @@
         </div>
     </div>
 </div>
+}
