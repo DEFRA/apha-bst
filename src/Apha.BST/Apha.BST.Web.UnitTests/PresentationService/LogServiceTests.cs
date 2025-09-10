@@ -7,7 +7,7 @@ namespace Apha.BST.Web.UnitTests.PresentationService
 {
     public class LogServiceTests
     {
-        private readonly ILogService _logService;
+        private readonly LogService _logService; 
         private readonly ILogger<LogService> _logger;
         private readonly IConfiguration _configuration;
 

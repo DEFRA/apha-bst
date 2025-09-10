@@ -21,7 +21,7 @@ namespace Apha.BST.DataAccess.Repositories
         public PersonsRepository(BstContext context, IAuditLogRepository auditLogRepository) : base(context)
         {           
             _auditLogRepository = auditLogRepository;
-        }//
+        }
         public async Task<string?> GetSiteNameById(int personId)
         {
             // Join Persons with Sites table to get the site name

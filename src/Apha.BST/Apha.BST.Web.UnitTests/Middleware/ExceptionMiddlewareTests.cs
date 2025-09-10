@@ -23,7 +23,7 @@ namespace Apha.BST.Web.UnitTests.Middleware
             _configuration = Substitute.For<IConfiguration>();
         }
 
-        private static HttpContext CreateContext()
+        private static DefaultHttpContext CreateContext()
         {
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();

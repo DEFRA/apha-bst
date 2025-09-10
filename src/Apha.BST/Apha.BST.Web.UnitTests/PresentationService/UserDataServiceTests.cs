@@ -13,7 +13,7 @@ namespace Apha.BST.Web.UnitTests.PresentationService
 {
     public class UserDataServiceTests
     {
-        private readonly IUserDataService _userDataService;
+        private readonly UserDataService _userDataService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IDataEntryService _dataEntryService;
 
