@@ -79,13 +79,13 @@
 									   asp-route-species="@training.TrainingAnimal"
 									   asp-route-dateTrained="@training.TrainingDateTime.ToString("yyyy-MM-dd")"
 									   asp-route-trainingType="@training.TrainingType"
-									   class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">
+									   class="custom-underline-hover btn btn-link p-0 m-0  fw-bold">
 										Edit
 									</a>
 								}
 								else
 								{
-									<a href="#" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">Edit</a>
+									<a href="#" class="custom-underline-hover  btn-link p-0 m-0  fw-bold">Edit</a>
 								}
 								<td>
 									<form asp-action="DeleteTraining" method="post" style="display: inline;">
@@ -93,7 +93,7 @@
 										<input type="hidden" name="traineeId" value="@training.TraineeId" />
 										<input type="hidden" name="species" value="@training.TrainingAnimal" />
 										<input type="hidden" name="dateTrained" value="@training.TrainingDateTime.ToString()" />
-										<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline" disabled="@isDisabled">Delete</button>
+									<button type="submit" class=" custom-underline-hover btn btn-link p-0 m-0 fw-bold" disabled="@isDisabled">Delete</button>
 									</form>
 								</td>
 

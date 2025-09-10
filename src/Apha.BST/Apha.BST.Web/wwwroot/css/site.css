@@ -372,7 +372,8 @@ nav .menu-bar {
 
 .custom-underline-hover {
     font-size: small;
-    color: #0b2677;    
+    color: #000040 !important;
+    text-decoration: underline !important;
 }
 
     .custom-underline-hover:hover {

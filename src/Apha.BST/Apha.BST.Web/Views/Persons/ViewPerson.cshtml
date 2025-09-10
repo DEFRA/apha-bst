@@ -54,7 +54,7 @@
 							<td>@person.PlantNo</td>
 							<td>@person.Name</td>
 							<td>
-								<a href="@(!Model.CanEdit ? "#" : Url.Action("EditPerson", "Persons", new { id = @person.PersonId }))" class="btn btn-link p-0 m-0  fw-bold custom-underline-hover" style="text-decoration:underline">Edit</a>
+								<a href="@(!Model.CanEdit ? "#" : Url.Action("EditPerson", "Persons", new { id = @person.PersonId }))" class="custom-underline-hover btn btn-link p-0 m-0  fw-bold">Edit</a>
 							</td>
 							<td>
 								<form asp-action="DeletePerson" method="post" style="display: inline;">
@@ -62,7 +62,7 @@
 									<input type="hidden" name="PersonId" value="@person.PersonId" />
 									<input type="hidden" name="selectedPerson" value="@Model.SelectedPerson" />
 									<input type="hidden" name="personName" value="@person.Person" />
-									<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline"
+									<button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover"
 											disabled="@isDisabled">
 										Delete
 									</button>

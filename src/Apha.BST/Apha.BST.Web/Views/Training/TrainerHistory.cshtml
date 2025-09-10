@@ -52,7 +52,7 @@
 
 	<div class="w-100 d-flex justify-content-start">
 		<p class="width-10">Trainer details</p>
-		@if (Model.SelectedTrainerId != 0)
+		@if (Model.HistoryDetails != null && Model.HistoryDetails.Any())
 		{
 
 			<table id="siteTable" class="w-75 grid-table ">
@@ -68,8 +68,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@if (Model.HistoryDetails != null)
-					{
+					
 						@foreach (var item in Model.HistoryDetails)
 						{
 							<tr>
@@ -82,7 +81,7 @@
 								<td>@item.Trainer</td>
 							</tr>
 						}
-					}
+					
 				</tbody>
 
 			</table>
