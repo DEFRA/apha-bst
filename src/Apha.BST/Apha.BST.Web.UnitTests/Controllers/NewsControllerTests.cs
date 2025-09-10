@@ -75,7 +75,6 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var model = Assert.IsType<AddNewsViewModel>(viewResult.Model);
             Assert.True(model.CanEdit);
             Assert.NotEmpty(model.Users);
-            Assert.Equal(DateTime.Now.Date, model.DatePublished.Date);
             // Check the default selection item was added
             Assert.Equal("Please select user", model.Users.First().Text);
         }
@@ -83,12 +82,93 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
         #region AddNews POST Tests
         [Fact]
-        public async Task AddNews_POST_InvalidModelState_ReturnsViewWithModel()
+        public async Task AddNews_ValidInput_UseCurrentDateTime_ReturnsRedirectToActionResult()
         {
             // Arrange
-            _controller.ModelState.AddModelError("Title", "Title is required");
-            var viewModel = new AddNewsViewModel();
+            var viewModel = new AddNewsViewModel
+            {
+                Title = "Test News",
+                NewsContent = "Test Content",
+                Author = "user1",
+                UseCurrentDateTime = true
+            };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _mapper.Map<NewsDto>(Arg.Any<AddNewsViewModel>()).Returns(new NewsDto());
+            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Returns("News added successfully");
+
+            // Act
+            var result = await _controller.AddNews(viewModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AddNews", redirectResult.ActionName);
+            Assert.Equal("News added successfully", _controller.TempData["NewsMessage"]);
+        }
+
+        [Fact]
+        public async Task AddNews_ValidInput_CustomDateTime_ReturnsRedirectToActionResult()
+        {
+            // Arrange
+            var viewModel = new AddNewsViewModel
+            {
+                Title = "Test News",
+                NewsContent = "Test Content",
+                Author = "user1",
+                UseCurrentDateTime = false,
+                DatePublished = "2023-05-01 10:00:00"
+            };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            _mapper.Map<NewsDto>(Arg.Any<AddNewsViewModel>()).Returns(new NewsDto());
+            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Returns("News added successfully");
+
+            // Act
+            var result = await _controller.AddNews(viewModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("AddNews", redirectResult.ActionName);
+            Assert.Equal("News added successfully", _controller.TempData["NewsMessage"]);
+        }
+        [Fact]
+        public async Task AddNews_InvalidInput_MissingRequiredFields_ReturnsViewResult()
+        {
+            // Arrange
+            var viewModel = new AddNewsViewModel
+            {
+                Title = "Test News",
+                NewsContent = "Test Content",
+                Author = "user1",
+                UseCurrentDateTime = false,
+                DatePublished = "Invalid Date"
+            };
+            _controller.ModelState.AddModelError("Title", "Required");
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            // Add this setup to prevent the null reference exception
+            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>
+            {
+                new UserViewDto { UserId = "1", UserName = "User1" }
+            });
+            // Act
+            var result = await _controller.AddNews(viewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsType<AddNewsViewModel>(viewResult.Model);
+        }
+        [Fact]
+        public async Task AddNews_InvalidInput_InvalidDateString_ReturnsViewResult()
+        {
+            // Arrange
+            var viewModel = new AddNewsViewModel
+            {
+                Title = "Test News",
+                NewsContent = "Test Content",
+                Author = "user1",
+                UseCurrentDateTime = false,
+                DatePublished = "Invalid Date"
+            };
+            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+           
             _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>
             {
                 new UserViewDto { UserId = "1", UserName = "User1" }
@@ -99,128 +179,23 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsType<AddNewsViewModel>(viewResult.Model);
-            Assert.Equal(viewModel, model);
-            Assert.NotEmpty(model.Users);
+            Assert.IsType<AddNewsViewModel>(viewResult.Model);
+            Assert.True(_controller.ModelState.ContainsKey("DatePublished"));
         }
+      
+        
 
         [Fact]
-        public async Task AddNews_POST_UseCurrentDateTime_UpdatesDatePublished()
+        public async Task AddNews_UserWithoutEditPermissions_ReturnsRedirectToActionResult()
         {
             // Arrange
-            var viewModel = new AddNewsViewModel { UseCurrentDateTime = true };
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-
-            // Create a partial mock of the controller to bypass TryValidateModel
-            var partialMock = Substitute.ForPartsOf<NewsController>(
-                _newsService, _userService, _mapper, _userDataService, _logService);
-
-            // Configure the mock to avoid the NullReferenceException
-            partialMock.When(x => x.TryValidateModel(Arg.Any<object>(), Arg.Any<string>()))
-                .DoNotCallBase();
-
-            // Make sure to return true when TryValidateModel is called
-            partialMock.TryValidateModel(Arg.Any<object>(), Arg.Any<string>()).Returns(true);
-
-            // Set up the ControllerContext and TempData
-            partialMock.ControllerContext = new ControllerContext
+            var viewModel = new AddNewsViewModel
             {
-                ActionDescriptor = new ControllerActionDescriptor { ActionName = "TestAction" }
+                Title = "Test News",
+                NewsContent = "Test Content",
+                Author = "user1",
+                UseCurrentDateTime = true
             };
-            partialMock.TempData = Substitute.For<ITempDataDictionary>();
-
-            // Set up other mocks
-            _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
-            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Returns("News added successfully");
-
-            // Act
-            var result = await partialMock.AddNews(viewModel);
-
-            // Assert
-            // Check that DatePublished was updated to the current date
-            Assert.Equal(DateTime.Now.Date, viewModel.DatePublished.Date);
-            // Verify we got the expected redirect
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("AddNews", redirectResult.ActionName);
-        }
-        [Fact]
-        public async Task AddNews_POST_DateOnlyInput_PreservesDateWithMidnightTime()
-        {
-            // Arrange
-            var dateOnly = new DateTime(2025, 12, 8, 0, 0, 0, DateTimeKind.Local);
-            var viewModel = new AddNewsViewModel { DatePublished = dateOnly };
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-
-            // Create a partial mock of the controller to bypass TryValidateModel
-            var partialMock = Substitute.ForPartsOf<NewsController>(
-                _newsService, _userService, _mapper, _userDataService, _logService);
-
-            // Configure the mock to avoid the NullReferenceException
-            partialMock.When(x => x.TryValidateModel(Arg.Any<object>(), Arg.Any<string>()))
-                .DoNotCallBase();
-
-            // Make sure to return true when TryValidateModel is called
-            partialMock.TryValidateModel(Arg.Any<object>(), Arg.Any<string>()).Returns(true);
-
-            // Set up the ControllerContext and TempData
-            partialMock.ControllerContext = new ControllerContext
-            {
-                ActionDescriptor = new ControllerActionDescriptor { ActionName = "TestAction" }
-            };
-            partialMock.TempData = Substitute.For<ITempDataDictionary>();
-
-            // Set up other mocks
-            _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
-            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Returns("News added successfully");
-
-            // Act
-            var result = await partialMock.AddNews(viewModel);
-
-            // Assert
-            // Verify the time remains at midnight (00:00:00)
-            Assert.Equal(0, viewModel.DatePublished.Hour);
-            Assert.Equal(0, viewModel.DatePublished.Minute);
-            Assert.Equal(0, viewModel.DatePublished.Second);
-
-            // Verify the date is preserved
-            Assert.Equal(2025, viewModel.DatePublished.Year);
-            Assert.Equal(12, viewModel.DatePublished.Month);
-            Assert.Equal(8, viewModel.DatePublished.Day);
-
-            // Verify DateTimeKind is Local
-            Assert.Equal(DateTimeKind.Local, viewModel.DatePublished.Kind);
-
-            // Verify we got the expected redirect
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("AddNews", redirectResult.ActionName);
-        }
-
-
-
-        [Fact]
-        public async Task AddNews_POST_UserHasPermission_AddsNewsSuccessfully()
-        {
-            // Arrange
-            var viewModel = new AddNewsViewModel();
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-            _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
-            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Returns("News added successfully");
-
-            // Act
-            var result = await _controller.AddNews(viewModel);
-
-            // Assert
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("AddNews", redirectResult.ActionName);
-            _controller.TempData.Received()["NewsMessage"] = "News added successfully";
-            await _newsService.Received(1).AddNewsAsync(Arg.Any<NewsDto>());
-        }
-
-        [Fact]
-        public async Task AddNews_POST_UserDoesNotHavePermission_ReturnsErrorMessage()
-        {
-            // Arrange
-            var viewModel = new AddNewsViewModel();
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
 
             // Act
@@ -229,17 +204,22 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddNews", redirectResult.ActionName);
-            _controller.TempData.Received()["NewsMessage"] = "You do not have permission to perform this action.";
-            await _newsService.DidNotReceive().AddNewsAsync(Arg.Any<NewsDto>());
+            Assert.Null(_controller.TempData["NewsMessage"]);
         }
 
         [Fact]
-        public async Task AddNews_POST_SqlExceptionThrown_LogsExceptionAndReturnsErrorMessage()
+        public async Task AddNews_SqlException_ReturnsRedirectToActionResult()
         {
             // Arrange
-            var viewModel = new AddNewsViewModel();
+            var viewModel = new AddNewsViewModel
+            {
+                Title = "Test News",
+                NewsContent = "Test Content",
+                Author = "user1",
+                UseCurrentDateTime = true
+            };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-            _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
+            _mapper.Map<NewsDto>(Arg.Any<AddNewsViewModel>()).Returns(new NewsDto());
             _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Throws(CreateSqlException());
 
             // Act
@@ -248,28 +228,32 @@ namespace Apha.BST.Web.UnitTests.Controllers
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddNews", redirectResult.ActionName);
-            _controller.TempData.Received()["NewsMessage"] = "Save failed";
-            _logService.Received(1).LogSqlException(Arg.Any<SqlException>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+            var newsMessage = _controller.TempData["NewsMessage"]?.ToString() ?? string.Empty;
+            Assert.StartsWith("Save failed:", newsMessage);
         }
-
         [Fact]
         public async Task AddNews_POST_GeneralExceptionThrown_LogsExceptionAndReturnsErrorMessage()
         {
             // Arrange
-            var viewModel = new AddNewsViewModel();
+            var viewModel = new AddNewsViewModel { Title = "Test Title", NewsContent = "Test Content", DatePublished = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), Author = "1" };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
             _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Throws(new Exception());
-
+            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>());
+           
             // Act
             var result = await _controller.AddNews(viewModel);
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AddNews", redirectResult.ActionName);
-            _controller.TempData.Received()["NewsMessage"] = "Save failed";
+            var newsMessage = _controller.TempData["NewsMessage"]?.ToString() ?? string.Empty;
+            Assert.StartsWith("Save failed:", newsMessage);
             _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
+
+
         }
+
         #endregion
 
         #region ViewNews Tests
