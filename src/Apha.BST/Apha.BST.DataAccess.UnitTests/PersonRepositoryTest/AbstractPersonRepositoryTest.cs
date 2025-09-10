@@ -22,11 +22,21 @@ namespace Apha.BST.DataAccess.UnitTests.PersonRepositoryTest
         private readonly IQueryable<PersonLookup>? _personLookups = personLookups;
         private readonly IQueryable<PersonDetail>? _personDetails = personDetails;
         private readonly IQueryable<PersonSiteLookup>? _personSiteLookups = personSiteLookups;
+        private IQueryable<Site>? _sites;
 
+        public void SetDbSetFor<T>(IQueryable<T> data) where T : class
+        {
+            if (typeof(T) == typeof(Site))
+            {
+                _sites = data as IQueryable<Site>;
+            }
+        }
         protected override IQueryable<T> GetDbSetFor<T>()
         {
             if (typeof(T) == typeof(Persons) && _persons != null)
                 return (IQueryable<T>)_persons;
+            if (typeof(T) == typeof(Site) && _sites != null)  
+                return (IQueryable<T>)_sites;
             throw new NotImplementedException($"No override for type {typeof(T).Name}");
         }
 

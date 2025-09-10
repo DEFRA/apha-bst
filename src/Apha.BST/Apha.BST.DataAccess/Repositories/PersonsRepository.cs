@@ -21,13 +21,23 @@ namespace Apha.BST.DataAccess.Repositories
         public PersonsRepository(BstContext context, IAuditLogRepository auditLogRepository) : base(context)
         {           
             _auditLogRepository = auditLogRepository;
+        }//
+        public async Task<string?> GetSiteNameById(int personId)
+        {
+            // Join Persons with Sites table to get the site name
+            return await (from person in GetDbSetFor<Persons>()
+                          join site in GetDbSetFor<Site>()
+                          on person.LocationId equals site.PlantNo
+                          where person.PersonId == personId
+                          select site.Name)
+                        .FirstOrDefaultAsync();
         }
         public async Task<string?> GetSiteByIdAsync(int personId)
         {
             return await GetDbSetFor<Persons>()
                                 .Where(p => p.PersonId == personId)
                                 .Select(p => p.LocationId)
-                                .FirstOrDefaultAsync();
+                        .FirstOrDefaultAsync();
         }
 
         public async Task<string?> GetPersonNameByIdAsync(int personId)

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Apha.BST.Application.DTOs;
+﻿using Apha.BST.Application.DTOs;
 using Apha.BST.Application.Interfaces;
 using Apha.BST.Core.Entities;
 using Apha.BST.Core.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Apha.BST.Application.Services
 {
@@ -24,6 +25,11 @@ namespace Apha.BST.Application.Services
         {
             var entities = await _personRepository.GetAllPersonsForDropdownAsync();
             return _mapper.Map<IEnumerable<PersonLookupDto>>(entities);
+        }
+        public async Task<string?> GetSiteNameById(int personId)
+        {
+            var siteName = await _personRepository.GetSiteNameById(personId);
+            return siteName;
         }
         public async Task<string?> GetSiteByIdAsync(int personId)
         {
@@ -74,7 +80,7 @@ namespace Apha.BST.Application.Services
             // Fetch person name first
             var personName = await _personRepository.GetPersonNameByIdAsync(personId);
             // Fetch site information
-            var site = await _personRepository.GetSiteByIdAsync(personId);
+            var site = await _personRepository.GetSiteNameById(personId);
 
             var deleted = await _personRepository.DeletePersonAsync(personId);
 
