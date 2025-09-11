@@ -13,7 +13,7 @@
         <tbody class="me-5">
             <tr>
                 <th id="newsheading" colspan="3" class="fw-bold text-decoration-underline">Add news item</th>
-                
+
             </tr>
             <tr>
                 <td class="w-25 ">
@@ -21,7 +21,7 @@
                 </td>
                 <td class="w-50">
                     <input id="Title" asp-for="Title" class="w-100" disabled="@isDisabled" />
-                    
+
                 </td>
                 <td><span asp-validation-for="Title" class="text-danger"></span></td>
             </tr>
@@ -31,7 +31,7 @@
                 </td>
                 <td class="w-50 pt-2">
                     <textarea id="NewsContent" asp-for="NewsContent" rows="4" cols="50" class="w-100" disabled="@isDisabled"></textarea>
-                   
+
                 </td>
                 <td> <span asp-validation-for="NewsContent" class="text-danger"></span></td>
             </tr>
@@ -41,27 +41,28 @@
                 </td>
                 <td class="w-50 pt-3">
                     <div class="d-flex align-items-center">
-                        <div class="w-75 me-1">
-                            <input asp-for="DatePublished" id="news-date-published" type="text" value="" placeholder=" " disabled="@isDisabled" />
+                        <div class="w-50 me-2">
+                            <input asp-for="DatePublished" id="news-date-published" type="text" placeholder=" " disabled="@isDisabled" />
                         </div>
                         <div class="form-check w-100">
                             @if (Model.CanEdit)
                             {
-                                <input class="form-check-input" type="checkbox"
+                                <input asp-for="UseCurrentDateTime" class="form-check-input" type="checkbox"
                                        style="width:18px; height:18px; border:1px solid; cursor:pointer;"
                                        id="news-date-checkbox" />
                             }
                             else
                             {
-                                <input class="form-check-input" type="checkbox" style="width:18px; height:18px; border:1px solid; cursor:pointer;" id="news-date-checkbox" disabled />
+                                <input asp-for="UseCurrentDateTime" class="form-check-input" type="checkbox" style="width:18px; height:18px; border:1px solid; cursor:pointer;" id="news-date-checkbox" disabled />
                             }
                             <label class="ms-2 pt-1" for="UseCurrentDateTime">Use current date and time</label>
-                           
+                            <span asp-validation-for="DatePublished" class="text-danger"></span>
+
                         </div>
                     </div>
                     <input type="hidden" asp-for="UseCurrentDateTime" id="UseCurrentDateTime" />
                     <input type="hidden" asp-for="CurrentDateTime" id="CurrentDateTime" />
-                    <span asp-validation-for="DatePublished" class="text-danger"></span>
+
                 </td>
                 <td>  </td>
             </tr>
@@ -73,13 +74,13 @@
                     <select id="Author" asp-for="Author" asp-items="Model.Users" class="search-dropdown w-50" disabled="@isDisabled">
                     </select>
                     <span asp-validation-for="Author" class="text-danger"></span>
-                    
+
                 </td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
-                <td class="pt-4 px-5">
+                <td class="pt-3">
                     <table class="w-100">
                         <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
                         <tr>
@@ -88,7 +89,7 @@
                                     <img src="~/Images/tick.gif" alt="Save news" />
                                 </button>
                             </td>
-                            <td>
+                            <td style="width:55%">
                                 <a href="@Url.Action("Index", "Home")" class="btn" title="Cancel action">
                                     <img src="~/Images/cancel.jpeg" alt="Cancel action" />
                                 </a>
