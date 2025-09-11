@@ -1,6 +1,6 @@
 ﻿@model AddTrainingViewModel
 @{
-	ViewData["Title"] = "AddTraining";	
+	ViewData["Title"] = "AddTraining";
 }
 @{
 	var isDisabled = !Model.CanEdit ? "disabled" : null;
@@ -23,8 +23,8 @@
 				</td>
 				<td class="px-5">
 					<select asp-for="PersonId" asp-items="Model.Persons" id="PersonId" disabled="@isDisabled">
-							<option value="0">Select trainee...</option>
-						</select>
+						<option value="0">Select trainee...</option>
+					</select>
 					<span asp-for="PersonId" class="text-danger"></span>
 				</td>
 			</tr>
@@ -32,7 +32,7 @@
 				<td class="pt-3 ">
 					<label for="TrainerId" id="TrainerId">Please select trainer</label>
 				</td>
-				<td class="pt-3 px-5">				
+				<td class="pt-3 px-5">
 					<select asp-for="TrainerId" asp-items="Model.Persons" id="TrainerId" disabled="@isDisabled">
 						<option value="0">Select trainer...</option>
 					</select>
@@ -45,7 +45,7 @@
 				</td>
 				<td class="pt-3 px-5">
 					<select asp-for="TrainingType" asp-items="Model.TrainingTypesList" id="TrainingType" disabled="@isDisabled">
-						<option value="">Select training type...</option>						
+						<option value="">Select training type...</option>
 					</select>
 					<span asp-for="TrainingType" class="text-danger"></span>
 				</td>
@@ -57,12 +57,13 @@
 				</td>
 				<td class="pt-3 px-5">
 
-					<input asp-for="TrainingDateTime" id="dateInput" type="date" class="custom-date-input" placeholder=" " disabled="@isDisabled">
+					<input asp-for="TrainingDateTime" id="dateInput" type="text" disabled="@isDisabled" value="@Model.TrainingDateTime?.ToString("dd/MM/yyyy")">
+					<input type="date" id="hiddenDateInput" style="position:absolute; opacity:0; width:1px; height:1px; pointer-events:auto;" />
 					<button type="button" onclick="openDateCalender()" class="btn btn-sm">
 						<img src="~/Images/asp-calendar.gif" alt="img" id="calenderImage" />
 					</button>
 
-					
+
 				</td>
 			</tr>
 			<tr>
@@ -71,7 +72,7 @@
 				</td>
 				<td class="pt-3 px-5">
 					<select asp-for="TrainingAnimal" asp-items="Model.TrainingAnimalList" id="TrainingAnimal" disabled="@isDisabled">
-						<option value="">Select species...</option>						
+						<option value="">Select species...</option>
 					</select>
 					<span asp-for="TrainingAnimal" class="text-danger"></span>
 				</td>
@@ -107,7 +108,7 @@
 								@TempData["Message"]
 							}
 					</div>
-					
+
 				</td>
 			</tr>
 			<tr>
@@ -120,8 +121,8 @@
 					</div>
 
 
-				
-				
+
+
 			</tr>
 		</tbody>
 	</table>

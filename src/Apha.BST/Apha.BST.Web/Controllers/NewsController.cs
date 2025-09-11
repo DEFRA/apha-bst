@@ -222,26 +222,17 @@ namespace Apha.BST.Web.Controllers
             string[] acceptedFormats = new[]
             {
             "yyyy/MM/dd",
-            "yyyy-MM-dd",
-            "MM/yyyy/dd",
-            "MM-yyyy-dd",
+            "yyyy-MM-dd",            
             "dd/MM/yyyy",
-            "dd-MM-yyyy",
-            "MM/dd/yyyy",
-            "MM-dd-yyyy",
-             // Add these for time + seconds + AM/PM
-            "M/d/yyyy h:mm:ss tt",
-            "M/d/yyyy hh:mm:ss tt",
-            "MM/dd/yyyy h:mm:ss tt",
-            "MM/dd/yyyy hh:mm:ss tt",
+            "dd-MM-yyyy",            
+             // Add these for time + seconds + AM/PM           
             "yyyy-MM-dd h:mm:ss tt",
             "yyyy-MM-dd hh:mm:ss tt",
             "d/M/yyyy h:mm:ss tt",
             "d/M/yyyy hh:mm:ss tt",
             "dd/MM/yyyy h:mm:ss tt",
             "dd/MM/yyyy hh:mm:ss tt",
-            // 24-hour time formats
-            "MM/dd/yyyy HH:mm:ss",
+            // 24-hour time formats            
             "dd/MM/yyyy HH:mm:ss",
             "yyyy-MM-dd HH:mm:ss"
         };
