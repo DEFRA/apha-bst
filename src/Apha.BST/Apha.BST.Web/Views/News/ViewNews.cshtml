@@ -45,13 +45,13 @@
                         <tr>
                             <td>@news.Title</td>
                             <td>@news.NewsContent</td>
-                            <td>@news.DatePublished.ToString("g")</td>
+                            <td>@news.DatePublished</td>
                             <td>@news.Author</td>
                             <td>
                                 <form asp-action="DeleteNews" method="post" style="display:inline;">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="title" value="@news.Title" />
-                                    <button type="submit" class="btn btn-link p-0 m-0 fw-bold custom-underline-hover" style="text-decoration:underline" disabled="@isDisabled">Delete</button>
+                                    <button type="submit" class="custom-underline-hover btn btn-link p-0 m-0 fw-bold" disabled="@isDisabled">Delete</button>
                                 </form>
                             </td>
                         </tr>

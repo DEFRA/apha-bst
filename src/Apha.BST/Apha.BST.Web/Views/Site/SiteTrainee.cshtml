@@ -32,22 +32,20 @@
 	<div class="w-100 d-flex justify-content-start">
 		<span class="w-30 me-0">Trainee details</span>
 		<span class="w-70 ms-4"></span>
-		@if (!string.IsNullOrEmpty(Model.SelectedSite))
+		@if (Model.FilteredTrainees != null && Model.FilteredTrainees.Any())
 		{
 			<table id="siteTable" class="w-60 mx-1 grid-table">
 				<thead>
-					@if (Model.FilteredTrainees != null && Model.FilteredTrainees.Any())
-					{
+					
 						<tr>
 							<th>Person ID</th>
 							<th>Person</th>
 							<th></th>
 						</tr>
-					}
+					
 				</thead>
 				<tbody>
-					@if (Model.FilteredTrainees != null && Model.FilteredTrainees.Any())
-					{
+					
 						@foreach (var trainee in Model.FilteredTrainees)
 						{
 							<tr>
@@ -62,7 +60,7 @@
 								</td>
 							</tr>
 						}
-					}
+					
 				</tbody>
 			</table>
 		}

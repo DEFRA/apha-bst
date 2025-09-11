@@ -52,9 +52,9 @@ namespace Apha.BST.Application.UnitTests.PersonServiceTest
 
             // Act
             var result = await _personsService.DeletePersonAsync(personId);
-
+         
             // Assert
-            result.Should().Be($"{personName} from Test Site has been deleted from the database.");
+            result.Should().Be($"{personName} from  has been deleted from the database.");
         }
 
         [Fact]
