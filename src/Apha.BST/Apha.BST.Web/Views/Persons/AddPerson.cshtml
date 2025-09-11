@@ -20,7 +20,7 @@
 					<label for="Name" id="Name">Please type person's name (surname, first name)</label>
 				</td>
 				<td class="w-50">
-					<input id="Name" class="w-50" asp-for="Name" type="text" placeholder=" " disabled="@isDisabled">
+					<input id="Name" asp-for="Name" type="text" style="width:45%" placeholder=" " disabled="@isDisabled">
 					<span asp-validation-for="Name" class="text-danger"></span>
 				</td>
 
@@ -30,7 +30,7 @@
 					<label for="PlantNo" id="PlantNo">Please select site</label>
 				</td>
 				<td class="w-50">
-					<select id="PlantNo" asp-for="PlantNo" asp-items="Model.Sites" disabled="@isDisabled">
+					<select id="PlantNo" asp-for="PlantNo" asp-items="Model.Sites" style="width:45%" disabled="@isDisabled">
 							<option value="">Select site...</option>
 						</select>					
 					<span asp-validation-for="PlantNo" class="text-danger"></span>
@@ -39,32 +39,36 @@
 				<td class="w-10"></td>
 			</tr>
 			<tr>
-				<td class="w-25 "></td>
+				<td class="w-25"></td>
 				<td class="w-50">
 					<table class="w-100">
 						<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
 						<tr>
-							<td class="w-20">
+							<td class="w-25">
 								<button type="submit" class="btn p-0" title="Save Person">
 									<img src="~/Images/tick.gif" alt="Save Person" />
 								</button>
 							</td>
-							<td>
+							<td style="width:40%">
 								<a href="@Url.Action("Index", "Home")" class="btn" title="Cancel action">
 									<img src="~/Images/cancel.jpeg" alt="Cancel action" />
 								</a>
 							</td>
 						</tr>
+						
+							<td>
+								<div class="pt-3 px-5 ErrorText">
+									@if (TempData["PersonMessage"] != null)
+									{
+										@TempData["PersonMessage"]
+									}
+								</div>
+							</td>
+					
+						
 					</table>
 				</td>
-				<td>
-					<div class="pt-3 px-5 ErrorText">
-						@if (TempData["PersonMessage"] != null)
-						{
-							@TempData["PersonMessage"]
-						}
-					</div>
-				</td>
+			
 			</tr>
 
 

@@ -1,15 +1,33 @@
 ﻿// utility: open date picker (keeps your original helpers)
 function openDateCalender() {
-    const input = document.getElementById("dateInput");
+    const visibleInput = document.getElementById("dateInput");
+    const hiddenInput = document.getElementById("hiddenDateInput");
 
-    if (input && input.showPicker) {
-        input.showPicker();
-    } else if (input) {
-        input.focus();
-        input.click();
+    if (visibleInput.disabled) {
+        return; // Don't open if input is disabled
+    }
+
+    hiddenInput.value = ''; // Reset hidden input
+
+    hiddenInput.onchange = function () {
+        if (!this.value) return;
+
+        const date = new Date(this.value);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        visibleInput.value = `${day}/${month}/${year}`;
+    };
+
+    // Show picker (modern) or fallback to click
+    if (typeof hiddenInput.showPicker === 'function') {
+        hiddenInput.showPicker();
+    } else {
+        hiddenInput.focus();
+        hiddenInput.click();
     }
 }
-
 document.addEventListener('DOMContentLoaded', function () {
     const checkbox = document.getElementById('news-date-checkbox');
     const dateInput = document.getElementById('news-date-published');
@@ -17,8 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (checkbox && dateInput) {
         checkbox.addEventListener('change', function () {
-            if (this.checked)
-            {
+            if (this.checked) {
                 dateInput.value = currentDate;
                 // This updates the UseCurrentDateTime model property
                 const useCurrent = document.getElementById('UseCurrentDateTime');

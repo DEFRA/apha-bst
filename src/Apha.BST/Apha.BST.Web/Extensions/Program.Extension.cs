@@ -1,8 +1,10 @@
-﻿using Apha.BST.Application.Mappings;
+﻿using System.Globalization;
+using Apha.BST.Application.Mappings;
 using Apha.BST.DataAccess.Data;
 using Apha.BST.Web.Mappings;
 using Apha.BST.Web.Middleware;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apha.BST.Web.Extensions
@@ -41,6 +43,17 @@ namespace Apha.BST.Web.Extensions
 
         public static void ConfigureMiddleware(this WebApplication app)
         {
+            // Set the default culture to en-GB (Great Britain)
+            var cultureSet = app.Configuration.GetValue<string>("DefaultCulture") ?? "en-GB";
+            var supportedCultures = new[] { new CultureInfo(cultureSet) };
+
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(cultureSet),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            };
+            app.UseRequestLocalization(localizationOptions);
             // Health checks endpoint
             app.MapHealthChecks("/health", new HealthCheckOptions
             {
@@ -60,7 +73,7 @@ namespace Apha.BST.Web.Extensions
             app.UseAuthentication();
             app.UseAuthorization();
 
-           
+
 
             // Default route
             app.MapControllerRoute(
