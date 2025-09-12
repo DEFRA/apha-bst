@@ -9,7 +9,7 @@
 ## Table of Contents
 
 - [Features](#features)  
-- [Key technologies](#Keytechnologies)  
+- [Technologies](#Technologies)  
 - [Deployment](#deployment)  
 - [Versioning](#versioning)  
 - [License](#license)
@@ -27,12 +27,12 @@
 
 ---
 
-## Key technologies
+## Technologies
 
 - ASP.NET Core MVC 
-- RDS PostgreSQL 
+- RDS SQL SERVER
 - AWS Cloud infrastructure  
-- ECR for CI
+- ECR for application container image service
 - ECS for hosting application 
 
 ---
@@ -59,8 +59,4 @@ You can view all available versions directly in the GitHub UI:
 
 ---
 
-## License  
-
-This project is licensed under the [MIT License](LICENSE).  
-See the LICENSE file for full details.
 
