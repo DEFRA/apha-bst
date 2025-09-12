@@ -20,6 +20,32 @@ namespace Apha.BST.DataAccess.UnitTests.SiteRepositoryTest
     public class SiteRepositoryTests
     {
         [Fact]
+        public async Task GetSiteTraineesAsync_ReturnsTrainees_Test()
+        {
+            // Arrange
+            var fakeTrainees = new List<SiteTrainee>
+    {
+        new SiteTrainee { PersonId = 1, Person = "Alice" },
+        new SiteTrainee { PersonId = 2, Person = "Bob" }
+    }.AsQueryable();
+
+            var asyncFakeTrainees = new TestAsyncEnumerable<SiteTrainee>(fakeTrainees);
+
+            var mockContext = new Mock<BstContext>();
+            var mockAuditLogRepo = new Mock<IAuditLogRepository>();
+
+            // Use the test subclass instead of Moq for SiteRepository
+            var repo = new AbstractSiteRepositoryTest(mockContext.Object, mockAuditLogRepo.Object, asyncFakeTrainees);
+
+            // Act
+            var result = await repo.GetSiteTraineesAsync("PLANT1");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, t => t.Person == "ABCD");
+        }
+        [Fact]
         public async Task GetAllSitesAsync_ReturnsSites()
         {
             // Arrange
