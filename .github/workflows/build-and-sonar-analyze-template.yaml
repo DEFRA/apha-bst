@@ -119,32 +119,30 @@ jobs:
             -p:DebugSymbols=true \
             --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.Application.test_results.trx"
 
-            
       - name: Run Web Unit Tests with Coverage
-        shell: bash
         run: |
           dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
             --no-build --configuration Release \
-            "/p:CollectCoverage=true" \
-            "/p:CoverletOutput=$(pwd)/src/TestResults/Apha.BST.Web.coverage.opencover.xml" \
-            "/p:CoverletOutputFormat=opencover" \
-            "/p:Deterministic=true" \
-            "/p:DebugType=full" \
-            "/p:DebugSymbols=true" \
+            -p:CollectCoverage=true \
+            -p:CoverletOutput=$(pwd)/src/TestResults/Apha.BST.Web.coverage.opencover.xml \
+            -p:CoverletOutputFormat=opencover \
+            -p:Deterministic=true \
+            -p:DebugType=full \
+            -p:DebugSymbols=true \
             --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.Web.test_results.trx"
 
       - name: Run DataAccess Unit Tests with Coverage
-        shell: bash
         run: |
           dotnet test src/Apha.BST/Apha.BST.DataAccess.UnitTests/Apha.BST.DataAccess.UnitTests.csproj \
             --no-build --configuration Release \
-            "/p:CollectCoverage=true" \
-            "/p:CoverletOutput=$(pwd)/src/TestResults/Apha.BST.DataAccess.coverage.opencover.xml" \
-            "/p:CoverletOutputFormat=opencover" \
-            "/p:Deterministic=true" \
-            "/p:DebugType=full" \
-            "/p:DebugSymbols=true" \
+            -p:CollectCoverage=true \
+            -p:CoverletOutput=$(pwd)/src/TestResults/Apha.BST.DataAccess.coverage.opencover.xml \
+            -p:CoverletOutputFormat=opencover \
+            -p:Deterministic=true \
+            -p:DebugType=full \
+            -p:DebugSymbols=true \
             --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.DataAccess.test_results.trx"
+      
 
 
       - name: List coverage files
