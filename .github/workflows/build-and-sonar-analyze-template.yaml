@@ -120,6 +120,7 @@ jobs:
             --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.Application.test_results.trx"
 
       - name: Run Web Unit Tests with Coverage
+        shell: bash
         run: |
           dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
             --no-build --configuration Release \
@@ -132,6 +133,7 @@ jobs:
             --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.Web.test_results.trx"
 
       - name: Run DataAccess Unit Tests with Coverage
+        shell: bash
         run: |
           dotnet test src/Apha.BST/Apha.BST.DataAccess.UnitTests/Apha.BST.DataAccess.UnitTests.csproj \
             --no-build --configuration Release \
