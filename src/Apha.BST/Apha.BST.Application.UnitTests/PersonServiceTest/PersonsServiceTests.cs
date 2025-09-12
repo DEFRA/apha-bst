@@ -11,6 +11,56 @@ namespace Apha.BST.Application.UnitTests.PersonServiceTest
     public class PersonsServiceTests : AbstractPersonServiceTest
     {
        
+        private readonly IPersonsRepository _mockPersonRepository;
+
+
+        [Fact]
+        public async Task GetSiteNameById_ValidPersonId_ReturnsSiteName()
+        {
+            // Arrange
+            int personId = 1;
+            string expectedSiteName = "Test Site";
+            MockForGetSiteNameById(expectedSiteName, personId);
+
+            // Act
+            var result = await _personsService.GetSiteNameById(personId);
+
+            // Assert
+            Assert.Equal(expectedSiteName, result);
+        }
+
+        [Fact]
+        public async Task GetSiteNameById_InvalidPersonId_ReturnsNull()
+        {
+            // Arrange
+            int personId = -1;
+            string? expectedSiteName = null;
+            MockForGetSiteNameById(expectedSiteName, personId);
+
+            // Act
+            var result = await _personsService.GetSiteNameById(personId);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        public async Task GetSiteNameById_VariousPersonIds_ReturnsExpectedSiteName(int personId)
+        {
+            // Arrange
+            string expectedSiteName = $"Site {personId}";
+            MockForGetSiteNameById(expectedSiteName, personId);
+
+            // Act
+            var result = await _personsService.GetSiteNameById(personId);
+
+            // Assert
+            Assert.Equal(expectedSiteName, result);
+        }
+
 
         [Fact]
         public async Task AddPersonAsync_NewPerson_ReturnsSuccessMessage()
@@ -338,6 +388,14 @@ namespace Apha.BST.Application.UnitTests.PersonServiceTest
                 .Should()
                 .ThrowAsync<Exception>()
                 .WithMessage("Failed to retrieve person name");
+        }
+
+        // In your test class constructor or setup method, initialize _mockPersonRepository and _personsService
+        public PersonsServiceTests()
+        {
+            _mockPersonRepository = Substitute.For<IPersonsRepository>();
+            var mockMapper = Substitute.For<AutoMapper.IMapper>();
+            _personsService = new PersonsService(_mockPersonRepository, mockMapper);
         }
     }
 }
