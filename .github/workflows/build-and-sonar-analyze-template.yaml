@@ -105,46 +105,45 @@ jobs:
       - name: Build Solution
         shell: pwsh
         run: dotnet build src/${{ inputs.dotnet_application_solution_name }}.sln --configuration Release
-# Assuming you're already inside a job and have dotnet installed
 
       - name: Run Application Unit Tests with Coverage
         shell: bash
         run: |
-          dotnet test src/${{ inputs.dotnet_application_solution_name }}/${{ inputs.dotnet_application_solution_name }}.Application.UnitTests/${{ inputs.dotnet_application_solution_name }}.Application.UnitTests.csproj \
+          dotnet test src/Apha.BST/Apha.BST.Application.UnitTests/Apha.BST.Application.UnitTests.csproj \
             --no-build --configuration Release \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput="$(pwd)/src/TestResults/${{ inputs.dotnet_application_solution_name }}.Application.coverage.opencover.xml" \
-            /p:CoverletOutputFormat=opencover \
-            /p:Deterministic=true \
-            /p:DebugType=full \
-            /p:DebugSymbols=true \
-            --logger "trx;LogFileName=$(pwd)/src/TestResults/${{ inputs.dotnet_application_solution_name }}.Application.test_results.trx"
+            "/p:CollectCoverage=true" \
+            "/p:CoverletOutput=$(pwd)/src/TestResults/Apha.BST.Application.coverage.opencover.xml" \
+            "/p:CoverletOutputFormat=opencover" \
+            "/p:Deterministic=true" \
+            "/p:DebugType=full" \
+            "/p:DebugSymbols=true" \
+            --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.Application.test_results.trx"
 
       - name: Run Web Unit Tests with Coverage
         shell: bash
         run: |
-          dotnet test src/${{ inputs.dotnet_application_solution_name }}/${{ inputs.dotnet_application_solution_name }}.Web.UnitTests/${{ inputs.dotnet_application_solution_name }}.Web.UnitTests.csproj \
+          dotnet test src/Apha.BST/Apha.BST.Web.UnitTests/Apha.BST.Web.UnitTests.csproj \
             --no-build --configuration Release \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput="$(pwd)/src/TestResults/${{ inputs.dotnet_application_solution_name }}.Web.coverage.opencover.xml" \
-            /p:CoverletOutputFormat=opencover \
-            /p:Deterministic=true \
-            /p:DebugType=full \
-            /p:DebugSymbols=true \
-            --logger "trx;LogFileName=$(pwd)/src/TestResults/${{ inputs.dotnet_application_solution_name }}.Web.test_results.trx"
+            "/p:CollectCoverage=true" \
+            "/p:CoverletOutput=$(pwd)/src/TestResults/Apha.BST.Web.coverage.opencover.xml" \
+            "/p:CoverletOutputFormat=opencover" \
+            "/p:Deterministic=true" \
+            "/p:DebugType=full" \
+            "/p:DebugSymbols=true" \
+            --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.Web.test_results.trx"
 
       - name: Run DataAccess Unit Tests with Coverage
         shell: bash
         run: |
-          dotnet test src/${{ inputs.dotnet_application_solution_name }}/${{ inputs.dotnet_application_solution_name }}.DataAccess.UnitTests/${{ inputs.dotnet_application_solution_name }}.DataAccess.UnitTests.csproj \
+          dotnet test src/Apha.BST/Apha.BST.DataAccess.UnitTests/Apha.BST.DataAccess.UnitTests.csproj \
             --no-build --configuration Release \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput="$(pwd)/src/TestResults/${{ inputs.dotnet_application_solution_name }}.DataAccess.coverage.opencover.xml" \
-            /p:CoverletOutputFormat=opencover \
-            /p:Deterministic=true \
-            /p:DebugType=full \
-            /p:DebugSymbols=true \
-            --logger "trx;LogFileName=$(pwd)/src/TestResults/${{ inputs.dotnet_application_solution_name }}.DataAccess.test_results.trx"
+            "/p:CollectCoverage=true" \
+            "/p:CoverletOutput=$(pwd)/src/TestResults/Apha.BST.DataAccess.coverage.opencover.xml" \
+            "/p:CoverletOutputFormat=opencover" \
+            "/p:Deterministic=true" \
+            "/p:DebugType=full" \
+            "/p:DebugSymbols=true" \
+            --logger "trx;LogFileName=$(pwd)/src/TestResults/Apha.BST.DataAccess.test_results.trx"
 
 
       - name: List coverage files
