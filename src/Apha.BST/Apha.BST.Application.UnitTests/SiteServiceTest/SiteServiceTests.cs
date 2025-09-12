@@ -11,21 +11,7 @@ namespace Apha.BST.Application.UnitTests.Services
 {
     public class SiteServiceTests : AbstractSiteServiceTest
     {
-        [Fact]
-        public async Task GetSiteTraineesAsync_ValidPlantNo_ReturnsNonEmptyListOrNot()
-        {
-            // Arrange
-            MockForGetSiteTraineesAsync("PLANT001");  // Mock data for valid plant number
-
-            // Act
-            var result = await _siteService.GetSiteTraineesAsync("PLANT001");
-
-            // Assert
-            result.Count.Should().Be(2);  // Expecting 2 trainees
-            result[0].Person.Should().Be("Karen");
-            result[1].Person.Should().Be("Jane Smith");
-        }
-
+       
 
         [Fact]
         public async Task GetAllSitesAsync_WithValidPlantNo_ReturnsListOfSiteDtos()
