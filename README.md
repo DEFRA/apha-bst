@@ -12,7 +12,6 @@
 - [Technologies](#Technologies)  
 - [Deployment](#deployment)  
 - [Versioning](#versioning)  
-- [License](#license)
 
 ---
 
