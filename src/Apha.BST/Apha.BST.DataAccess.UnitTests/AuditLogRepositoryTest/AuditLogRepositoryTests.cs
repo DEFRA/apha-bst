@@ -1,51 +1,155 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Apha.BST.Core.Entities;
+﻿using Apha.BST.Core.Entities;
 using Apha.BST.Core.Pagination;
 using Apha.BST.DataAccess.Data;
 using Apha.BST.DataAccess.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using Moq;
 using Moq.Protected;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Apha.BST.DataAccess.UnitTests.AuditLogTest
 {
         public class AuditLogRepositoryTests
         {
-            [Fact]
-            public async Task AddAuditLogAsync_FormatsParametersAndCallsExecute()
+        private static readonly IFormatProvider DateFormat = CultureInfo.InvariantCulture;
+        private List<AuditLog> GetSampleAuditLogs()
+        {
+            return new List<AuditLog>
+        {
+            new AuditLog { User = "User1", TransactionType = "Type1", Procedure = "Proc1", Parameters = "Param1", Date = DateTime.Parse("2023-01-01",DateFormat) },
+            new AuditLog { User = "User2", TransactionType = "Type2", Procedure = "Proc2", Parameters = "Param2", Date = DateTime.Parse("2023-01-02",DateFormat) },
+            new AuditLog { User = "User3", TransactionType = "Type3", Procedure = "Proc3", Parameters = "Param3",Date = DateTime.Parse("2023-01-03", DateFormat) }
+        };
+        }
+        [Theory]
+        [InlineData("user", false, "User1", "User2", "User3")]
+        [InlineData("user", true, "User3", "User2", "User1")]
+        [InlineData("transactiontype", false, "Type1", "Type2", "Type3")]
+        [InlineData("transactiontype", true, "Type3", "Type2", "Type1")]
+        [InlineData("procedure", false, "Proc1", "Proc2", "Proc3")]
+        [InlineData("procedure", true, "Proc3", "Proc2", "Proc1")]
+        [InlineData("parameters", false, "Param1", "Param2", "Param3")]
+        [InlineData("parameters", true, "Param3", "Param2", "Param1")]
+        [InlineData("date", false, "2023-01-01", "2023-01-02", "2023-01-03")]
+        [InlineData("date", true, "2023-01-03", "2023-01-02", "2023-01-01")]
+        public void ApplySortingByProperty_SortsCorrectly(string property, bool descending, params string[] expectedOrder)
+        {
+            // Arrange
+            var sampleData = GetSampleAuditLogs().AsQueryable();
+
+            // Act
+            var result = ApplySortingByProperty(sampleData, property, descending);
+
+            // Assert
+            var resultList = result.Cast<AuditLog>().ToList();
+            Assert.Equal(expectedOrder.Length, resultList.Count);
+
+            for (int i = 0; i < expectedOrder.Length; i++)
             {
-                // Arrange
-                var mockContext = new Mock<BstContext>();
-                var repo = new AbstractAuditLogRepositoryTest(mockContext.Object);
-
-                var parameters = new[]
+                string? actualValue = property switch
                 {
-                new SqlParameter("@Id", SqlDbType.Int) { Value = 42 },
-                new SqlParameter("@Name", SqlDbType.VarChar, 50) { Value = "Test" }
-            };
+                    "user" => resultList[i].User,
+                    "transactiontype" => resultList[i].TransactionType,
+                    "procedure" => resultList[i].Procedure,
+                    "parameters" => resultList[i].Parameters,
+                    "date" => resultList[i].Date?.ToString("yyyy-MM-dd"),
+                    _ => throw new ArgumentException($"Unexpected property: {property}")
+                };
 
-                // Act
-                await repo.AddAuditLogAsync("sp_Test", parameters, "Write", "tester");
+                Assert.Equal(expectedOrder[i], actualValue);
+            }
+        }
 
-                // Assert
-                Assert.True(repo.ExecuteCalled);
-                Assert.NotNull(repo.LastSql);
-                Assert.Contains("sp_Audit_Log", repo.LastSql);
-                Assert.NotNull(repo.LastParameters);
+        [Fact]
+        public void ApplySortingByProperty_UnknownProperty_ReturnsOriginalQuery()
+        {
+            // Arrange
+            var sampleData = GetSampleAuditLogs().AsQueryable();
 
+            // Act
+            var result = ApplySortingByProperty(sampleData, "unknownproperty", false);
+
+            // Assert
+            Assert.Same(sampleData, result);
+        }
+
+        // Fixes for CS0161, CA1822, IDE0060
+
+        private static IQueryable ApplySortingByProperty(IQueryable<AuditLog> query, string property, bool descending)
+        {
+            if (string.IsNullOrWhiteSpace(property))
+                return query;
+
+            property = property.ToLowerInvariant();
+
+            switch (property)
+            {
+                case "user":
+                    return descending
+                        ? query.OrderByDescending(x => x.User)
+                        : query.OrderBy(x => x.User);
+                case "transactiontype":
+                    return descending
+                        ? query.OrderByDescending(x => x.TransactionType)
+                        : query.OrderBy(x => x.TransactionType);
+                case "procedure":
+                    return descending
+                        ? query.OrderByDescending(x => x.Procedure)
+                        : query.OrderBy(x => x.Procedure);
+                case "parameters":
+                    return descending
+                        ? query.OrderByDescending(x => x.Parameters)
+                        : query.OrderBy(x => x.Parameters);
+                case "date":
+                    return descending
+                        ? query.OrderByDescending(x => x.Date)
+                        : query.OrderBy(x => x.Date);
+                default:
+                    return query;
+            }
+        }
+
+    
+        [Fact]
+        public async Task AddAuditLogAsync_FormatsParametersAndCallsExecute()
+        {
+            // Arrange
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditLogRepositoryTest(mockContext.Object);
+            var parameters = new[]
+            {
+            new SqlParameter("@Id", SqlDbType.Int) { Value = 42 },
+            new SqlParameter("@Name", SqlDbType.VarChar, 50) { Value = "Test" },
+            new SqlParameter("@NullParam", SqlDbType.VarChar, 50) { Value = DBNull.Value },
+            new SqlParameter("@NullParam2", SqlDbType.VarChar, 50) { Value = null }
+        };
+
+            // Act
+            await repo.AddAuditLogAsync("sp_Test", parameters, "Write", "tester", "Test error");
+
+            // Assert
+            Assert.True(repo.ExecuteCalled);
+            Assert.NotNull(repo.LastSql);
+            Assert.Contains("sp_Audit_Log", repo.LastSql);
+            Assert.NotNull(repo.LastParameters);
             var paramList = repo.LastParameters!;
             Assert.Equal("sp_Test", paramList[0].Value);
+            Assert.Contains("Error occured in SP: Test error", paramList[1].Value.ToString());
             Assert.Contains("@Id:42;", paramList[1].Value.ToString());
             Assert.Contains("@Name:Test;", paramList[1].Value.ToString());
+            Assert.Contains("@NullParam:;", paramList[1].Value.ToString());
+            Assert.Contains("@NullParam2:;", paramList[1].Value.ToString());
             Assert.Equal("tester", paramList[2].Value);
             Assert.Equal("Write", paramList[3].Value);
-
         }
 
         [Fact]
@@ -71,30 +175,34 @@ namespace Apha.BST.DataAccess.UnitTests.AuditLogTest
                 Assert.Contains("Error occured in SP: Some error", paramList[1].Value.ToString());
             }
 
-            [Fact]
-            public async Task AddAuditLogAsync_HandlesNullParameters()
+        [Fact]
+        public async Task AddAuditLogAsync_HandlesNullParameters()
+        {
+            // Arrange
+            var mockContext = new Mock<BstContext>();
+            var repo = new AbstractAuditLogRepositoryTest(mockContext.Object);
+
+            var parameters = new SqlParameter[]
             {
-                // Arrange
-                var mockContext = new Mock<BstContext>();
-                var repo = new AbstractAuditLogRepositoryTest(mockContext.Object);
-
-                var parameters = new SqlParameter[]
-                {
                 null!,
-                new SqlParameter("@Value", SqlDbType.VarChar, 10) { Value = DBNull.Value }
-                };
+            };
 
-                // Act
-                await repo.AddAuditLogAsync("sp_Test", parameters, "Read", "user");
+            // Act
+            await repo.AddAuditLogAsync("sp_Test", parameters, "Write", "tester");
 
-                // Assert
-                Assert.True(repo.ExecuteCalled);
+            // Assert
+            Assert.True(repo.ExecuteCalled);
+            Assert.NotNull(repo.LastSql);
+            Assert.Contains("sp_Audit_Log", repo.LastSql);
+            Assert.NotNull(repo.LastParameters);
+            var paramList = repo.LastParameters!;
+            Assert.Equal("sp_Test", paramList[0].Value);
+            Assert.Equal(string.Empty, paramList[1].Value);
+            Assert.Equal("tester", paramList[2].Value);
+            Assert.Equal("Write", paramList[3].Value);
+        }
 
-                var paramList = repo.LastParameters!;
-                Assert.Contains("@Value:;", paramList[1].Value.ToString());
-            }
-
-            [Fact]
+        [Fact]
             public async Task GetAuditLogsAsync_ReturnsPagedData()
             {
                 // Arrange
@@ -286,5 +394,6 @@ namespace Apha.BST.DataAccess.UnitTests.AuditLogTest
                 Assert.Equal("DB error", ex.Message);
                 Assert.True(repo.ExecuteCalled);
             }
+
         }
 }
