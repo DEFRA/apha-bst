@@ -150,7 +150,7 @@ nav .menu-bar {
     }
 
 /* Keyboard focus styles */
-.menu-bar ul li a:focus {   
+.menu-bar ul li a:focus {
     outline-offset: 2px;
     color: #E3EAEB;
     background-color: #666666;
@@ -186,7 +186,7 @@ nav .menu-bar {
     .dropdown-menu a:hover,
     .dropdown-menu a:focus {
         background-color: #f5f5f5;
-        color: #0b2677;      
+        color: #0b2677;
         outline-offset: -2px;
     }
 
@@ -388,18 +388,6 @@ nav .menu-bar {
         cursor: default; /* Optional: set appropriate cursor */
     }
 
-/*input calender */
-input[type="date"].custom-date-input::-webkit-calendar-picker-indicator {
-    opacity: 0;
-    pointer-events: none;
-}
-
-input[type="date"].custom-date-input {
-    position: relative;
-    z-index: 2;
-    -moz-appearance: textfield;
-}
-
 .form-control {
     width: 208px;
 }
@@ -415,7 +403,7 @@ input[type="date"].custom-date-input {
     padding-left: 100px;
 }
 
-.additional-info {   
+.additional-info {
     margin-left: 50px;
 }
 
@@ -481,13 +469,13 @@ input[type="date"].custom-date-input {
     margin-left: 14px;
     margin-right: 14px;
 }
- #contentHome p {
+    #contentHome p {
         margin: 0.7em 0 0 0;
         padding: 0 0 0 0;
-  }
- #contentHome q {
+    }
+    #contentHome q {
         font-style: italic;
- }
+    }
 #lastUpdatedBox {
     clear: both;
     margin-top: 11px;
