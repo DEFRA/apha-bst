@@ -14,14 +14,26 @@ namespace Apha.BST.Application.UnitTests.PersonServiceTest
     {
         protected IPersonsService _personsService;
         protected IMapper _mapper;
+        protected IPersonsRepository _mockPersonRepo;
+
 
         public AbstractPersonServiceTest()
         {
             _personsService = null!;
             _mapper = null!;
+            _mockPersonRepo = null!;
+        }
+        protected void MockForGetSiteNameById(string? expectedSiteName, int personId)
+        {
+            var mockRepo = Substitute.For<IPersonsRepository>();
+            var mockMapper = Substitute.For<IMapper>();
+
+            mockRepo.GetSiteNameById(personId).Returns(Task.FromResult(expectedSiteName));
+
+            _mapper = mockMapper;
+            _personsService = new PersonsService(mockRepo, _mapper);
         }
 
-       
         public void MockForAddPersonAsync(string returnValue, AddPersonDto inputDto, string userName = "testUser")
         {
             var mockRepo = Substitute.For<IPersonsRepository>();
@@ -54,6 +66,20 @@ namespace Apha.BST.Application.UnitTests.PersonServiceTest
             });
 
             _mapper = config.CreateMapper();
+            _personsService = new PersonsService(mockRepo, _mapper);
+        }
+        public void MockForGetSiteNameById(int personId, string? expectedSiteName)
+        {
+            var mockRepo = Substitute.For<IPersonsRepository>();
+            mockRepo.GetSiteNameById(personId).Returns(expectedSiteName);
+
+            var config = new MapperConfiguration(cfg =>
+            {
+               
+            });
+
+            _mapper = config.CreateMapper();
+          
             _personsService = new PersonsService(mockRepo, _mapper);
         }
 
