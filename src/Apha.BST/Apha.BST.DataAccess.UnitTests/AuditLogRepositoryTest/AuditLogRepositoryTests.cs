@@ -21,7 +21,7 @@ namespace Apha.BST.DataAccess.UnitTests.AuditLogTest
         public class AuditLogRepositoryTests
         {
         private static readonly IFormatProvider DateFormat = CultureInfo.InvariantCulture;
-        private List<AuditLog> GetSampleAuditLogs()
+        private static List<AuditLog> GetSampleAuditLogs()
         {
             return new List<AuditLog>
         {
