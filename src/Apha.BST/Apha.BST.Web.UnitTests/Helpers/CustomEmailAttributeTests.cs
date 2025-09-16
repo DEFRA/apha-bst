@@ -42,7 +42,7 @@ namespace Apha.BST.Web.UnitTests.Helpers
             var attribute = new CustomEmailAttribute();
 
             // Act
-            var result = attribute.IsValid(string.Empty);
+            var result = attribute.IsValid("");
 
             // Assert
             Assert.True(result);
@@ -94,5 +94,44 @@ namespace Apha.BST.Web.UnitTests.Helpers
             // Assert
             Assert.False(result);
         }
+        [Fact]
+        public void Constructor_SetsDefaultErrorMessage()
+        {
+            // Arrange & Act
+            var attribute = new CustomEmailAttribute();
+
+            // Assert
+            Assert.Equal("Please enter a valid email address", attribute.ErrorMessage);
+        }
+
+        [Fact]
+        public void IsValid_ValidEmailWithUppercase_ReturnsTrue()
+        {
+            // Arrange
+            var attribute = new CustomEmailAttribute();
+
+            // Act
+            var result = attribute.IsValid("TEST@EXAMPLE.COM");
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsValid_ValidEmailWithMixedCase_ReturnsTrue()
+        {
+            // Arrange
+            var attribute = new CustomEmailAttribute();
+
+            // Act
+            var result = attribute.IsValid("TeSt@ExAmPlE.CoM");
+
+            // Assert
+            Assert.True(result);
+        }
+
+        
+
+       
     }
-    }
+}
