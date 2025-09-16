@@ -6,7 +6,8 @@ namespace Apha.BST.Web.Helpers
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class CustomEmailAttribute : ValidationAttribute
     {
-        private const string EmailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        private static readonly Regex EmailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
 
         public CustomEmailAttribute()
         {
@@ -24,7 +25,7 @@ namespace Apha.BST.Web.Helpers
             if (string.IsNullOrWhiteSpace(email))
                 return true; // Let [Required] handle empty values
 
-            return Regex.IsMatch(email, EmailPattern, RegexOptions.IgnoreCase);
+            return EmailRegex.IsMatch(email);
         }
     }
 }
