@@ -12,12 +12,11 @@ on:
         required: true
     
 
-env:
-  REPOSITORY: apha/bst
 jobs:
   application-release:
     name: prod-application-release
     runs-on: ubuntu-latest
+    environment: prod
     permissions:
       id-token: write
       contents: write
