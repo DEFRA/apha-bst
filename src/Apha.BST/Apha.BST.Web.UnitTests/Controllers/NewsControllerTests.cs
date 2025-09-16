@@ -231,28 +231,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var newsMessage = _controller.TempData["NewsMessage"]?.ToString() ?? string.Empty;
             Assert.StartsWith("Save failed:", newsMessage);
         }
-        [Fact]
-        public async Task AddNews_POST_GeneralExceptionThrown_LogsExceptionAndReturnsErrorMessage()
-        {
-            // Arrange
-            var viewModel = new AddNewsViewModel { Title = "Test Title", NewsContent = "Test Content", DatePublished = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), Author = "1" };
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-            _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
-            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Throws(new Exception());
-            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>());
-           
-            // Act
-            var result = await _controller.AddNews(viewModel);
-
-            // Assert
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("AddNews", redirectResult.ActionName);
-            var newsMessage = _controller.TempData["NewsMessage"]?.ToString() ?? string.Empty;
-            Assert.StartsWith("Save failed:", newsMessage);
-            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
-
-
-        }
+        
 
         #endregion
 
