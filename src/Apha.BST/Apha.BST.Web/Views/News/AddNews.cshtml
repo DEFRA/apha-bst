@@ -7,7 +7,7 @@
 }
 
 <form asp-action="AddNews" method="post">
-
+    @Html.AntiForgeryToken()
     <table class="h-100" style="width:90%">
         <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
         <tbody class="me-5">
