@@ -4,6 +4,7 @@
 }
 
 <form asp-action="GenerateExcel" method="post">
+    @Html.AntiForgeryToken()
     <table class="w-80 h-100">
         <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
         <tbody class="me-5">

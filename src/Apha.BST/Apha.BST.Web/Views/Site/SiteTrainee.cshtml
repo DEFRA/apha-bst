@@ -53,6 +53,7 @@
 								<td>@trainee.Person</td>
 								<td>
 									<form asp-action="DeleteTrainee" asp-controller="Site" method="post">
+									@Html.AntiForgeryToken()
 										<input type="hidden" name="personId" value="@trainee.PersonId" />
 										<input type="hidden" name="selectedSite" value="@Model.SelectedSite" />
 										<button type="submit" class="btn btn-link p-0 m-0 text-dark custom-underline-hover">Delete</button>

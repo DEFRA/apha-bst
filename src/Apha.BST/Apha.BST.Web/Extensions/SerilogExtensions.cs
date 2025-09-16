@@ -30,7 +30,8 @@ namespace Apha.BST.Web.Extensions
             };
 
             return loggerConfiguration
-               .Enrich.FromLogContext()              
+               .Enrich.FromLogContext()
+               .WriteTo.Console()
                .WriteTo.AmazonCloudWatch(cloudWatchOptions, cloudWatchClient);
 
         }

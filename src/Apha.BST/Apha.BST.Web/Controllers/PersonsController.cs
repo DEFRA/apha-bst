@@ -63,6 +63,7 @@ namespace Apha.BST.Web.Controllers
         
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePerson(int personId,string personName,int selectedPerson)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
@@ -140,6 +141,7 @@ namespace Apha.BST.Web.Controllers
             return View(viewModel);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPerson(AddPersonViewModel viewModel)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
@@ -205,6 +207,7 @@ namespace Apha.BST.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPerson(EditPersonViewModel viewModel)
         {
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
