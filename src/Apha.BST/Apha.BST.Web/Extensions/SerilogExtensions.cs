@@ -31,8 +31,7 @@ namespace Apha.BST.Web.Extensions
 
             return loggerConfiguration
                .Enrich.FromLogContext()
-               .WriteTo.Console(new RenderedCompactJsonFormatter()); // Structured JSON to stdout
-               
+               .WriteTo.Console(new RenderedCompactJsonFormatter()); // Structured JSON to stdout               
 
         }
     }
