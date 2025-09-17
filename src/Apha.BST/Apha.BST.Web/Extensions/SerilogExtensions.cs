@@ -31,8 +31,8 @@ namespace Apha.BST.Web.Extensions
 
             return loggerConfiguration
                .Enrich.FromLogContext()
-               .WriteTo.Console()
-               .WriteTo.AmazonCloudWatch(cloudWatchOptions, cloudWatchClient);
+               .WriteTo.Console(new RenderedCompactJsonFormatter()); // Structured JSON to stdout
+               
 
         }
     }
