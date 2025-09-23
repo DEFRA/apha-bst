@@ -22,6 +22,6 @@ namespace Apha.BST.Web.Models
         public string Author { get; set; } = string.Empty;
 
         public IEnumerable<SelectListItem> Users { get; set; } = new List<SelectListItem>();
-        public DateTime CurrentDateTime { get; set; } = DateTime.Now;
+       
     }
 }
