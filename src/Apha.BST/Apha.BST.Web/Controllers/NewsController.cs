@@ -61,12 +61,8 @@ namespace Apha.BST.Web.Controllers
             bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
             // Validate DatePublished string
             DateTime parsedDate;
-            if (viewModel.UseCurrentDateTime)
-            {
-                parsedDate = DateTime.Now;
-                viewModel.DatePublished = parsedDate.ToString();
-            }
-            else if (string.IsNullOrWhiteSpace(viewModel.DatePublished))
+           
+            if (string.IsNullOrWhiteSpace(viewModel.DatePublished))
             {
                 ModelState.AddModelError(nameof(viewModel.DatePublished), "Complete date and time");
             }
