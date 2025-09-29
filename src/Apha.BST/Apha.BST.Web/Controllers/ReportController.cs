@@ -10,26 +10,23 @@ namespace Apha.BST.Web.Controllers
     [Authorize]
     public class ReportController : Controller
     {
-        private readonly IReportService _reportService;
-        private readonly IUserDataService _userDataService;
+        private readonly IReportService _reportService;       
         private readonly ILogService _logService;
 
-        public ReportController(IReportService reportService,IUserDataService userDataService,ILogService logService)
+        public ReportController(IReportService reportService, ILogService logService)
         {
             _reportService = reportService;
-            _userDataService = userDataService;
+          
             _logService = logService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Report()
-        {
-            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);
+        public IActionResult Report()  
+        {          
 
             var viewModel = new ReportViewModel
             {
-                ReportTitle = "Reports",
-                CanEdit = canEdit
+                ReportTitle = "Reports"
             };
 
             return View(viewModel);
@@ -39,16 +36,13 @@ namespace Apha.BST.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateExcel()
         {
-            bool canEdit = await _userDataService.CanEditPage(ControllerContext.ActionDescriptor.ActionName);            
 
             try
             {
-                if (canEdit)
-                {                   
-                    var (fileContent, fileName) = await _reportService.GenerateExcelReportAsync();
-                    return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-                }
-                
+
+                var (fileContent, fileName) = await _reportService.GenerateExcelReportAsync();
+                return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
             }
             catch (SqlException sqlEx)
             {
