@@ -119,6 +119,12 @@ jobs:
             -p:DebugSymbols=true \
             --logger "trx;LogFileName=$(pwd)/src/TestResults/${{ inputs.dotnet_application_solution_name }}.Application.test_results.trx"
 
+      - name: Set consistent locale
+        run: |
+          echo "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=0" >> $GITHUB_ENV
+          echo "LANG=en-US.UTF-8" >> $GITHUB_ENV
+          echo "LC_ALL=en-US.UTF-8" >> $GITHUB_ENV
+      
       - name: Run Web Unit Tests with Coverage
         shell: bash
         run: |
