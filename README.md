@@ -9,11 +9,10 @@
 ## Table of Contents
 
 - [Features](#features)  
-- [Key technologies](#Keytechnologies)  
-- [Deployment](#deployment)  
-- [Versioning](#versioning)  
-- [License](#license)
-
+- [Technologies](#Technologies)  
+- [Deployment](#Deployment)  
+- [Versioning](#Versioning)  
+- [License](#License)  
 ---
 
 ## Features
@@ -27,12 +26,12 @@
 
 ---
 
-## Key technologies
+## Technologies
 
 - ASP.NET Core MVC 
-- RDS PostgreSQL 
+- RDS SQL SERVER
 - AWS Cloud infrastructure  
-- ECR for CI
+- ECR for application container image service
 - ECS for hosting application 
 
 ---
@@ -59,8 +58,20 @@ You can view all available versions directly in the GitHub UI:
 
 ---
 
-## License  
+## License
 
-This project is licensed under the [MIT License](LICENSE).  
-See the LICENSE file for full details.
+THIS INFORMATION IS LICENSED UNDER THE CONDITIONS OF THE OPEN GOVERNMENT LICENCE found at:
+
+<http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3>
+
+The following attribution statement MUST be cited in your products and applications when using this information.
+
+>Contains public sector information licensed under the Open Government Licence v3.0.
+
+### About the license
+
+The Open Government Licence (OGL) v3.0 was developed by the The National Archives to enable information providers in the public sector to license the use and re-use of their information under a common open licence.
+
+It is designed to encourage use and re-use of information freely and flexibly, with only a few conditions.
+
 

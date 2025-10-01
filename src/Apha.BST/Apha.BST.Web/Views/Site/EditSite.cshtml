@@ -7,6 +7,7 @@
 }
 
 <form asp-action="EditSite" asp-controller="Site" method="post">
+	@Html.AntiForgeryToken()
 	<table class="w-100 h-100 m-3">
 		<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
 		<tbody class="me-5">

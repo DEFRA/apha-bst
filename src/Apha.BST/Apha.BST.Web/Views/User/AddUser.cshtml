@@ -7,6 +7,7 @@
 }
 
 <form asp-action="AddUser" method="post">
+    @Html.AntiForgeryToken()
     <table class="w-80 h-100">
         <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
         <tbody class="me-5">
@@ -20,7 +21,7 @@
                 </td>
                 <td class="pt-3 px-5"></td>
                 <td class="pt-3">
-                    <input id="UserId" asp-for="UserId" disabled="@isDisabled" type="email" />
+                    <input id="UserId" asp-for="UserId" disabled="@isDisabled" />
                    
                 </td>
                 

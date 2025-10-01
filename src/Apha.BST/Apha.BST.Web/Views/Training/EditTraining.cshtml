@@ -6,6 +6,7 @@
 	var isDisabled = !Model.CanEdit ? "disabled" : null;
 }
 <form asp-action="EditTraining" method="post" id="editTrainingForm">
+	@Html.AntiForgeryToken()
 	<table class="w-80 h-100 m-4">
 		<thead class="sr-only"><tr><th scope="col"></th></tr></thead>
 		<tbody class="me-5">

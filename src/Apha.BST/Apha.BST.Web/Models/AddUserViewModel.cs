@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Apha.BST.Web.Helpers;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace Apha.BST.Web.Models
@@ -6,7 +7,7 @@ namespace Apha.BST.Web.Models
     public class AddUserViewModel:BaseViewModel
     {
         [Required(ErrorMessage = "Add User Email")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        [CustomEmail]
         public string? UserId { get; set; }
 
         [Required(ErrorMessage = "Add new user name")]

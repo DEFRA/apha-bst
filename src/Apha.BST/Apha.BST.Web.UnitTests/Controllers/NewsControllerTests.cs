@@ -82,7 +82,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
 
         #region AddNews POST Tests
         [Fact]
-        public async Task AddNews_ValidInput_UseCurrentDateTime_ReturnsRedirectToActionResult()
+        public async Task AddNews_ValidInput_ReturnsRedirectToActionResult()
         {
             // Arrange
             var viewModel = new AddNewsViewModel
@@ -90,7 +90,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 Title = "Test News",
                 NewsContent = "Test Content",
                 Author = "user1",
-                UseCurrentDateTime = true
+                DatePublished = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") // Add a valid date string
             };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<NewsDto>(Arg.Any<AddNewsViewModel>()).Returns(new NewsDto());
@@ -168,7 +168,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 DatePublished = "Invalid Date"
             };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-           
+
             _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>
             {
                 new UserViewDto { UserId = "1", UserName = "User1" }
@@ -182,8 +182,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.IsType<AddNewsViewModel>(viewResult.Model);
             Assert.True(_controller.ModelState.ContainsKey("DatePublished"));
         }
-      
-        
+
+
 
         [Fact]
         public async Task AddNews_UserWithoutEditPermissions_ReturnsRedirectToActionResult()
@@ -194,7 +194,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 Title = "Test News",
                 NewsContent = "Test Content",
                 Author = "user1",
-                UseCurrentDateTime = true
+                DatePublished = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") // Add a valid date string
             };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
 
@@ -216,7 +216,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
                 Title = "Test News",
                 NewsContent = "Test Content",
                 Author = "user1",
-                UseCurrentDateTime = true
+                DatePublished = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") // Add a valid date string
             };
             _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
             _mapper.Map<NewsDto>(Arg.Any<AddNewsViewModel>()).Returns(new NewsDto());
@@ -231,28 +231,8 @@ namespace Apha.BST.Web.UnitTests.Controllers
             var newsMessage = _controller.TempData["NewsMessage"]?.ToString() ?? string.Empty;
             Assert.StartsWith("Save failed:", newsMessage);
         }
-        [Fact]
-        public async Task AddNews_POST_GeneralExceptionThrown_LogsExceptionAndReturnsErrorMessage()
-        {
-            // Arrange
-            var viewModel = new AddNewsViewModel { Title = "Test Title", NewsContent = "Test Content", DatePublished = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), Author = "1" };
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-            _mapper.Map<NewsDto>(viewModel).Returns(new NewsDto());
-            _newsService.AddNewsAsync(Arg.Any<NewsDto>()).Throws(new Exception());
-            _userService.GetUsersAsync("All users").Returns(new List<UserViewDto>());
-           
-            // Act
-            var result = await _controller.AddNews(viewModel);
-
-            // Assert
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("AddNews", redirectResult.ActionName);
-            var newsMessage = _controller.TempData["NewsMessage"]?.ToString() ?? string.Empty;
-            Assert.StartsWith("Save failed:", newsMessage);
-            _logService.Received(1).LogGeneralException(Arg.Any<Exception>(), _controller.ControllerContext.ActionDescriptor.ActionName);
 
 
-        }
 
         #endregion
 

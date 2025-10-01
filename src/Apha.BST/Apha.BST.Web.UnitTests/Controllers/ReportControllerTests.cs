@@ -19,16 +19,16 @@ namespace Apha.BST.Web.UnitTests.Controllers
     public class ReportControllerTests
     {
         private readonly IReportService _reportService;
-        private readonly IUserDataService _userDataService;
+       
         private readonly ILogService _logService;
         private readonly ReportController _controller;
 
         public ReportControllerTests()
         {
             _reportService = Substitute.For<IReportService>();
-            _userDataService = Substitute.For<IUserDataService>();
+           
             _logService = Substitute.For<ILogService>();
-            _controller = new ReportController(_reportService, _userDataService, _logService);
+            _controller = new ReportController(_reportService,  _logService);
 
             // Setup TempData for the controller
             var tempData = Substitute.For<ITempDataDictionary>();
@@ -43,88 +43,36 @@ namespace Apha.BST.Web.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task Report_SuccessfulExecution_ReturnsViewResult()
+        public void Report_SuccessfulExecution_ReturnsViewResult()
         {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            // Arrange           
 
             // Act
-            var result = await _controller.Report();
+            var result =  _controller.Report();
 
             // Assert
             Assert.IsType<ViewResult>(result);
         }
 
         [Fact]
-        public async Task Report_VerifyViewModelProperties_ReturnsCorrectProperties()
+        public void Report_VerifyViewModelProperties_ReturnsCorrectProperties()
         {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-
             // Act
-            var result = await _controller.Report();
+            var result =  _controller.Report();
             var viewResult = Assert.IsType<ViewResult>(result);
             var viewModel = Assert.IsType<ReportViewModel>(viewResult.Model);
 
             // Assert
             Assert.NotNull(viewModel);
             Assert.Equal("Reports", viewModel.ReportTitle);
-            Assert.True(viewModel.CanEdit);
-        }
-
-        [Fact]
-        public async Task Report_CanEditPageReturnsTrue_CanEditIsTrue()
-        {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
-
-            // Act
-            var result = await _controller.Report();
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = Assert.IsType<ReportViewModel>(viewResult.Model);
-
-            // Assert
-            Assert.True(viewModel.CanEdit);
-        }
-
-        [Fact]
-        public async Task Report_CanEditPageReturnsFalse_CanEditIsFalse()
-        {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
-
-            // Act
-            var result = await _controller.Report();
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = Assert.IsType<ReportViewModel>(viewResult.Model);
-            Assert.False(viewModel.CanEdit);
-        }
-
-        [Fact]
-        public async Task Report_VerifyUserDataServiceCalled_CalledWithCorrectActionName()
-        {
-            // Arrange
-            string expectedActionName = "Report";
-            _controller.ControllerContext = new ControllerContext
-            {
-                ActionDescriptor = new ControllerActionDescriptor
-                {
-                    ActionName = expectedActionName
-                }
-            };
-
-            // Act
-            await _controller.Report();
-
-            // Assert
-            await _userDataService.Received(1).CanEditPage(expectedActionName);
-        }
+           
+        }           
+             
 
         [Fact]
         public async Task GenerateExcel_UserHasEditPermissions_ReturnsFileResult()
         {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            // Arrange           
             var fileContent = new byte[] { 1, 2, 3 };
             var fileName = "report.xlsx";
             _reportService.GenerateExcelReportAsync().Returns((fileContent, fileName));
@@ -138,26 +86,11 @@ namespace Apha.BST.Web.UnitTests.Controllers
             Assert.Equal(fileName, fileResult.FileDownloadName);
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
         }
-
-        [Fact]
-        public async Task GenerateExcel_UserDoesNotHaveEditPermissions_RedirectsToReport()
-        {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(false);
-
-            // Act
-            var result = await _controller.GenerateExcel();
-
-            // Assert
-            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("Report", redirectResult.ActionName);
-        }
-
+               
         [Fact]
         public async Task GenerateExcel_SqlExceptionOccurs_LogsErrorAndRedirectsToReport()
         {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            // Arrange            
             _reportService.GenerateExcelReportAsync().Throws(CreateSqlException());
 
             // Act
@@ -173,8 +106,7 @@ namespace Apha.BST.Web.UnitTests.Controllers
         [Fact]
         public async Task GenerateExcel_GeneralExceptionOccurs_LogsErrorAndRedirectsToReport()
         {
-            // Arrange
-            _userDataService.CanEditPage(Arg.Any<string>()).Returns(true);
+            // Arrange           
             _reportService.GenerateExcelReportAsync().Throws(new Exception());
 
             // Act

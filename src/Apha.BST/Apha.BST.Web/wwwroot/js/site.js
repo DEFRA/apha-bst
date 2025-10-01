@@ -31,12 +31,13 @@ function openDateCalender() {
 document.addEventListener('DOMContentLoaded', function () {
     const checkbox = document.getElementById('news-date-checkbox');
     const dateInput = document.getElementById('news-date-published');
-    const currentDate = document.getElementById('CurrentDateTime').value;
-
+   
+    
     if (checkbox && dateInput) {
         checkbox.addEventListener('change', function () {
             if (this.checked) {
-                dateInput.value = currentDate;
+                const ukDate = getCurrentUKTimeFormatted();                
+                dateInput.value = ukDate;
                 // This updates the UseCurrentDateTime model property
                 const useCurrent = document.getElementById('UseCurrentDateTime');
                 if (useCurrent) useCurrent.value = 'true';
@@ -48,6 +49,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+function getCurrentUKTimeFormatted() {
+    const now = new Date();
+
+    // Use Intl.DateTimeFormat with Europe/London timezone and options to get parts
+    const options = {
+        timeZone: 'Europe/London',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    };
+
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    const parts = formatter.formatToParts(now);
+
+    // Extract parts by type
+    const dateParts = {};
+    parts.forEach(({ type, value }) => {
+        dateParts[type] = value;
+    });
+
+    // Format as dd/MM/yyyy HH:mm:ss
+    return `${dateParts.day}/${dateParts.month}/${dateParts.year} ${dateParts.hour}:${dateParts.minute}:${dateParts.second}`;
+}
+
 
 // Accessible navigation class (robust version with blur + focusout)
 class AccessibleNavigation {
