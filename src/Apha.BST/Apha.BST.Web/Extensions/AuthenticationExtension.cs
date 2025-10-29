@@ -83,6 +83,7 @@ namespace Apha.BST.Web.Extensions
             return Task.CompletedTask;
         }
 
+        //Role added in database to handle remote failures during authentication
         private static Task HandleRemoteFailure(RemoteFailureContext context)
         {
             if (context.Failure?.InnerException is UnauthorizedAccessException unauthorizedEx)
