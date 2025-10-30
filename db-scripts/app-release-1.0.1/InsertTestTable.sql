@@ -1,0 +1,1 @@
+Insert into TestTable (Name, CreatedAt) Values ('Test Entry 1', GETDATE());
