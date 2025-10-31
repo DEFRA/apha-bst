@@ -1,3 +1,4 @@
+-- TestTable using TSQL language
 Create table TestTable (
 	ID INT PRIMARY KEY,
 	Name VARCHAR(100) NOT NULL,
