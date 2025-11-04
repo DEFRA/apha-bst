@@ -6,12 +6,12 @@
 <table class="home-container w-100">
     <thead class="sr-only"><tr><th scope="col"></th></tr></thead>
     <tbody>
-        <tr class="news-header">
+        <tr>
             <td>News and Updates.....</td>
         </tr>
 
         <tr>
-            <td>
+            <td colspan="2">
                 @if (Model != null && Model.Any())
                 {
                     var lastUpdatedNews = Model.LastOrDefault();
@@ -32,7 +32,7 @@
         </tr>
         <tr>
             <td>
-                Only News..... Nothing new input
+                Testing for ECR Push
             </td>
             <td class="text-end">
                 <a asp-controller="News" asp-action="OldNews">........ Show older posts</a>
