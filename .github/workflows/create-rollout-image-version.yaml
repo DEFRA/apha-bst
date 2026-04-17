@@ -2,7 +2,7 @@ name: Create rollout Image Version and Push ECR
 
 on:
   workflow_dispatch:
-  jobs:
+jobs:
   print-chars:
     runs-on: ubuntu-latest
 
